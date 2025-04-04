@@ -1,5 +1,8 @@
 package Controller;
 
+import Model.Movie;
+import Model.MovieModel;
+
 import java.util.ArrayList;
 import java.util.List;
 
