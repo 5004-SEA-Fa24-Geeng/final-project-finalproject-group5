@@ -1,5 +1,7 @@
 package Controller;
 
+import Model.Movie;
+
 /**
  * Interface for the MovieController, responsible for handling
  * user input events from the view and coordinating responses
