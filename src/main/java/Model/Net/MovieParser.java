@@ -5,7 +5,10 @@ import Model.Genre;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MovieParser {
+public final class MovieParser {
+
+
+
     private static List<Genre> convertGenreIds(List<Integer> genreIds) {
         List<Genre> genres = new ArrayList<>();
         for (Integer id : genreIds) {

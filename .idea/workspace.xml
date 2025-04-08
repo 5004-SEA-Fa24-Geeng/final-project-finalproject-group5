@@ -5,7 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c47278ea-e367-4c58-b29e-8b4f6eebf9b6" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/src/main/java/Model/Genre.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Model/Genre.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Model/Net/MovieParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Model/Net/MovieParser.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -66,7 +68,7 @@
     "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit5",
     "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5": "",
     "dart.analysis.tool.window.visible": "false",
-    "git-widget-placeholder": "Merging model",
+    "git-widget-placeholder": "model",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "/Users/happy1claire/Desktop/NEU/CS5004/repo/final-project-finalproject-group5",
     "node.js.detected.package.eslint": "true",
@@ -213,7 +215,7 @@
       <option name="presentableId" value="Default" />
       <updated>1743787779885</updated>
       <workItem from="1743787780977" duration="6011000" />
-      <workItem from="1743794091302" duration="18310000" />
+      <workItem from="1743794091302" duration="18923000" />
     </task>
     <servers />
   </component>
