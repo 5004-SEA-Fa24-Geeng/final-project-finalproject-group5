@@ -21,7 +21,7 @@ public final class NetUtil {
      */
     private static final Dotenv dotenv = Dotenv.load();
     /** Access Api keys from `.env` file. */
-    private static final String API_TOKEN = dotenv.get("TMDB_API_KEY");
+    private static final String API_TOKEN = dotenv.get("TMDB_API_TOKEN");
     /** TMDB default api url.*/
     private static final String API_URL = "https://api.themoviedb.org/3/discover/movie";
     /** Amount of movies that needed to pull from api.*/

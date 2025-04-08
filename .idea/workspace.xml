@@ -5,9 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c47278ea-e367-4c58-b29e-8b4f6eebf9b6" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.env.example" beforeDir="false" afterPath="$PROJECT_DIR$/.env.example" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Model/Net/MovieParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Model/Net/MovieParser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Model/Net/NetUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Model/Net/NetUtil.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,30 +58,30 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Gradle.NetUtilTest.executor": "Run",
-    "Gradle.NetUtilTest.testGetTop50MoviesJsonNotNull.executor": "Run",
-    "Gradle.NetUtilTest.testSimpleStub.executor": "Run",
-    "Gradle.final-project-finalproject-group5 [:Model.Net.NetUtil.main()].executor": "Run",
-    "Gradle.final-project-finalproject-group5 [:Model.Net.NetUtilTest.main()].executor": "Debug",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit5",
-    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5": "",
-    "dart.analysis.tool.window.visible": "false",
-    "git-widget-placeholder": "model",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/Users/happy1claire/Desktop/NEU/CS5004/repo/final-project-finalproject-group5",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "configurable.group.editor",
-    "show.migrate.to.gradle.popup": "false",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Gradle.NetUtilTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.NetUtilTest.testGetTop50MoviesJsonNotNull.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.NetUtilTest.testSimpleStub.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.final-project-finalproject-group5 [:Model.Net.NetUtil.main()].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.final-project-finalproject-group5 [:Model.Net.NetUtilTest.main()].executor&quot;: &quot;Debug&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary&quot;: &quot;JUnit5&quot;,
+    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5&quot;: &quot;&quot;,
+    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;model&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/happy1claire/Desktop/NEU/CS5004/repo/final-project-finalproject-group5&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;configurable.group.editor&quot;,
+    &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CreateTestDialog.Recents.Supers">
       <recent name="" />
