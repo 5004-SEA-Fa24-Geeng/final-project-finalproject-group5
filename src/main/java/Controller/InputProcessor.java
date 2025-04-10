@@ -1,5 +1,7 @@
 package Controller;
 
+import Model.Genre;
+
 /**
  * InputProcessor is responsible for parsing and validating user input
  * received from the view. All parsing methods are optional, meaning
@@ -57,7 +59,7 @@ public class InputProcessor implements InputProcessorInterface {
      * @return Trimmed and lowercased type or null.
      */
     @Override
-    public String optionalParseType(String input) {
-        return (input == null || input.isBlank()) ? null : input.trim().toLowerCase();
+    public Genre optionalParseType(String input) {
+        return Genre.fromName(input.trim());
     }
 }

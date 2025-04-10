@@ -25,7 +25,7 @@ public class MovieModel implements MovieModelInterface{
     }
 
     @Override
-    public List<Movie> searchByMultipleFilters(String title, String director, int year, String genre) {
+    public List<Movie> searchByMultipleFilters(String title, String director, int year, Genre genre) {
         return List.of();
     }
 
