@@ -27,7 +27,7 @@ public interface MovieModelInterface {
      * @param genere movie's genere
      * @return List of move that filtered by user's input.
      */
-    List<Movie> searchByMultipleFilters(String title, String director, int year, Genere genere);
+    List<Movie> searchByMultipleFilters(String title, String director, int year, Genre genere);
 
     /**
      * Update comments with user-given comment.

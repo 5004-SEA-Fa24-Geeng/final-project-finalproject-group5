@@ -24,7 +24,7 @@ public class Movie {
     private float rating;
 
     /** List of genres the movie belongs to */
-    private List<Genere> genres;
+    private List<Genre> genres;
 
     /** List of actors or actresses in the movie */
     private List<String> castings;
@@ -61,7 +61,7 @@ public class Movie {
      * @param imgUrl         Relative path to movie's poster
      */
     public Movie(String title, List<String> directors, int year, float rating,
-                 List<Genere> genres, List<String> castings, String imgUrl) {
+                 List<Genre> genres, List<String> castings, String imgUrl) {
         this.title = (title != null && !title.isBlank()) ? title : "Unknown Title";
         this.directors = (directors != null) ? directors : new ArrayList<>();
         this.year = (year > 1800) ? year : 0; // TODO: check if this is logical?
@@ -159,7 +159,7 @@ public class Movie {
      *
      * @return A list of genres.
      */
-    public List<Genere> getGenres() {
+    public List<Genre> getGenres() {
         return genres;
     }
 
@@ -168,7 +168,7 @@ public class Movie {
      *
      * @param genres A list of genres. Null value will be replaced with an empty list.
      */
-    public void setGenres(List<Genere> genres) {
+    public void setGenres(List<Genre> genres) {
         this.genres = (genres != null) ? genres : new ArrayList<>();
     }
 
@@ -278,6 +278,22 @@ public class Movie {
      */
     public void setImgUrl(String imgUrl) {
         this.imgUrl = (imgUrl != null) ? imgUrl : "";
+    }
+
+    @Override
+    public String toString() {
+        return "Movie{" +
+                "title='" + title + '\'' +
+                ", directors=" + directors +
+                ", year=" + year +
+                ", rating=" + rating +
+                ", genres=" + genres +
+                ", castings=" + castings +
+                ", comments=" + comments +
+                ", InAppRating=" + InAppRating +
+                ", updatedAverageInAppRating=" + updatedAverageInAppRating +
+                ", imgUrl='" + imgUrl + '\'' +
+                '}';
     }
 
 }

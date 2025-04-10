@@ -1,5 +1,7 @@
 package Controller;
 
+import Model.Genre;
+
 /**
  * Interface for parsing and validating user input from the view
  * before it is used in the controller or model.
@@ -36,7 +38,7 @@ public interface InputProcessorInterface {
      * Parses the type/genre input. Returns null if blank.
      *
      * @param input The raw input from the user.
-     * @return Trimmed and lowercased type string or null.
+     * @return Trimmed and lowercased type Genre or null.
      */
-    String optionalParseType(String input);
+    Genre optionalParseType(String input);
 }

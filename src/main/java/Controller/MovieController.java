@@ -1,5 +1,6 @@
 package Controller;
 
+import Model.Genre;
 import Model.Movie;
 import Model.MovieModel;
 
@@ -41,6 +42,8 @@ public class MovieController implements MovieControllerInterface {
         );
         view.setMovieSelectionHandler(this::handleMovieSelected);
         view.setBackHandler(this::handleBackPressed);
+        view.setCommentHandler(this::handleCommentSubmission);
+        view.setRatingHandler(this::handleRatingSubmission);
     }
 
     /**
@@ -58,7 +61,7 @@ public class MovieController implements MovieControllerInterface {
             String name = inputProcessor.optionalParseName(nameInput);
             String director = inputProcessor.optionalParseDirector(directorInput);
             Integer year = inputProcessor.optionalParseYear(yearInput);
-            String type = inputProcessor.optionalParseType(typeInput);
+            Genre type = inputProcessor.optionalParseType(typeInput);
 
             List<Movie> results = model.searchByMultipleFilters(name, director, year, type);
             currentResults = results;
@@ -88,5 +91,47 @@ public class MovieController implements MovieControllerInterface {
     @Override
     public void handleBackPressed() {
         view.displayMovieSelectionDropdown(currentResults);
+    }
+
+    /**
+     * Handles user-submitted comment for a selected movie.
+     *
+     * @param movieID The ID of the movie to comment on.
+     * @param comment The comment text.
+     */
+    @Override
+    public void handleCommentSubmission(String movieID, String comment) {
+        try {
+            if (movieID == null || comment == null || comment.isBlank()) {
+                view.displayError("Invalid comment or movie ID.");
+                return;
+            }
+
+            model.UpdateComments(movieID, comment);
+            view.displayInfo("Comment added successfully.");
+        } catch (Exception e) {
+            view.displayError("Failed to add comment: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Handles user-submitted rating for a selected movie.
+     *
+     * @param movieID The ID of the movie to rate.
+     * @param rating  The rating value.
+     */
+    @Override
+    public void handleRatingSubmission(String movieID, Float rating) {
+        try {
+            if (movieID == null || rating == null || rating < 0.0 || rating > 5.0) {
+                view.displayError("Invalid rating or movie ID.");
+                return;
+            }
+
+            model.UpdateRating(movieID, rating);
+            view.displayInfo("Rating updated successfully.");
+        } catch (Exception e) {
+            view.displayError("Failed to update rating: " + e.getMessage());
+        }
     }
 }
