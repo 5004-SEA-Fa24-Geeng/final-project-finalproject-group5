@@ -47,6 +47,7 @@ public class MovieModel implements MovieModelInterface{
     public static MovieModel getInstance() {
         if (instance == null) {
             instance = new MovieModel();
+            
         }
         return instance;
     }

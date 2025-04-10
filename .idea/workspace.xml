@@ -4,11 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c47278ea-e367-4c58-b29e-8b4f6eebf9b6" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Model/Net/MovieParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Model/Net/MovieParser.java" afterDir="false" />
-    </list>
+    <list default="true" id="c47278ea-e367-4c58-b29e-8b4f6eebf9b6" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -41,6 +37,12 @@
                 <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
                 <item name="final-project-finalproject-group5" type="f1a62948:ProjectNode" />
                 <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="build" type="c8890929:TasksNode$1" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="final-project-finalproject-group5" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
                 <item name="verification" type="c8890929:TasksNode$1" />
               </path>
               <path>
@@ -60,8 +62,8 @@
       <list>
         <option value="Interface" />
         <option value="Enum" />
-        <option value="JUnit5 Test Class" />
         <option value="Class" />
+        <option value="JUnit5 Test Class" />
       </list>
     </option>
   </component>
@@ -78,13 +80,22 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Gradle.Build final-project-finalproject-group5.executor": "Run",
+    "Gradle.MovieParserTest.executor": "Run",
+    "Gradle.MovieParserTest.getParsedMovies.executor": "Run",
+    "Gradle.MovieParserTest.testGetParsedMovies.executor": "Run",
     "Gradle.NetUtilTest.executor": "Run",
     "Gradle.NetUtilTest.testGetTop50MoviesJsonNotNull.executor": "Run",
     "Gradle.NetUtilTest.testSimpleStub.executor": "Coverage",
     "Gradle.NetUtilTest.testWithMockData.executor": "Run",
+    "Gradle.Tests in 'Model.Net'.executor": "Run",
+    "Gradle.Tests in 'final-project-finalproject-group5.test'.executor": "Run",
+    "Gradle.final-project-finalproject-group5 [:Model.Net.MovieParserTest.main()].executor": "Run",
     "Gradle.final-project-finalproject-group5 [:Model.Net.NetUtil.main()].executor": "Run",
     "Gradle.final-project-finalproject-group5 [:Model.Net.NetUtilTest.main()].executor": "Debug",
+    "Gradle.final-project-finalproject-group5 [build].executor": "Run",
     "Gradle.final-project-finalproject-group5 [check].executor": "Run",
+    "Gradle.final-project-finalproject-group5 [clean].executor": "Run",
     "Gradle.final-project-finalproject-group5 [jacocoTestCoverageVerification].executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit5",
@@ -111,8 +122,8 @@
       <recent name="Model.Net" />
     </key>
   </component>
-  <component name="RunManager" selected="Gradle.final-project-finalproject-group5 [jacocoTestCoverageVerification]">
-    <configuration name="NetUtilTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+  <component name="RunManager" selected="Gradle.Tests in 'Model.Net'">
+    <configuration name="MovieParserTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -125,7 +136,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;Model.Net.NetUtilTest&quot;" />
+            <option value="&quot;Model.Net.MovieParserTest&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -136,7 +147,7 @@
       <RunAsTest>true</RunAsTest>
       <method v="2" />
     </configuration>
-    <configuration name="NetUtilTest.testSimpleStub" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="MovieParserTest.getParsedMovies" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -149,7 +160,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;Model.Net.NetUtilTest.testSimpleStub&quot;" />
+            <option value="&quot;Model.Net.MovieParserTest.getParsedMovies&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -160,7 +171,7 @@
       <RunAsTest>true</RunAsTest>
       <method v="2" />
     </configuration>
-    <configuration name="NetUtilTest.testWithMockData" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="Tests in 'Model.Net'" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -173,7 +184,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;Model.Net.NetUtilTest.testWithMockData&quot;" />
+            <option value="&quot;Model.Net.*&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -184,7 +195,7 @@
       <RunAsTest>true</RunAsTest>
       <method v="2" />
     </configuration>
-    <configuration name="final-project-finalproject-group5 [check]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="final-project-finalproject-group5 [build]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -195,7 +206,7 @@
         </option>
         <option name="taskNames">
           <list>
-            <option value="check" />
+            <option value="build" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -206,7 +217,7 @@
       <RunAsTest>false</RunAsTest>
       <method v="2" />
     </configuration>
-    <configuration name="final-project-finalproject-group5 [jacocoTestCoverageVerification]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="final-project-finalproject-group5 [clean]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -217,7 +228,7 @@
         </option>
         <option name="taskNames">
           <list>
-            <option value="jacocoTestCoverageVerification" />
+            <option value="clean" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -230,11 +241,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.final-project-finalproject-group5 [jacocoTestCoverageVerification]" />
-        <item itemvalue="Gradle.final-project-finalproject-group5 [check]" />
-        <item itemvalue="Gradle.NetUtilTest.testWithMockData" />
-        <item itemvalue="Gradle.NetUtilTest.testSimpleStub" />
-        <item itemvalue="Gradle.NetUtilTest" />
+        <item itemvalue="Gradle.Tests in 'Model.Net'" />
+        <item itemvalue="Gradle.MovieParserTest" />
+        <item itemvalue="Gradle.final-project-finalproject-group5 [build]" />
+        <item itemvalue="Gradle.final-project-finalproject-group5 [clean]" />
+        <item itemvalue="Gradle.MovieParserTest.getParsedMovies" />
       </list>
     </recent_temporary>
   </component>

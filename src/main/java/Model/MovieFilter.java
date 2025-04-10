@@ -156,8 +156,6 @@ public class MovieFilter {
         return results;
     }
 
-
-
     /**
      * Filter movies with a rating less than or equal to a specified value
      *

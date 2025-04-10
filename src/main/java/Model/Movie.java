@@ -26,6 +26,9 @@ public class Movie {
     /** List of genres the movie belongs to */
     private List<Genre> genres;
 
+    /** String of overview in movie */
+    private String overview;
+
     /** List of actors or actresses in the movie */
     private List<String> castings;
 
@@ -61,12 +64,13 @@ public class Movie {
      * @param imgUrl         Relative path to movie's poster
      */
     public Movie(String title, List<String> directors, int year, double rating,
-                 List<Genre> genres, List<String> castings, String imgUrl) {
+                 List<Genre> genres, String overview, List<String> castings, String imgUrl) {
         this.title = (title != null && !title.isBlank()) ? title : "Unknown Title";
         this.directors = (directors != null) ? directors : new ArrayList<>();
-        this.year = (year > 1800) ? year : 0; // TODO: check if this is logical?
+        this.year = (year > 1800) ? year : 0;
         this.rating = (rating >= 0.0 && rating <= 10.0) ? rating : 0.0;
         this.genres = (genres != null) ? genres : new ArrayList<>();
+        this.overview = overview != null && !overview.isBlank() ? overview : "No Overview";
         this.castings = (castings != null) ? castings : new ArrayList<>();
         this.comments = new ArrayList<>();
         this.InAppRating = new ArrayList<>();
@@ -127,7 +131,6 @@ public class Movie {
      * @param year Release year (must be > 1800 to be accepted).
      */
     public void setYear(int year) {
-        // TODO: check if the constraint is logical.
         if (year > 1800) {
             this.year = year;
         }
@@ -170,6 +173,24 @@ public class Movie {
      */
     public void setGenres(List<Genre> genres) {
         this.genres = (genres != null) ? genres : new ArrayList<>();
+    }
+
+    /**
+     * Returns the overview of the movie.
+     *
+     * @return a brief summary or description of the movie
+     */
+    public String getOverview() {
+        return overview;
+    }
+
+    /**
+     * Sets the overview of the movie.
+     *
+     * @param overview a brief summary or description of the movie
+     */
+    public void setOverview(String overview) {
+        this.overview = overview;
     }
 
     /**
