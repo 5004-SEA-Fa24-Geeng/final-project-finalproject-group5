@@ -151,7 +151,7 @@ public final class DataFormatter {
 
         // Write movie records
         for (Movie movie : movies) {
-            pout.printf("%s,%d,%.1f,%s,%s,%s,%s,%.1f,%s%n",
+            pout.printf("%s,%d,%.1f,%s,%s,%s,%s,%.1f%n",
                     formatCsvField(movie.getTitle()),
                     movie.getYear(),
                     movie.getRating(),
@@ -237,8 +237,12 @@ public final class DataFormatter {
                 writeCsvData(movies, out);
                 break;
             default:
-                String formattedMovies = formatMovieList(movies);  // Get formatted movie list
-                // Write this formatted movie list to OutputStream (e.g., file, console, etc.)
+                String formattedMovies = formatMovieList(movies);
+                try (PrintStream ps = new PrintStream(out)) {
+                    ps.print(formattedMovies);
+                } catch (Exception e) {
+                    System.err.println("Error writing formatted data: " + e.getMessage());
+                }
                 break;
         }
     }
