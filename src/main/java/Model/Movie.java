@@ -21,7 +21,7 @@ public class Movie {
     private int year;
 
     /** Rating of the movie */
-    private float rating;
+    private double rating;
 
     /** List of genres the movie belongs to */
     private List<Genre> genres;
@@ -33,7 +33,7 @@ public class Movie {
     private List<String> comments;
 
     /** In-App rating information provided by users*/
-    private List<Float> InAppRating;
+    private List<Double> InAppRating;
 
     /** The updated average rating calculated by mean of accumulated amount of the ratings
      * and the accumulated amount of the rating. This field prevent redundant list iteration.
@@ -60,12 +60,12 @@ public class Movie {
      * @param castings       List of cast members
      * @param imgUrl         Relative path to movie's poster
      */
-    public Movie(String title, List<String> directors, int year, float rating,
+    public Movie(String title, List<String> directors, int year, double rating,
                  List<Genre> genres, List<String> castings, String imgUrl) {
         this.title = (title != null && !title.isBlank()) ? title : "Unknown Title";
         this.directors = (directors != null) ? directors : new ArrayList<>();
         this.year = (year > 1800) ? year : 0; // TODO: check if this is logical?
-        this.rating = (rating >= 0.0f && rating <= 10.0f) ? rating : 0.0f;
+        this.rating = (rating >= 0.0 && rating <= 10.0) ? rating : 0.0;
         this.genres = (genres != null) ? genres : new ArrayList<>();
         this.castings = (castings != null) ? castings : new ArrayList<>();
         this.comments = new ArrayList<>();
@@ -138,7 +138,7 @@ public class Movie {
      *
      * @return The movie rating.
      */
-    public float getRating() {
+    public double getRating() {
         return rating;
     }
 
@@ -147,8 +147,8 @@ public class Movie {
      *
      * @param rating Rating between 0.0 and 10.0.
      */
-    public void setRating(float rating) {
-        if (rating >= 0.0f && rating <= 10.0f) {
+    public void setRating(double rating) {
+        if (rating >= 0.0 && rating <= 10.0) {
             this.rating = rating;
         }
     }
@@ -221,7 +221,7 @@ public class Movie {
      *
      * @return A list of in-app ratings.
      */
-    public List<Float> getInAppRating() {
+    public List<Double> getInAppRating() {
         return InAppRating;
     }
 
@@ -230,7 +230,7 @@ public class Movie {
      *
      * @param inAppRating A list of in-app ratings. Null list will be replaced with an empty list.
      */
-    public void setInAppRating(List<Float> inAppRating) {
+    public void setInAppRating(List<Double> inAppRating) {
         this.InAppRating = (inAppRating != null) ? inAppRating : new ArrayList<>();
     }
 
@@ -239,7 +239,7 @@ public class Movie {
      *
      * @param rating Rating to add.
      */
-    public void addInAppRating(float rating) {
+    public void addInAppRating(Double rating) {
         this.InAppRating.add(rating);
     }
 
