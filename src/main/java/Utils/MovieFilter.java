@@ -1,4 +1,7 @@
-package Model;
+package Utils;
+
+import Model.Genre;
+import Model.Movie;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -266,14 +269,14 @@ public class MovieFilter {
      * @param minRating the minimum in-app rating
      * @return list of movies that match the condition
      */
-    public static List<Movie> filterByMinInAppRating(List<Movie> movies, float minRating) {
+    public static List<Movie> filterByMinInAppRating(List<Movie> movies, double minRating) {
         if (movies == null) {
             return new ArrayList<>();
         }
         List<Movie> results = new ArrayList<>();
 
         for (Movie movie : movies) {
-            if (movie.getUpdatedAverageInAppRating().a >= minRating) {
+            if (movie.getInAppRating() >= minRating) {
                 results.add(movie);
             }
         }

@@ -1,4 +1,4 @@
-package Model.Net;
+package Model.Utils;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Disabled;

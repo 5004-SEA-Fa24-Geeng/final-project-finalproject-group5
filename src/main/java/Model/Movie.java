@@ -41,12 +41,6 @@ public class Movie {
     /** In-App rating information provided by users*/
     private List<Double> InAppRating;
 
-    /** The updated average rating calculated by mean of accumulated amount of the ratings
-     * and the accumulated amount of the rating. This field prevent redundant list iteration.
-     * With <updatedAverageRating, accumulated amount of the rating> structure.
-     */
-    private Pair<Float, Integer> updatedAverageInAppRating;
-
     /** Relative path to movie's poster. For details, see below.
      * https://www.themoviedb.org/talk/62933de3df86a834e0a960ff?utm_source=chatgpt.com
      */
@@ -80,7 +74,6 @@ public class Movie {
         this.castings = (castings != null) ? castings : new ArrayList<>();
         this.comments = new ArrayList<>();
         this.InAppRating = new ArrayList<>();
-        this.updatedAverageInAppRating = new Pair<>(0.0f, 0);
         this.imgUrl = (imgUrl != null) ? imgUrl : "";
     }
 
@@ -266,8 +259,14 @@ public class Movie {
      *
      * @return A list of in-app ratings.
      */
-    public List<Double> getInAppRating() {
-        return InAppRating;
+    public double getInAppRating() {
+        double count = 0;
+        double sum = 0;
+        for (Double rating : InAppRating) {
+            sum += rating;
+            count++;
+        }
+        return count / sum;
     }
 
     /**
@@ -286,25 +285,6 @@ public class Movie {
      */
     public void addInAppRating(Double rating) {
         this.InAppRating.add(rating);
-    }
-
-    /**
-     * Gets the updated average in-app rating and the total rating count.
-     *
-     * @return A pair containing the average rating and the count.
-     */
-    public Pair<Float, Integer> getUpdatedAverageInAppRating() {
-        return updatedAverageInAppRating;
-    }
-
-    /**
-     * Sets the updated average in-app rating.
-     *
-     * @param updatedAverageInAppRating A pair of average rating and count. Null pair will be replaced with default.
-     */
-    public void setUpdatedAverageInAppRating(Pair<Float, Integer> updatedAverageInAppRating) {
-        this.updatedAverageInAppRating = (updatedAverageInAppRating != null)
-                ? updatedAverageInAppRating : new Pair<>(0.0f, 0);
     }
 
     /**
@@ -337,7 +317,7 @@ public class Movie {
                 ", castings=" + castings +
                 ", comments=" + comments +
                 ", InAppRating=" + InAppRating +
-                ", updatedAverageInAppRating=" + updatedAverageInAppRating +
+                ", updatedAverageInAppRating=" + getInAppRating() +
                 ", imgUrl='" + imgUrl + '\'' +
                 '}';
     }

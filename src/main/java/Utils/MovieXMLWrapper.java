@@ -1,6 +1,8 @@
-package Model;
+package Utils;
 
 import java.util.Collection;
+
+import Model.Movie;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
