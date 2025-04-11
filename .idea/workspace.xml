@@ -4,16 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c47278ea-e367-4c58-b29e-8b4f6eebf9b6" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Controller/MovieController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Controller/MovieController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Controller/MovieControllerInterface.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Controller/MovieControllerInterface.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Model/Movie.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Model/Movie.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Model/MovieFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Model/MovieFilter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Model/MovieModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Model/MovieModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Model/MovieModelInterface.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Model/MovieModelInterface.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Model/MovieSorter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Model/MovieSorter.java" afterDir="false" />
-    </list>
+    <list default="true" id="c47278ea-e367-4c58-b29e-8b4f6eebf9b6" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -281,7 +272,7 @@
       <workItem from="1744249579768" duration="3523000" />
       <workItem from="1744311968239" duration="9579000" />
       <workItem from="1744327911164" duration="5633000" />
-      <workItem from="1744337030344" duration="1170000" />
+      <workItem from="1744337030344" duration="1287000" />
     </task>
     <servers />
   </component>
