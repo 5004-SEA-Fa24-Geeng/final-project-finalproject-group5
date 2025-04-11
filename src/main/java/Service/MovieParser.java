@@ -24,6 +24,9 @@ public final class MovieParser {
     /** The placeholder class for original JSON structure */
     private static List<MovieSummary> moviesSummary;
 
+    /** The number of movies we're trying to parse */
+    private static int numberOfMovies = 600;
+
     /** The root image URL to TMDB poster. */
     private static final String IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
 
@@ -50,16 +53,21 @@ public final class MovieParser {
     }
 
     /**
-     * Parses the top 50 movies JSON into a list of MovieSummary objects.
+     * Parses the top N movies JSON into a list of MovieSummary objects.
      */
     private static void parseMovies() {
         try (InputStream jsonStream = NetUtil.getTop50MoviesJson()) {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode root = mapper.readTree(jsonStream);
 
-            JsonNode results = root.path("results");
-
-            moviesSummary = mapper.readerForListOf(MovieSummary.class).readValue(results);
+            if (root.isArray()) {
+                // JSON is a raw array
+                moviesSummary = mapper.readerForListOf(MovieSummary.class).readValue(root);
+            } else {
+                // JSON has a "results" wrapper
+                JsonNode results = root.path("results");
+                moviesSummary = mapper.readerForListOf(MovieSummary.class).readValue(results);
+            }
         } catch (IOException e) {
             e.printStackTrace();
             moviesSummary = Collections.emptyList();
@@ -109,6 +117,11 @@ public final class MovieParser {
 
             }
             movies.add(new Movie(MovieID, title, directors, year, rating, genre, overview, castings, imgUrl));
+
+            // Break if we've reached our target number of movies
+            if (movies.size() >= numberOfMovies) {
+                break;
+            }
         }
     }
 
@@ -124,7 +137,7 @@ public final class MovieParser {
 
     /** Inner class to map individual movie entries from TMDb API. */
     @JsonIgnoreProperties(ignoreUnknown = true)
-    protected static class MovieSummary {
+    public static class MovieSummary {
 
         @JsonProperty("id")
         private int movieID;

@@ -1,9 +1,15 @@
 package Utils;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import io.github.cdimascio.dotenv.Dotenv;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -25,8 +31,8 @@ public final class NetUtil {
     private static final String API_TOKEN = dotenv.get("TMDB_API_TOKEN");
     /** TMDB default api url.*/
     private static final String API_URL = "https://api.themoviedb.org/3/discover/movie";
-    /** Amount of movies that needed to pull from api.*/
-    private static final int MOVIE_RESULTS_AMOUNT = 50;
+    /** Number of movies that needed to pull from api.*/
+    private static final int MOVIE_RESULTS_AMOUNT = 200;
     /** OkHttpClient instance used for making HTTP requests to the TMDb API. */
     private static final OkHttpClient client = new OkHttpClient();
 
@@ -46,10 +52,8 @@ public final class NetUtil {
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         return String.format(
-                "%s?include_adult=false&include_video=false&language=en-US&sort_by=popularity.desc&primary_release_date.gte=%s&primary_release_date.lte=%s&page=%d",
+                "%s?include_adult=false&include_video=false&language=en-US&sort_by=popularity.desc&page=%d",
                 API_URL,
-                firstDay.format(fmt),
-                today.format(fmt),
                 page
         );
     }
@@ -59,9 +63,8 @@ public final class NetUtil {
      * @return top 50 movies json string as input stream
      */
     public static InputStream getTop50MoviesJson() {
-        StringBuilder result = new StringBuilder();
-
-        // There are 20 movies per page from TMDB api.
+        ObjectMapper mapper = new ObjectMapper();
+        ArrayNode allResults = mapper.createArrayNode();
         int totalPages = (int) Math.ceil(MOVIE_RESULTS_AMOUNT / 20.0);
 
         try {
@@ -77,17 +80,23 @@ public final class NetUtil {
 
                 try (Response response = client.newCall(request).execute()) {
                     if (response.isSuccessful() && response.body() != null) {
-                        result.append(response.body().string());
+                        JsonNode root = mapper.readTree(response.body().string());
+                        JsonNode results = root.path("results");
+                        if (results.isArray()) {
+                            allResults.addAll((ArrayNode) results);
+                        }
                     } else {
                         System.err.println("Error fetching movies (Page " + page + "): HTTP status " + response.code());
                     }
                 }
             }
 
-            return new ByteArrayInputStream(result.toString().getBytes());
+            // Convert to InputStream of a JSON array
+            byte[] jsonBytes = mapper.writeValueAsBytes(allResults);
+            return new ByteArrayInputStream(jsonBytes);
 
         } catch (Exception e) {
-            System.err.println("Error connecting to TMDb API: " + e.getMessage());
+            e.printStackTrace();
             return InputStream.nullInputStream();
         }
     }
