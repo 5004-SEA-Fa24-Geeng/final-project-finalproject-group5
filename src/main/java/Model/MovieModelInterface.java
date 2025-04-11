@@ -29,20 +29,22 @@ public interface MovieModelInterface {
      */
     List<Movie> searchByMultipleFilters(String title, String director, int year, Genre genere);
 
+    List<Movie> sortBy
+
     /**
      * Update comments with user-given comment.
      *
      * @param movieID ID of movie that the comments is given.
      * @param comment comments.
      */
-    void UpdateComments(String movieID, String comment);
+    void UpdateComments(int movieID, String comment);
 
     /**
      * Update in-App rating with given rating.
      * @param movieID ID of movie that the rating is given.
      * @param rating rating from user.
      */
-    void UpdateRating(String movieID, Float rating);
+    void UpdateRating(int movieID, double rating);
 
     /**
      * Gets the singleton instance of the model.

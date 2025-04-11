@@ -21,24 +21,38 @@ public class MovieModel implements MovieModelInterface{
         this.movies = MovieParser.getMoviesFromApi();
     }
 
+    public List<Movie> getMovies() {
+        return this.movies;
+    }
+
     @Override
     public void writeFile(Format format) {
-
+        return;
     }
 
     @Override
     public List<Movie> searchByMultipleFilters(String title, String director, int year, Genre genre) {
-        return List.of();
+        return null;
     }
 
     @Override
-    public void UpdateComments(String movieID, String comment) {
-        
+    public void UpdateComments(int movieID, String comment) {
+        for (Movie movie : this.movies) {
+            if (movie.getId() == movieID) {
+                movie.addComment(comment);
+                return;
+            }
+        }
     }
 
     @Override
-    public void UpdateRating(String movieID, Float rating) {
-
+    public void UpdateRating(int movieID, double rating) {
+        for (Movie movie : this.movies) {
+            if (movie.getId() == movieID) {
+                movie.addInAppRating(rating);
+                return;
+            }
+        }
     }
 
     /**
