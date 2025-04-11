@@ -33,12 +33,11 @@ public interface MovieModelInterface {
      */
     List<Movie> searchByMultipleFilters(String title, String director, int year, Genre genere);
 
-    List<Movie> sortBy
 
     /**
      * Update comments with user-given comment.
      *
-     * @param movieID ID of movie that the comments is given.
+     * @param movieID ID of movie that the comments are given.
      * @param comment comments.
      */
     void UpdateComments(int movieID, String comment);
