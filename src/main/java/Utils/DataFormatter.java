@@ -79,8 +79,8 @@ public final class DataFormatter {
         }
 
         // Format app rating
-        sb.append("App Rating: ").append(movie.getUpdatedAverageInAppRating().a).append(" ")
-                .append("(Total ratings: ").append(movie.getUpdatedAverageInAppRating().b).append(")\n");
+        sb.append("App Rating: ").append(movie.getInAppRating()).append(" ")
+                .append("(Total ratings: ").append(movie.getInAppRating()).append(")\n");
 
 
         return sb.toString();  // Return the formatted movie data as a string
@@ -160,7 +160,7 @@ public final class DataFormatter {
                     formatCsvField(joinGenres(movie)),
                     formatCsvField(joinCastings(movie)),
                     formatCsvField(joinComments(movie)),
-                    movie.getUpdatedAverageInAppRating().a);
+                    movie.getInAppRating());
         }
     }
 
