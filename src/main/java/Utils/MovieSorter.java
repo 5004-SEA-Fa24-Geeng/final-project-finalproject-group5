@@ -1,4 +1,6 @@
-package Model;
+package Utils;
+
+import Model.Movie;
 
 import java.util.ArrayList;
 import java.util.Collections;

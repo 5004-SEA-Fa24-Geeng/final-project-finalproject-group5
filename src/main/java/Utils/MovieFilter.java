@@ -1,4 +1,7 @@
-package Model;
+package Utils;
+
+import Model.Genre;
+import Model.Movie;
 
 import java.util.ArrayList;
 import java.util.HashSet;

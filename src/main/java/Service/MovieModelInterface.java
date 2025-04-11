@@ -1,4 +1,8 @@
-package Model;
+package Service;
+
+import Model.Format;
+import Model.Genre;
+import Model.Movie;
 
 import java.util.List;
 

@@ -2,7 +2,7 @@ package Controller;
 
 import Model.Genre;
 import Model.Movie;
-import Model.MovieModel;
+import Service.MovieModel;
 
 import java.util.ArrayList;
 import java.util.List;

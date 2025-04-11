@@ -1,12 +1,13 @@
-package Model;
+package Utils;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Collection;
 import javax.annotation.Nonnull;
+
+import Model.Format;
 import Model.Movie;
 import Model.Genre;
-import Model.MovieXMLWrapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;

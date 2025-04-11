@@ -1,7 +1,8 @@
-package Model.Net;
+package Service;
 
 import Model.Genre;
 import Model.Movie;
+import Utils.NetUtil;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;

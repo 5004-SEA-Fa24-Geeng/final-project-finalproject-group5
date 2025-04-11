@@ -1,10 +1,12 @@
-package Model;
+package Service;
 
-import Model.Net.MovieParser;
+import Model.Format;
+import Model.Genre;
+import Model.Movie;
 
 import java.util.List;
 
-public class MovieModel implements MovieModelInterface{
+public class MovieModel implements MovieModelInterface {
     /** Singleton instance */
     private static MovieModel instance;
     /** Movie's list */

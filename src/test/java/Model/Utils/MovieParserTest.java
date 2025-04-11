@@ -1,6 +1,7 @@
-package Model.Net;
+package Model.Utils;
 
 import Model.Movie;
+import Service.MovieParser;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
