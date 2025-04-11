@@ -11,6 +11,9 @@ import java.util.List;
  */
 public class Movie {
 
+    /** ID of the movie */
+    private int id;
+
     /** Title of the movie */
     private String title;
 
@@ -52,19 +55,22 @@ public class Movie {
 
     /**
      * Constructs a Movie instance with the given details with safeguard.
-     * If the information is unable to acquire from api. It will be constructed
+     * If the information is unable to be acquired from api. It will be constructed
      * with default value.
      *
+     * @param id             ID of the movie
      * @param title          Title of the movie
      * @param directors      List of directors
      * @param year           Year the movie was released
      * @param rating         Rating of the movie
      * @param genres         List of genres
+     * @param overview       Overview of movie
      * @param castings       List of cast members
      * @param imgUrl         Relative path to movie's poster
      */
-    public Movie(String title, List<String> directors, int year, double rating,
+    public Movie(int id, String title, List<String> directors, int year, double rating,
                  List<Genre> genres, String overview, List<String> castings, String imgUrl) {
+        this.id = id;
         this.title = (title != null && !title.isBlank()) ? title : "Unknown Title";
         this.directors = (directors != null) ? directors : new ArrayList<>();
         this.year = (year > 1800) ? year : 0;
@@ -76,6 +82,24 @@ public class Movie {
         this.InAppRating = new ArrayList<>();
         this.updatedAverageInAppRating = new Pair<>(0.0f, 0);
         this.imgUrl = (imgUrl != null) ? imgUrl : "";
+    }
+
+    /**
+     * Returns the ID of the movie.
+     *
+     * @return the movie ID
+     */
+    public int getId() {
+        return id;
+    }
+
+    /**
+     * Sets the ID of the movie.
+     *
+     * @param id the movie ID to set
+     */
+    public void setId(int id) {
+        this.id = id;
     }
 
     /**
@@ -304,6 +328,7 @@ public class Movie {
     @Override
     public String toString() {
         return "Movie{" +
+                "id=" + id + ", " +
                 "title='" + title + '\'' +
                 ", directors=" + directors +
                 ", year=" + year +

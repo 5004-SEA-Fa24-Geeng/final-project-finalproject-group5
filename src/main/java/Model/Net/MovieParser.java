@@ -29,7 +29,7 @@ public final class MovieParser {
     /** Private constructor to prevent instantiation. */
     private MovieParser() {}
 
-
+    /** Get the TOP 50 movie list of the month from TMDB api. */
     public static List<Movie> getMoviesFromApi() {
         try {
             parseMovies();
@@ -48,7 +48,6 @@ public final class MovieParser {
         return moviesSummary == null ? Collections.emptyList() : moviesSummary;
     }
 
-
     /**
      * Parses the top 50 movies JSON into a list of MovieSummary objects.
      */
@@ -66,8 +65,13 @@ public final class MovieParser {
         }
     }
 
+    /**
+     * Transfer a movie type from the original JSON form to a conform movie type.
+     * @throws IOException If the NetUtil unable to connect TMDB api to acquire a crew list by ID.
+     */
     private static void cleanMovieSummary() throws IOException {
         for (MovieSummary movie : moviesSummary) {
+            int MovieID = movie.getMovieID();
             String title = movie.getTitle();
 
             // Parsing the year from the date form
@@ -78,9 +82,11 @@ public final class MovieParser {
             List<Genre> genre = convertGenreIds(movie.getGenreID());
             String overview = movie.getOverview();
             List<String> directors = new ArrayList<>();
+            List<String> castings = new ArrayList<>();
             double rating = movie.getRating();
             String imgUrl = IMAGE_BASE_URL + movie.getPosterPath();
 
+            // Map crew (directors and castings).
             InputStream crewJson = NetUtil.getCrewJsonStream(movie.getMovieID()); // movie ID
             if (crewJson != null) {
                 ObjectMapper mapper = new ObjectMapper();
@@ -92,8 +98,16 @@ public final class MovieParser {
                         directors.add(member.get("name").asText());
                     }
                 }
+
+                // Cast
+                JsonNode castArray = root.get("cast");
+                for (JsonNode actor : castArray) {
+                    String actorName = actor.get("name").asText();
+                    castings.add(actorName);
+                }
+
             }
-            movies.add(new Movie(title, directors, year, rating, genre, overview, directors, imgUrl));
+            movies.add(new Movie(MovieID, title, directors, year, rating, genre, overview, castings, imgUrl));
         }
     }
 

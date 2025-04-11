@@ -1,5 +1,7 @@
 package Model;
 
+import Model.Net.MovieParser;
+
 import java.util.List;
 
 public class MovieModel implements MovieModelInterface{
@@ -16,7 +18,7 @@ public class MovieModel implements MovieModelInterface{
 
     @Override
     public void fetchMovies() {
-
+        this.movies = MovieParser.getMoviesFromApi();
     }
 
     @Override
@@ -31,7 +33,7 @@ public class MovieModel implements MovieModelInterface{
 
     @Override
     public void UpdateComments(String movieID, String comment) {
-
+        
     }
 
     @Override
@@ -47,7 +49,7 @@ public class MovieModel implements MovieModelInterface{
     public static MovieModel getInstance() {
         if (instance == null) {
             instance = new MovieModel();
-            
+            instance.fetchMovies();
         }
         return instance;
     }
