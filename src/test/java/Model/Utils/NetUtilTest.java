@@ -1,9 +1,14 @@
 package Model.Utils;
 
+import Utils.NetUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Disabled;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
+
+import Service.MovieParser;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -17,11 +22,26 @@ public class NetUtilTest {
     }
 
     // Actual test marked as disabled until implementation is complete
-    @Disabled("Implementation not complete yet")
     @Test
     public void testGetTop50MoviesJsonNotNull() {
-        System.out.println("This test is disabled");
-        // Original test code here
+        InputStream result = NetUtil.getTop50MoviesJson();
+        try {
+            // Mark the stream so we can reset it after reading
+            result.mark(Integer.MAX_VALUE);
+
+            // Read all bytes
+            byte[] data = new byte[result.available()];
+            result.read(data);
+
+            // Print the content
+            String jsonString = new String(data);
+            System.out.println(jsonString);
+
+            // Reset the stream so it can be read again
+            result.reset();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     // Another approach: Create a stub that returns mock data

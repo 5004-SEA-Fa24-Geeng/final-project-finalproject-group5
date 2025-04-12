@@ -79,17 +79,13 @@ public final class DataFormatter {
             }
         }
 
-        // Format app rating
         double averageRating = movie.getInAppRating();
-        sb.append("App Rating: ").append(String.format("%.1f", averageRating)).append("\n");
+        sb.append("App Rating: ").append(String.format("%.1f", averageRating)).append(" ")
+                .append("(Total ratings: ").append(movie.getInAppRating()).append(")\n");
 
-
-        // Format image URL
         if (movie.getImgUrl() != null && !movie.getImgUrl().isEmpty()) {
             sb.append("Poster: ").append(movie.getImgUrl()).append("\n");
         }
-
-
 
         return sb.toString();  // Return the formatted movie data as a string
     }
