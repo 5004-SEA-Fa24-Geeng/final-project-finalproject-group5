@@ -1,12 +1,11 @@
 package com.moviefeaster.Utils;
 
+import com.moviefeaster.Service.*;
 import com.moviefeaster.Utils.*;
 import org.junit.jupiter.api.Test;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class NetUtilTest {

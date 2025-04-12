@@ -1,4 +1,4 @@
-package Utils;
+package com.moviefeaster.Utils;
 
 import com.moviefeaster.Model.Movie;
 import java.util.ArrayList;
