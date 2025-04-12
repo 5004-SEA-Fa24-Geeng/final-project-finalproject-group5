@@ -44,14 +44,5 @@ public interface MovieModelInterface {
      */
     void UpdateRating(int movieID, double rating);
 
-    /**
-     * Gets the singleton instance of the model.
-     * Delegates to the implementation class {@link MovieModel}.
-     *
-     * @return the singleton instance of MovieModelInterface
-     */
-    static MovieModel getInstance() {
-        return MovieModel.getInstance();
-    }
 
 }
