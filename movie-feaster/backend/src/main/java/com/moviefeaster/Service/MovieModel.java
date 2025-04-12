@@ -3,6 +3,7 @@ package com.moviefeaster.Service;
 import com.moviefeaster.Utils.*;
 import com.moviefeaster.Model.*;
 import com.moviefeaster.Service.*;
+import org.springframework.stereotype.Service;
 
 
 import java.io.FileOutputStream;
@@ -12,19 +13,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Service
 public class MovieModel implements MovieModelInterface {
 
-    /** Singleton instance */
-    private static MovieModel instance;
     /** Movie's list */
     private List<Movie> movies;
     /** Filtered movies' list */
     private List<Movie> processedMovies;
 
     /**
-     * Private constructor to prevent direct instantiation
+     * Public constructor to prevent direct instantiation
      */
-    private MovieModel() {
+    public MovieModel() {
+        this.movies = new ArrayList<>();
+        fetchMovies(); // Optionally auto-fetch at startup
     }
 
     /** Fetch movie's data from TMDB api and ingest into movie's field.
@@ -186,16 +188,4 @@ public class MovieModel implements MovieModelInterface {
         }
     }
 
-    /**
-     * Gets the singleton instance of the MovieModel.
-     * It prevents model being instantiated more than once.
-     * @return MovieModel
-     */
-    public static MovieModel getInstance() {
-        if (instance == null) {
-            instance = new MovieModel();
-            instance.fetchMovies();
-        }
-        return instance;
-    }
 }

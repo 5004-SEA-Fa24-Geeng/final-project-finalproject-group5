@@ -1,10 +1,9 @@
 package com.moviefeaster.Utils;
 
-import Utils.MovieSorter;
+import com.moviefeaster.Model.*;
+import com.moviefeaster.Utils.MovieSorter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import com.moviefeaster.Model.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
