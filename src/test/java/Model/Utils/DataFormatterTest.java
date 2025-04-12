@@ -59,7 +59,7 @@ public class DataFormatterTest {
     }
 
     @Test
-    public void formatSingleMovie_containsAllRequiredFields() {
+    public void SingleMovie_containsAllFields() {
         String result = DataFormatter.formatSingleMovie(movie1);
 
         // Verify all core fields are present
@@ -76,7 +76,7 @@ public class DataFormatterTest {
     }
 
     @Test
-    public void formatMovieList_containsAllMoviesWithSeparators() {
+    public void MovieList_containsAllMovies() {
         String result = DataFormatter.formatMovieList(testMovies);
 
         // Verify both movies are present
@@ -89,7 +89,7 @@ public class DataFormatterTest {
     }
 
     @Test
-    public void writeDefaultFormat_producesCorrectOutput() {
+    public void writePretty() {
         DataFormatter.write(testMovies, Format.PRETTY, outputStream);
         String result = outputStream.toString();
 
@@ -98,7 +98,7 @@ public class DataFormatterTest {
     }
 
     @Test
-    public void writeCsvFormat_hasCorrectStructure() {
+    public void writeCsv() {
         DataFormatter.write(testMovies, Format.CSV, outputStream);
         String result = outputStream.toString();
         String[] lines = result.split("\n");
@@ -113,7 +113,7 @@ public class DataFormatterTest {
     }
 
     @Test
-    public void writeJsonFormat_containsMovieData() {
+    public void writeJson() {
         DataFormatter.write(testMovies, Format.JSON, outputStream);
         String result = outputStream.toString();
 
@@ -124,7 +124,7 @@ public class DataFormatterTest {
     }
 
     @Test
-    public void writeXmlFormat_hasCorrectElements() {
+    public void writeXml() {
         DataFormatter.write(testMovies, Format.XML, outputStream);
         String result = outputStream.toString();
 
@@ -135,7 +135,7 @@ public class DataFormatterTest {
     }
 
     @Test
-    public void formatMovieWithEmptyFields_handlesGracefully() {
+    public void MovieWithEmptyFields() {
         Movie emptyMovie = new Movie(
                 3,
                 "Empty Fields Movie",
@@ -157,7 +157,7 @@ public class DataFormatterTest {
     }
 
     @Test
-    public void writeEmptyList_producesNoOutput() {
+    public void writeEmptyList() {
         DataFormatter.write(Collections.emptyList(), Format.PRETTY, outputStream);
         assertEquals("", outputStream.toString(), "Empty list should produce empty output");
     }
