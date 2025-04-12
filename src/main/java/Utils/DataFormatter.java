@@ -1,12 +1,13 @@
-package Model;
+package Utils;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Collection;
 import javax.annotation.Nonnull;
+
+import Model.Format;
 import Model.Movie;
 import Model.Genre;
-import Model.MovieXMLWrapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
@@ -35,6 +36,7 @@ public final class DataFormatter {
         sb.append("\nTitle: ").append(movie.getTitle()).append("\n");
         sb.append("Year: ").append(movie.getYear()).append("\n");
         sb.append("Rating: ").append(movie.getRating()).append("\n");
+        sb.append("Overview: ").append(movie.getOverview()).append("\n");
 
         // Format directors
         sb.append("Directors: ");
@@ -78,8 +80,8 @@ public final class DataFormatter {
         }
 
         // Format app rating
-        sb.append("App Rating: ").append(movie.getUpdatedAverageInAppRating().a).append(" ")
-                .append("(Total ratings: ").append(movie.getUpdatedAverageInAppRating().b).append(")\n");
+        double averageRating = movie.getInAppRating();
+        sb.append("App Rating: ").append(String.format("%.1f", averageRating)).append("\n");
 
 
         // Format image URL
@@ -154,19 +156,19 @@ public final class DataFormatter {
         PrintStream pout = new PrintStream(out);
 
         // Write header
-        pout.println("Title,Year,Rating,Directors,Genres,Castings,Comments,InAppRating,ImgUrl");
+        pout.println("Title,Year,Rating,Overview,Directors,Genres,Castings,Comments,InAppRating,ImgUrl");
 
-        // Write movie records
         for (Movie movie : movies) {
-            pout.printf("%s,%d,%.1f,%s,%s,%s,%s,%.1f,%s%n",
+            pout.printf("%s,%d,%.1f,%s,%s,%s,%s,%s,%.1f,%s%n",
                     formatCsvField(movie.getTitle()),
                     movie.getYear(),
                     movie.getRating(),
+                    formatCsvField(movie.getOverview()),
                     formatCsvField(joinDirectors(movie)),
                     formatCsvField(joinGenres(movie)),
                     formatCsvField(joinCastings(movie)),
                     formatCsvField(joinComments(movie)),
-                    movie.getUpdatedAverageInAppRating().a,
+                    movie.getInAppRating(),
                     formatCsvField(movie.getImgUrl()));
         }
     }

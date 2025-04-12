@@ -11,6 +11,9 @@ import java.util.List;
  */
 public class Movie {
 
+    /** ID of the movie */
+    private int id;
+
     /** Title of the movie */
     private String title;
 
@@ -21,10 +24,13 @@ public class Movie {
     private int year;
 
     /** Rating of the movie */
-    private float rating;
+    private double rating;
 
     /** List of genres the movie belongs to */
     private List<Genre> genres;
+
+    /** String of overview in movie */
+    private String overview;
 
     /** List of actors or actresses in the movie */
     private List<String> castings;
@@ -33,13 +39,7 @@ public class Movie {
     private List<String> comments;
 
     /** In-App rating information provided by users*/
-    private List<Float> InAppRating;
-
-    /** The updated average rating calculated by mean of accumulated amount of the ratings
-     * and the accumulated amount of the rating. This field prevent redundant list iteration.
-     * With <updatedAverageRating, accumulated amount of the rating> structure.
-     */
-    private Pair<Float, Integer> updatedAverageInAppRating;
+    private List<Double> InAppRating;
 
     /** Relative path to movie's poster. For details, see below.
      * https://www.themoviedb.org/talk/62933de3df86a834e0a960ff?utm_source=chatgpt.com
@@ -49,29 +49,50 @@ public class Movie {
 
     /**
      * Constructs a Movie instance with the given details with safeguard.
-     * If the information is unable to acquire from api. It will be constructed
+     * If the information is unable to be acquired from api. It will be constructed
      * with default value.
      *
+     * @param id             ID of the movie
      * @param title          Title of the movie
      * @param directors      List of directors
      * @param year           Year the movie was released
      * @param rating         Rating of the movie
      * @param genres         List of genres
+     * @param overview       Overview of movie
      * @param castings       List of cast members
      * @param imgUrl         Relative path to movie's poster
      */
-    public Movie(String title, List<String> directors, int year, float rating,
-                 List<Genre> genres, List<String> castings, String imgUrl) {
+    public Movie(int id, String title, List<String> directors, int year, double rating,
+                 List<Genre> genres, String overview, List<String> castings, String imgUrl) {
+        this.id = id;
         this.title = (title != null && !title.isBlank()) ? title : "Unknown Title";
         this.directors = (directors != null) ? directors : new ArrayList<>();
-        this.year = (year > 1800) ? year : 0; // TODO: check if this is logical?
-        this.rating = (rating >= 0.0f && rating <= 10.0f) ? rating : 0.0f;
+        this.year = (year > 1800) ? year : 0;
+        this.rating = (rating >= 0.0 && rating <= 10.0) ? rating : 0.0;
         this.genres = (genres != null) ? genres : new ArrayList<>();
+        this.overview = overview != null && !overview.isBlank() ? overview : "No Overview";
         this.castings = (castings != null) ? castings : new ArrayList<>();
         this.comments = new ArrayList<>();
         this.InAppRating = new ArrayList<>();
-        this.updatedAverageInAppRating = new Pair<>(0.0f, 0);
         this.imgUrl = (imgUrl != null) ? imgUrl : "";
+    }
+
+    /**
+     * Returns the ID of the movie.
+     *
+     * @return the movie ID
+     */
+    public int getId() {
+        return id;
+    }
+
+    /**
+     * Sets the ID of the movie.
+     *
+     * @param id the movie ID to set
+     */
+    public void setId(int id) {
+        this.id = id;
     }
 
     /**
@@ -127,7 +148,6 @@ public class Movie {
      * @param year Release year (must be > 1800 to be accepted).
      */
     public void setYear(int year) {
-        // TODO: check if the constraint is logical.
         if (year > 1800) {
             this.year = year;
         }
@@ -138,7 +158,7 @@ public class Movie {
      *
      * @return The movie rating.
      */
-    public float getRating() {
+    public double getRating() {
         return rating;
     }
 
@@ -147,8 +167,8 @@ public class Movie {
      *
      * @param rating Rating between 0.0 and 10.0.
      */
-    public void setRating(float rating) {
-        if (rating >= 0.0f && rating <= 10.0f) {
+    public void setRating(double rating) {
+        if (rating >= 0.0 && rating <= 10.0) {
             this.rating = rating;
         }
     }
@@ -170,6 +190,24 @@ public class Movie {
      */
     public void setGenres(List<Genre> genres) {
         this.genres = (genres != null) ? genres : new ArrayList<>();
+    }
+
+    /**
+     * Returns the overview of the movie.
+     *
+     * @return a brief summary or description of the movie
+     */
+    public String getOverview() {
+        return overview;
+    }
+
+    /**
+     * Sets the overview of the movie.
+     *
+     * @param overview a brief summary or description of the movie
+     */
+    public void setOverview(String overview) {
+        this.overview = overview;
     }
 
     /**
@@ -221,8 +259,14 @@ public class Movie {
      *
      * @return A list of in-app ratings.
      */
-    public List<Float> getInAppRating() {
-        return InAppRating;
+    public double getInAppRating() {
+        double count = 0;
+        double sum = 0;
+        for (Double rating : InAppRating) {
+            sum += rating;
+            count++;
+        }
+        return count / sum;
     }
 
     /**
@@ -230,7 +274,7 @@ public class Movie {
      *
      * @param inAppRating A list of in-app ratings. Null list will be replaced with an empty list.
      */
-    public void setInAppRating(List<Float> inAppRating) {
+    public void setInAppRating(List<Double> inAppRating) {
         this.InAppRating = (inAppRating != null) ? inAppRating : new ArrayList<>();
     }
 
@@ -239,27 +283,8 @@ public class Movie {
      *
      * @param rating Rating to add.
      */
-    public void addInAppRating(float rating) {
+    public void addInAppRating(Double rating) {
         this.InAppRating.add(rating);
-    }
-
-    /**
-     * Gets the updated average in-app rating and the total rating count.
-     *
-     * @return A pair containing the average rating and the count.
-     */
-    public Pair<Float, Integer> getUpdatedAverageInAppRating() {
-        return updatedAverageInAppRating;
-    }
-
-    /**
-     * Sets the updated average in-app rating.
-     *
-     * @param updatedAverageInAppRating A pair of average rating and count. Null pair will be replaced with default.
-     */
-    public void setUpdatedAverageInAppRating(Pair<Float, Integer> updatedAverageInAppRating) {
-        this.updatedAverageInAppRating = (updatedAverageInAppRating != null)
-                ? updatedAverageInAppRating : new Pair<>(0.0f, 0);
     }
 
     /**
@@ -283,6 +308,7 @@ public class Movie {
     @Override
     public String toString() {
         return "Movie{" +
+                "id=" + id + ", " +
                 "title='" + title + '\'' +
                 ", directors=" + directors +
                 ", year=" + year +
@@ -291,7 +317,7 @@ public class Movie {
                 ", castings=" + castings +
                 ", comments=" + comments +
                 ", InAppRating=" + InAppRating +
-                ", updatedAverageInAppRating=" + updatedAverageInAppRating +
+                ", updatedAverageInAppRating=" + getInAppRating() +
                 ", imgUrl='" + imgUrl + '\'' +
                 '}';
     }

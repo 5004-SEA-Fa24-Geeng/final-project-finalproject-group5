@@ -30,4 +30,20 @@ public interface MovieControllerInterface {
      * Handles the "Back" button event, returning the user to the movie selection view.
      */
     void handleBackPressed();
+
+    /**
+     * Updates the comment for a given movie.
+     *
+     * @param movieID The ID of the movie to comment on.
+     * @param comment The user-provided comment.
+     */
+    void handleCommentSubmission(int movieID, String comment);
+
+    /**
+     * Updates the rating for a given movie.
+     *
+     * @param movieID The ID of the movie to rate.
+     * @param rating  The user-provided rating.
+     */
+    void handleRatingSubmission(int movieID, double rating);
 }

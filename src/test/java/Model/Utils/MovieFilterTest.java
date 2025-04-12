@@ -1,8 +1,11 @@
-package Model;
+package Model.Utils;
 
+import Model.Movie;
+import Model.Genre;
+
+import Utils.MovieFilter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,46 +20,52 @@ class MovieFilterTest {
 
     @BeforeEach
     void setUp() {
+        testMovies = new ArrayList<>();
+
         // Movie 1
         movie1 = new Movie(
+                1,
                 "The Shawshank Redemption",
                 Arrays.asList("Frank Darabont"),
                 1994,
-                9.3f,
+                9.3,
                 Arrays.asList(Genre.DRAMA),
+                "Two imprisoned men bond over a number of years...",
                 Arrays.asList("Tim Robbins", "Morgan Freeman"),
                 "https://example.com/shawshank.jpg"
         );
         movie1.setComments(Arrays.asList("Great prison movie", "Classic film"));
-        movie1.setInAppRating(Arrays.asList(5.0f, 4.5f));
-
+        movie1.setInAppRating(Arrays.asList(5.0, 4.5));
 
         // Movie 2
         movie2 = new Movie(
+                2,
                 "The Godfather",
                 Arrays.asList("Francis Ford Coppola"),
                 1972,
-                9.2f,
+                9.2,
                 Arrays.asList(Genre.CRIME, Genre.DRAMA),
+                "The aging patriarch of an organized crime dynasty...",
                 Arrays.asList("Marlon Brando", "Al Pacino"),
                 "https://example.com/godfather.jpg"
         );
         movie2.setComments(Arrays.asList("Masterpiece of cinema", "Excellent performances"));
-        movie2.setInAppRating(Arrays.asList(4.8f, 4.9f));
-
+        movie2.setInAppRating(Arrays.asList(4.8, 4.9));
 
         // Movie 3
         movie3 = new Movie(
+                3,
                 "The Dark Knight",
                 Arrays.asList("Christopher Nolan"),
                 2008,
-                9.0f,
+                9.0,
                 Arrays.asList(Genre.ACTION, Genre.CRIME, Genre.DRAMA),
+                "When the menace known as the Joker wreaks havoc...",
                 Arrays.asList("Christian Bale", "Heath Ledger"),
                 "https://example.com/darkknight.jpg"
         );
         movie3.setComments(Arrays.asList("Best superhero movie", "Heath Ledger's Joker is amazing"));
-        movie3.setInAppRating(Arrays.asList(4.7f, 4.2f));
+        movie3.setInAppRating(Arrays.asList(4.7, 4.2));
 
         testMovies.add(movie1);
         testMovies.add(movie2);
@@ -144,7 +153,6 @@ class MovieFilterTest {
         result = MovieFilter.filterByYearRange(testMovies, 2010, 2020);
         assertEquals(0, result.size());
     }
-
 
     @Test
     void filterByMinRating() {
@@ -238,22 +246,21 @@ class MovieFilterTest {
         // Test no match
         result = MovieFilter.filterByCommentKeyword(testMovies, "terrible");
         assertEquals(0, result.size());
-
     }
 
     @Test
     void filterByMinInAppRating() {
         // Test threshold that includes all movies
-        List<Movie> result = MovieFilter.filterByMinInAppRating(testMovies, 4.0f);
+        List<Movie> result = MovieFilter.filterByMinInAppRating(testMovies, 4.0);
         assertEquals(3, result.size());
 
         // Test threshold that includes some movies
-        result = MovieFilter.filterByMinInAppRating(testMovies, 4.8f);
+        result = MovieFilter.filterByMinInAppRating(testMovies, 4.8);
         assertEquals(1, result.size());
         assertTrue(result.contains(movie2));
 
         // Test threshold that includes no movies
-        result = MovieFilter.filterByMinInAppRating(testMovies, 5.0f);
+        result = MovieFilter.filterByMinInAppRating(testMovies, 5.0);
         assertEquals(0, result.size());
     }
 
@@ -278,6 +285,5 @@ class MovieFilterTest {
         // Test with empty list
         result = MovieFilter.combineAnd(new ArrayList<>(), crimeMovies);
         assertEquals(0, result.size());
-
     }
 }

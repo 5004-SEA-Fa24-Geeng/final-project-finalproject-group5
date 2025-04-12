@@ -1,4 +1,4 @@
-package Model.Net;
+package Utils;
 
 import io.github.cdimascio.dotenv.Dotenv;
 import okhttp3.OkHttpClient;
@@ -6,6 +6,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -88,6 +89,35 @@ public final class NetUtil {
         } catch (Exception e) {
             System.err.println("Error connecting to TMDb API: " + e.getMessage());
             return InputStream.nullInputStream();
+        }
+    }
+
+    public static InputStream getCrewJsonStream(int movieId) {
+        String url = "https://api.themoviedb.org/3/movie/" + movieId + "/credits";
+
+        OkHttpClient client = new OkHttpClient();
+
+        Request request = new Request.Builder()
+                .url(url)
+                .get()
+                .addHeader("accept", "application/json")
+                .addHeader("Authorization", "Bearer " + API_TOKEN)
+                .build();
+
+        try {
+            Response response = client.newCall(request).execute();
+
+            if (!response.isSuccessful()) {
+                System.err.println("Failed to fetch crew for movie ID " + movieId + ": " + response.code());
+                return null;
+            }
+
+            // Return the response body as InputStream for your parser to handle
+            return response.body().byteStream();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }

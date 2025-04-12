@@ -1,4 +1,8 @@
-package Model;
+package Service;
+
+import Model.Format;
+import Model.Genre;
+import Model.Movie;
 
 import java.util.List;
 
@@ -27,7 +31,9 @@ public interface MovieModelInterface {
      * @param genere movie's genere
      * @return List of move that filtered by user's input.
      */
-    List<Movie> searchByMultipleFilters(String title, String director, int year, String genere);
+    List<Movie> searchByMultipleFilters(String title, String director, int year, Genre genere);
+
+    List<Movie> sortBy
 
     /**
      * Update comments with user-given comment.
@@ -35,14 +41,14 @@ public interface MovieModelInterface {
      * @param movieID ID of movie that the comments is given.
      * @param comment comments.
      */
-    void UpdateComments(String movieID, String comment);
+    void UpdateComments(int movieID, String comment);
 
     /**
      * Update in-App rating with given rating.
      * @param movieID ID of movie that the rating is given.
      * @param rating rating from user.
      */
-    void UpdateRating(String movieID, Float rating);
+    void UpdateRating(int movieID, double rating);
 
     /**
      * Gets the singleton instance of the model.

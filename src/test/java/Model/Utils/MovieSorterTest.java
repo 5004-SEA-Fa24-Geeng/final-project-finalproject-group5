@@ -1,7 +1,11 @@
-package Model;
+package Model.Utils;
 
+import Utils.MovieSorter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import Model.Movie;
+import Model.Genre;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,54 +25,59 @@ class MovieSorterTest {
 
         // Movie 1 - Medium year, high rating, "S" title
         movie1 = new Movie(
+                1, // ID
                 "The Shawshank Redemption",
                 Arrays.asList("Frank Darabont"),
                 1994,
-                9.3f,
+                9.3,
                 Arrays.asList(Genre.DRAMA),
+                "Two imprisoned men bond over a number of years...",
                 Arrays.asList("Tim Robbins", "Morgan Freeman"),
                 "https://example.com/shawshank.jpg"
         );
-        movie1.setInAppRating(Arrays.asList(5.0f, 4.5f)); // Average: 4.75
-
+        movie1.setInAppRating(Arrays.asList(5.0, 4.5)); // Average: 4.75
 
         // Movie 2 - Oldest, medium-high rating, "G" title
         movie2 = new Movie(
+                2, // ID
                 "The Godfather",
                 Arrays.asList("Francis Ford Coppola"),
                 1972,
-                9.2f,
+                9.2,
                 Arrays.asList(Genre.CRIME, Genre.DRAMA),
+                "The aging patriarch of an organized crime dynasty...",
                 Arrays.asList("Marlon Brando", "Al Pacino"),
                 "https://example.com/godfather.jpg"
         );
-        movie2.setInAppRating(Arrays.asList(4.8f, 4.9f)); // Average: 4.85
-
+        movie2.setInAppRating(Arrays.asList(4.8, 4.9)); // Average: 4.85
 
         // Movie 3 - Recent, medium rating, "D" title
         movie3 = new Movie(
+                3, // ID
                 "The Dark Knight",
                 Arrays.asList("Christopher Nolan"),
                 2008,
-                9.0f,
+                9.0,
                 Arrays.asList(Genre.ACTION, Genre.CRIME, Genre.DRAMA),
+                "When the menace known as the Joker wreaks havoc...",
                 Arrays.asList("Christian Bale", "Heath Ledger"),
                 "https://example.com/darkknight.jpg"
         );
-        movie3.setInAppRating(Arrays.asList(4.7f, 4.2f)); // Average: 4.45
-
+        movie3.setInAppRating(Arrays.asList(4.7, 4.2)); // Average: 4.45
 
         // Movie 4 - Newest, lowest rating, "I" title
         movie4 = new Movie(
+                4, // ID
                 "Inception",
                 Arrays.asList("Christopher Nolan"),
                 2010,
-                8.8f,
+                8.8,
                 Arrays.asList(Genre.ACTION, Genre.SCIENCE_FICTION),
+                "A thief who steals corporate secrets...",
                 Arrays.asList("Leonardo DiCaprio", "Joseph Gordon-Levitt"),
                 "https://example.com/inception.jpg"
         );
-        movie4.setInAppRating(Arrays.asList(4.0f, 4.2f)); // Average: 4.1
+        movie4.setInAppRating(Arrays.asList(4.0, 4.2)); // Average: 4.1
 
         testMovies.add(movie1);
         testMovies.add(movie2);
@@ -89,7 +98,6 @@ class MovieSorterTest {
         assertEquals("The Shawshank Redemption", sorted.get(3).getTitle());
     }
 
-
     @Test
     void sortByTitleDescending() {
         // Sort by title (Z-A)
@@ -103,7 +111,6 @@ class MovieSorterTest {
         assertEquals("Inception", sorted.get(3).getTitle());
     }
 
-
     @Test
     void sortByRating() {
         // Sort by rating (high to low)
@@ -111,12 +118,11 @@ class MovieSorterTest {
 
         // Expected order: Shawshank (9.3), Godfather (9.2), Dark Knight (9.0), Inception (8.8)
         assertEquals(4, sorted.size());
-        assertEquals(9.3f, sorted.get(0).getRating(), 0.01f);
-        assertEquals(9.2f, sorted.get(1).getRating(), 0.01f);
-        assertEquals(9.0f, sorted.get(2).getRating(), 0.01f);
-        assertEquals(8.8f, sorted.get(3).getRating(), 0.01f);
+        assertEquals(9.3, sorted.get(0).getRating(), 0.01);
+        assertEquals(9.2, sorted.get(1).getRating(), 0.01);
+        assertEquals(9.0, sorted.get(2).getRating(), 0.01);
+        assertEquals(8.8, sorted.get(3).getRating(), 0.01);
     }
-
 
     @Test
     void sortByRatingAscending() {
@@ -125,12 +131,11 @@ class MovieSorterTest {
 
         // Expected order: Inception (8.8), Dark Knight (9.0), Godfather (9.2), Shawshank (9.3)
         assertEquals(4, sorted.size());
-        assertEquals(8.8f, sorted.get(0).getRating(), 0.01f);
-        assertEquals(9.0f, sorted.get(1).getRating(), 0.01f);
-        assertEquals(9.2f, sorted.get(2).getRating(), 0.01f);
-        assertEquals(9.3f, sorted.get(3).getRating(), 0.01f);
+        assertEquals(8.8, sorted.get(0).getRating(), 0.01);
+        assertEquals(9.0, sorted.get(1).getRating(), 0.01);
+        assertEquals(9.2, sorted.get(2).getRating(), 0.01);
+        assertEquals(9.3, sorted.get(3).getRating(), 0.01);
     }
-
 
     @Test
     void sortByYear() {
@@ -143,7 +148,6 @@ class MovieSorterTest {
         assertEquals(2008, sorted.get(1).getYear());
         assertEquals(1994, sorted.get(2).getYear());
         assertEquals(1972, sorted.get(3).getYear());
-
     }
 
     @Test
@@ -157,9 +161,7 @@ class MovieSorterTest {
         assertEquals(1994, sorted.get(1).getYear());
         assertEquals(2008, sorted.get(2).getYear());
         assertEquals(2010, sorted.get(3).getYear());
-
     }
-
 
     @Test
     void sortByInAppRating() {

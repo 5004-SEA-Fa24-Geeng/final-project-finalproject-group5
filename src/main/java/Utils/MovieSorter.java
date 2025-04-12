@@ -1,4 +1,6 @@
-package Model;
+package Utils;
+
+import Model.Movie;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -125,9 +127,9 @@ public class MovieSorter {
         }
         List<Movie> sortedMovies = new ArrayList<>(movies);
         sortedMovies.sort((m1, m2) -> {
-            float rating1 = m1.getUpdatedAverageInAppRating().a;
-            float rating2 = m2.getUpdatedAverageInAppRating().a;
-            return Float.compare(rating2, rating1); // High to low
+            double rating1 = m1.getInAppRating();
+            double rating2 = m2.getInAppRating();
+            return Double.compare(rating2, rating1); // High to low
         });
         return sortedMovies;
     }
@@ -145,9 +147,9 @@ public class MovieSorter {
         }
         List<Movie> sortedMovies = new ArrayList<>(movies);
         sortedMovies.sort((m1, m2) -> {
-            float rating1 = m1.getUpdatedAverageInAppRating().a;
-            float rating2 = m2.getUpdatedAverageInAppRating().a;
-            return Float.compare(rating1, rating2); // Low to high
+            double rating1 = m1.getInAppRating();
+            double rating2 = m2.getInAppRating();
+            return Double.compare(rating1, rating2); // Low to high
         });
         return sortedMovies;
     }
