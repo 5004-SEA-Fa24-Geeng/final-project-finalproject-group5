@@ -52,7 +52,7 @@ public class MovieController implements MovieControllerInterface {
         try {
             String parsedName = inputProcessor.optionalParseName(title);
             String parsedDirector = inputProcessor.optionalParseDirector(director);
-            String parsedCast = inputProcessor.optionalParseDirector(cast);
+            String parsedCast = inputProcessor.optionalParseCast(cast);
             Integer parsedYear = inputProcessor.optionalParseYear(year);
             Genre parsedGenre = inputProcessor.optionalParseGenre(genre);
 
@@ -67,7 +67,7 @@ public class MovieController implements MovieControllerInterface {
      *
      * @param movieId The ID of the movie to comment on.
      * @param comment The comment text.
-     * @return
+     * @return  comment
      */
     @PostMapping("/{movieId}/comment")
     @Override
@@ -87,7 +87,7 @@ public class MovieController implements MovieControllerInterface {
      */
     @PostMapping("/{movieId}/rating")
     @Override
-    public void handleRatingSubmission(int movieId, double rating) {
+    public void handleRatingSubmission(@PathVariable int movieId, @RequestBody double rating) {
         try {
             if (rating < 0.0 || rating > 5.0) {
                 throw new IllegalArgumentException("Invalid rating value.");
