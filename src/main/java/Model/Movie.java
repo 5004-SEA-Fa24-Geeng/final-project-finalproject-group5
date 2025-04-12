@@ -64,6 +64,7 @@ public class Movie {
      */
     public Movie(int id, String title, List<String> directors, int year, double rating,
                  List<Genre> genres, String overview, List<String> castings, String imgUrl) {
+        // ID is a primary key, thus it will never be null.
         this.id = id;
         this.title = (title != null && !title.isBlank()) ? title : "Unknown Title";
         this.directors = (directors != null) ? directors : new ArrayList<>();

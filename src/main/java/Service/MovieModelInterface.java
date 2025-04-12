@@ -3,8 +3,10 @@ package Service;
 import Model.Format;
 import Model.Genre;
 import Model.Movie;
+import Model.MovieFilterType;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Interface for MovieModel. Responsible for handling data fetching from api sources,
@@ -21,18 +23,14 @@ public interface MovieModelInterface {
     /**
      * Write the movie data stored in the model to the file.
      */
-    void writeFile(Format format);
+    void writeFile(boolean useProcessedMovie, Format format);
 
     /**
-     * Filter the movie that conform with user's input
-     * @param title movie title
-     * @param director directors of the movie
-     * @param year movie's publish year
-     * @param genere movie's genere
-     * @return List of move that filtered by user's input.
+     * Filter the movie that conforms with user's input
+     * @param filtersStrategy filtered strategies that with filter type and corresponding values.
+     * @return List of movies that filtered by user's input.
      */
-    List<Movie> searchByMultipleFilters(String title, String director, int year, Genre genere);
-
+    List<Movie> searchByMultipleFilters(Map<MovieFilterType, Object> filtersStrategy) ;
 
     /**
      * Update comments with user-given comment.

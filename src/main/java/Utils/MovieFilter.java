@@ -143,7 +143,7 @@ public class MovieFilter {
      * @param minRating the minimum rating
      * @return list of movies that match the condition
      */
-    public static List<Movie> filterByMinRating(List<Movie> movies, float minRating) {
+    public static List<Movie> filterByMinRating(List<Movie> movies, double minRating) {
         if (movies == null) {
             return new ArrayList<>();
         }
@@ -164,7 +164,7 @@ public class MovieFilter {
      * @param maxRating the maximum rating
      * @return list of movies that match the condition
      */
-    public static List<Movie> filterByMaxRating(List<Movie> movies, float maxRating) {
+    public static List<Movie> filterByMaxRating(List<Movie> movies, double maxRating) {
         if (movies == null) {
             return new ArrayList<>();
         }
