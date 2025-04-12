@@ -1,9 +1,9 @@
-package Service;
+package com.moviefeaster.Service;
 
-import Model.*;
-import Utils.DataFormatter;
-import Utils.MovieFilterFacilitator;
-import Utils.MovieSorter;
+import com.moviefeaster.Utils.*;
+import com.moviefeaster.Model.*;
+import com.moviefeaster.Service.*;
+
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -106,7 +106,7 @@ public class MovieModel implements MovieModelInterface {
      * @param sortType     the sorting strategy to be applied to the movie list
      * @return a new list of movies sorted according to the given strategy
      */
-    public List<Movie> sortMovieList(MovieSortType sortType) {
+    public List<Movie> sortMovieList(MovieSorterType sortType) {
         // If no sort type, return original data.
         if (sortType == null) {
             return this.movies;
@@ -135,7 +135,7 @@ public class MovieModel implements MovieModelInterface {
      * @param useFiltered  if true, sort the filtered (processed) list; otherwise, sort the original movie list
      * @return a movie list that applied the sorting strategy.
      */
-    public List<Movie> sortMovieList(boolean useFiltered, MovieSortType sortType) {
+    public List<Movie> sortMovieList(boolean useFiltered, MovieSorterType sortType) {
         // If no sort type, return original data.
         if (sortType == null) {
             return this.movies;

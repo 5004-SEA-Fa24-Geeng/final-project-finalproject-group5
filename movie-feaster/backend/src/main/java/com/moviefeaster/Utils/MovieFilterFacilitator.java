@@ -1,7 +1,7 @@
-package Utils;
+package com.moviefeaster.Utils;
 
-import Model.Movie;
-import Model.MovieFilterType;
+import com.moviefeaster.Model.Movie;
+import com.moviefeaster.Model.MovieFilterType;
 
 import java.util.ArrayList;
 import java.util.List;

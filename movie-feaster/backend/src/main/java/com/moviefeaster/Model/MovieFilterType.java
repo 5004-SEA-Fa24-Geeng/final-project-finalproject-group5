@@ -1,4 +1,4 @@
-package Model;
+package com.moviefeaster.Model;
 
 /** Enum for filter type to apply. */
 public enum MovieFilterType {

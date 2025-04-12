@@ -1,4 +1,4 @@
-package Model;
+package com.moviefeaster.Model;
 
 /**
  * Enum representing available movie sorting strategies.
