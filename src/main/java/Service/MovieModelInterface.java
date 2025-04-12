@@ -33,6 +33,10 @@ public interface MovieModelInterface {
      */
     List<Movie> searchByMultipleFilters(String title, String director, int year, Genre genere);
 
+<<<<<<< HEAD
+    List<Movie> sortBy
+=======
+>>>>>>> 7f2050b2caa3bcc0af826d42c144c0b19862b098
 
     /**
      * Update comments with user-given comment.
