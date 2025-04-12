@@ -14,7 +14,7 @@ public interface InputProcessorInterface {
      * @param input The raw input from the user.
      * @return Trimmed movie name or null.
      */
-    String optionalParseName(String input);
+    String optionalParseTitle(String input);
 
     /**
      * Parses the director name input. Returns null if the input is blank.

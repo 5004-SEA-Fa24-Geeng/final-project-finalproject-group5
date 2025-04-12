@@ -24,10 +24,8 @@ public interface MovieModelInterface {
 
     /**
      * Filter the movie that conforms with user's input
-     * @param filtersStrategy filtered strategies that with filter type and corresponding values.
-     * @return List of movies that filtered by user's input.
      */
-    List<Movie> searchByMultipleFilters(Map<MovieFilterType, Object> filtersStrategy) ;
+    void searchByFilter(Map<MovieFilterType, Object> filtersStrategy) ;
 
     /**
      * Update comments with user-given comment.

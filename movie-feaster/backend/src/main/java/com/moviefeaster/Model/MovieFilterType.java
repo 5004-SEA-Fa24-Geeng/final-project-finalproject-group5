@@ -1,6 +1,8 @@
 package com.moviefeaster.Model;
 
-/** Enum for filter type to apply. */
+import com.moviefeaster.Utils.MovieFilter;
+
+/** Enum representing available movie filtering strategies. */
 public enum MovieFilterType {
     TITLE_KEYWORD,
     EXACT_TITLE,

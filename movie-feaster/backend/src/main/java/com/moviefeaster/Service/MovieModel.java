@@ -20,12 +20,16 @@ public class MovieModel implements MovieModelInterface {
     private List<Movie> movies;
     /** Filtered movies' list */
     private List<Movie> processedMovies;
+    /** Default sorting type */
+    private MovieSorterType defaultMovieSorterType;
 
     /**
      * Public constructor to prevent direct instantiation
      */
     public MovieModel() {
         this.movies = new ArrayList<>();
+        this.processedMovies = new ArrayList<>();
+        this.defaultMovieSorterType = MovieSorterType.TITLE_ASC;
         fetchMovies(); // Optionally auto-fetch at startup
     }
 
@@ -35,7 +39,6 @@ public class MovieModel implements MovieModelInterface {
     @Override
     public void fetchMovies() {
         this.movies = MovieParser.getMoviesFromApi();
-        this.processedMovies = new ArrayList<>();
     }
 
     /** Get the original movies that pull from TMDB api. */
@@ -44,7 +47,7 @@ public class MovieModel implements MovieModelInterface {
     }
 
     /** Get the processed movies that applied sorter and filter. */
-    public List<Movie> getProcessedMoviesMovies() {
+    public List<Movie> getProcessedMovies() {
         return this.processedMovies;
     }
 
@@ -67,16 +70,14 @@ public class MovieModel implements MovieModelInterface {
     /**
      * Filtered the movie list by filter strategy.
      * @param filtersStrategy filtered strategies that with filter type and corresponding values.
-     * @return Filtered movies list.
      */
     @Override
-    public List<Movie> searchByMultipleFilters(Map<MovieFilterType, Object> filtersStrategy) {
+    public void searchByFilter(Map<MovieFilterType, Object> filtersStrategy) {
         if (filtersStrategy == null) {
-            return this.movies;
+            return;
         }
-
-        List<Movie> filteredMovies = MovieFilterFacilitator.filter(this.movies, filtersStrategy);
-        return filteredMovies;
+        this.processedMovies = MovieFilterFacilitator.filter(this.movies, filtersStrategy);
+        sortMovieList(this.defaultMovieSorterType);
     }
 
     /**
@@ -86,65 +87,32 @@ public class MovieModel implements MovieModelInterface {
      * @param filtersStrategy  filtersStrategy filtered strategies that with filter type and corresponding values.
      * @return Filtered movies list.
      */
-    public List<Movie> searchByMultipleFilters(boolean newFilter, Map<MovieFilterType, Object> filtersStrategy) {
+    public void searchByFilter(boolean newFilter, Map<MovieFilterType, Object> filtersStrategy) {
         if (filtersStrategy == null) {
-            return this.movies;
+            return;
         }
 
-        List<Movie> moviesToFilter;
-
-        if (newFilter) {
-            moviesToFilter = this.movies;
-        } else {
-            moviesToFilter = this.processedMovies;
+        if (this.processedMovies.isEmpty()) {
+            this.processedMovies = this.movies;
         }
 
-        return MovieFilterFacilitator.filter(moviesToFilter, filtersStrategy);
-    }
-
-    /**
-     * Sorts the movie list by sorting strategy.
-     *
-     * @param sortType     the sorting strategy to be applied to the movie list
-     * @return a new list of movies sorted according to the given strategy
-     */
-    public List<Movie> sortMovieList(MovieSorterType sortType) {
-        // If no sort type, return original data.
-        if (sortType == null) {
-            return this.movies;
-        }
-
-        List<Movie> moviesToSort = this.movies;
-        List<Movie> sortedMovies = switch (sortType) {
-            case TITLE_ASC -> MovieSorter.sortByTitle(moviesToSort);
-            case TITLE_DESC -> MovieSorter.sortByTitleDescending(moviesToSort);
-            case YEAR_ASC -> MovieSorter.sortByYearAscending(moviesToSort);
-            case YEAR_DESC -> MovieSorter.sortByYear(moviesToSort);
-            case RATING_ASC -> MovieSorter.sortByRatingAscending(moviesToSort);
-            case RATING_DESC -> MovieSorter.sortByRating(moviesToSort);
-            case INAPP_RATING_ASC -> MovieSorter.sortByInAppRatingAscending(moviesToSort);
-            case INAPP_RATING_DESC -> MovieSorter.sortByInAppRating(moviesToSort);
-        };
-
-        this.processedMovies = sortedMovies;
-        return sortedMovies;
+        List<Movie> moviesToFilter = newFilter ? this.movies : this.processedMovies;
+        this.processedMovies = MovieFilterFacilitator.filter(moviesToFilter, filtersStrategy);
+        sortMovieList(defaultMovieSorterType);
     }
 
     /**
      * Sorts the movie list by sorting strategy with an option to use original data or processed data.
      *
-     * @param sortType     the sorting strategy to be applied to the movie list
-     * @param useFiltered  if true, sort the filtered (processed) list; otherwise, sort the original movie list
-     * @return a movie list that applied the sorting strategy.
+     * @param sortType the sorting strategy to be applied to the movie list
      */
-    public List<Movie> sortMovieList(boolean useFiltered, MovieSorterType sortType) {
+    public void sortMovieList(MovieSorterType sortType) {
         // If no sort type, return original data.
         if (sortType == null) {
-            return this.movies;
+            return;
         }
 
-        List<Movie> moviesToSort = useFiltered ? this.processedMovies : this.movies;
-
+        List<Movie> moviesToSort = this.processedMovies;
         List<Movie> sortedMovies = switch (sortType) {
             case TITLE_ASC -> MovieSorter.sortByTitle(moviesToSort);
             case TITLE_DESC -> MovieSorter.sortByTitleDescending(moviesToSort);
@@ -157,7 +125,10 @@ public class MovieModel implements MovieModelInterface {
         };
 
         this.processedMovies = sortedMovies;
-        return sortedMovies;
+    }
+
+    public void setDefaultMovieSorterType(MovieSorterType defaultMovieSorterType) {
+        this.defaultMovieSorterType = defaultMovieSorterType;
     }
 
     /** Update the inApp comment
