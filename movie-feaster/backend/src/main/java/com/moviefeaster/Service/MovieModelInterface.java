@@ -3,6 +3,7 @@ package com.moviefeaster.Service;
 import com.moviefeaster.Model.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Interface for MovieModel. Responsible for handling data fetching from api sources,
@@ -19,22 +20,19 @@ public interface MovieModelInterface {
     /**
      * Write the movie data stored in the model to the file.
      */
-    void writeFile(Format format);
+    void writeFile(boolean useProcessedMovie, Format format);
 
     /**
-     * Filter the movie that conform with user's input
-     * @param title movie title
-     * @param director directors of the movie
-     * @param year movie's publish year
-     * @param genere movie's genere
-     * @return List of move that filtered by user's input.
+     * Filter the movie that conforms with user's input
+     * @param filtersStrategy filtered strategies that with filter type and corresponding values.
+     * @return List of movies that filtered by user's input.
      */
-    List<Movie> searchByMultipleFilters(String title, String director, String cast, int year, Genre genere);
+    List<Movie> searchByMultipleFilters(Map<MovieFilterType, Object> filtersStrategy) ;
 
     /**
      * Update comments with user-given comment.
      *
-     * @param movieID ID of movie that the comments is given.
+     * @param movieID ID of movie that the comments are given.
      * @param comment comments.
      */
     void UpdateComments(int movieID, String comment);
@@ -45,5 +43,15 @@ public interface MovieModelInterface {
      * @param rating rating from user.
      */
     void UpdateRating(int movieID, double rating);
+
+    /**
+     * Gets the singleton instance of the model.
+     * Delegates to the implementation class {@link MovieModel}.
+     *
+     * @return the singleton instance of MovieModelInterface
+     */
+    static MovieModel getInstance() {
+        return MovieModel.getInstance();
+    }
 
 }
