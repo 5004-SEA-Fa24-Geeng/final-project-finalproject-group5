@@ -3,7 +3,7 @@ package Model;
 /**
  * Enum representing available movie sorting strategies.
  */
-public enum MovieSortType {
+public enum MovieSorterType {
     TITLE_ASC,
     TITLE_DESC,
     YEAR_ASC,
