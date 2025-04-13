@@ -8,29 +8,43 @@ const MovieDetailPage = () => {
     const [movie, setMovie] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    // Separate states for comment and rating
     const [comment, setComment] = useState('');
+    const [commentSubmitting, setCommentSubmitting] = useState(false);
+
     const [userRating, setUserRating] = useState(0);
+    const [ratingSubmitting, setRatingSubmitting] = useState(false);
+
+    const fetchMovieDetails = async () => {
+        try {
+            setLoading(true);
+
+            // Try to get all movies and filter by id
+            const response = await fetch('http://localhost:3000/api/movies/search');
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch movies');
+            }
+
+            const movies = await response.json();
+            const foundMovie = movies.find(movie => movie.id === parseInt(id));
+
+            if (!foundMovie) {
+                throw new Error('Movie not found');
+            }
+
+            setMovie(foundMovie);
+            setLoading(false);
+        } catch (err) {
+            console.error('Error fetching movie:', err);
+            setError(err.message);
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        const fetchMovie = async () => {
-            try {
-                setLoading(true);
-                const response = await fetch(`http://localhost:3000/api/movies/${id}`);
-
-                if (!response.ok) {
-                    throw new Error('Failed to fetch movie details');
-                }
-
-                const data = await response.json();
-                setMovie(data);
-                setLoading(false);
-            } catch (err) {
-                setError(err.message);
-                setLoading(false);
-            }
-        };
-
-        fetchMovie();
+        fetchMovieDetails();
     }, [id]);
 
     const handleGoBack = () => {
@@ -50,7 +64,8 @@ const MovieDetailPage = () => {
         if (!comment.trim()) return;
 
         try {
-            const response = await fetch(`http://localhost:8080/api/movies/${id}/comment`, {
+            setCommentSubmitting(true);
+            const response = await fetch(`http://localhost:3000/api/movies/${id}/comment`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -65,17 +80,26 @@ const MovieDetailPage = () => {
             // Clear the comment field after successful submission
             setComment('');
             alert('Comment submitted successfully!');
+
+            // Refresh movie data to get updated comments
+            await fetchMovieDetails();
         } catch (err) {
             console.error('Error submitting comment:', err);
             alert('Failed to submit comment. Please try again.');
+        } finally {
+            setCommentSubmitting(false);
         }
     };
 
     const handleRatingSubmit = async () => {
-        if (userRating === 0) return;
+        if (userRating === 0) {
+            alert('Please select a rating first');
+            return;
+        }
 
         try {
-            const response = await fetch(`http://localhost:8080/api/movies/${id}/rating`, {
+            setRatingSubmitting(true);
+            const response = await fetch(`http://localhost:3000/api/movies/${id}/rating`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -88,10 +112,30 @@ const MovieDetailPage = () => {
             }
 
             alert('Rating submitted successfully!');
+            setUserRating(0); // Reset rating input
+
+            // Refresh movie data to get updated ratings
+            await fetchMovieDetails();
         } catch (err) {
             console.error('Error submitting rating:', err);
             alert('Failed to submit rating. Please try again.');
+        } finally {
+            setRatingSubmitting(false);
         }
+    };
+
+    // Format genre for display
+    const formatGenre = (genre) => {
+        if (!genre) return '';
+
+        // Handle if genre is a string or an object
+        const genreName = typeof genre === 'string' ? genre : (genre.name || '');
+
+        return genreName.replace(/_/g, ' ')
+            .toLowerCase()
+            .split(' ')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
     };
 
     if (loading) {
@@ -136,14 +180,38 @@ const MovieDetailPage = () => {
             </button>
 
             <div className="movie-detail-container">
-                <div className="movie-poster">
-                    {movie.imgUrl ? (
-                        <img src={movie.imgUrl} alt={`${movie.title} poster`} />
-                    ) : (
-                        <div className="placeholder-poster">
-                            <span>{movie.title.charAt(0)}</span>
+                <div className="movie-poster-section">
+                    <div className="movie-poster">
+                        {movie.imgUrl ? (
+                            <img src={movie.imgUrl} alt={`${movie.title} poster`} />
+                        ) : (
+                            <div className="placeholder-poster">
+                                <span>{movie.title.charAt(0)}</span>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="rating-section">
+                        <h3>Rate This Movie</h3>
+                        <div className="star-rating">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                                <span
+                                    key={star}
+                                    className={`rating-star ${userRating >= star ? 'active' : ''}`}
+                                    onClick={() => handleRatingChange(star)}
+                                >
+                                    ★
+                                </span>
+                            ))}
                         </div>
-                    )}
+                        <button
+                            className="rating-button"
+                            onClick={handleRatingSubmit}
+                            disabled={ratingSubmitting || userRating === 0}
+                        >
+                            {ratingSubmitting ? 'Submitting...' : 'Submit Rating'}
+                        </button>
+                    </div>
                 </div>
 
                 <div className="movie-info">
@@ -155,7 +223,9 @@ const MovieDetailPage = () => {
                         {movie.genres && movie.genres.length > 0 && (
                             <div className="movie-genres">
                                 {movie.genres.map((genre, index) => (
-                                    <span key={index} className="genre-item">{genre.name}</span>
+                                    <span key={index} className="genre-item">
+                                        {formatGenre(genre)}
+                                    </span>
                                 ))}
                             </div>
                         )}
@@ -189,6 +259,72 @@ const MovieDetailPage = () => {
                         <div className="detail-group">
                             <h3>Overview</h3>
                             <p className="movie-description">{movie.overview || 'No description available.'}</p>
+                        </div>
+
+                        {/* In-App User Ratings section */}
+                        <div className="detail-group">
+                            <h3>In-App User Ratings</h3>
+                            <div className="user-ratings">
+                                {movie.InAppRating && movie.InAppRating.length > 0 ? (
+                                    <div>
+                                        <div className="rating-summary">
+                                            <span className="average-rating">
+                                                {(movie.InAppRating.reduce((sum, rating) => sum + rating, 0) / movie.InAppRating.length).toFixed(1)}
+                                            </span>
+                                            <div className="rating-stars">
+                                                {[1, 2, 3, 4, 5].map((star) => {
+                                                    const averageRating = movie.InAppRating.reduce((sum, rating) => sum + rating, 0) / movie.InAppRating.length;
+                                                    return (
+                                                        <span
+                                                            key={star}
+                                                            className={`star ${averageRating >= star ? 'filled' : ''}`}
+                                                        >
+                                                            ★
+                                                        </span>
+                                                    );
+                                                })}
+                                            </div>
+                                            <span className="rating-count">({movie.InAppRating.length} {movie.InAppRating.length === 1 ? 'rating' : 'ratings'})</span>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <p>No user ratings yet. Be the first to rate this movie!</p>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Comments section */}
+                        <div className="detail-group">
+                            <h3>Comments</h3>
+                            <div className="comments-section">
+                                {movie.comments && movie.comments.length > 0 ? (
+                                    <ul className="comments-list">
+                                        {movie.comments.map((comment, index) => (
+                                            <li key={index} className="comment-item">{comment}</li>
+                                        ))}
+                                    </ul>
+                                ) : (
+                                    <p>No comments yet. Be the first to comment on this movie!</p>
+                                )}
+
+                                <form className="comment-form" onSubmit={handleCommentSubmit}>
+                                    <textarea
+                                        className="comment-input"
+                                        placeholder="Add your comment..."
+                                        value={comment}
+                                        onChange={handleCommentChange}
+                                        rows={4}
+                                        required
+                                    ></textarea>
+                                    <button
+                                        type="submit"
+                                        className="comment-button"
+                                        disabled={commentSubmitting || !comment.trim()}
+                                    >
+                                        {commentSubmitting ? 'Submitting...' : 'Add Comment'}
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>

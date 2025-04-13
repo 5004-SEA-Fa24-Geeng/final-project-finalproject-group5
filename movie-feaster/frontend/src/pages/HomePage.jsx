@@ -13,6 +13,9 @@ const HomePage = () => {
     });
     const [genres, setGenres] = useState([]);
     const [years, setYears] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [bannerMovie, setBannerMovie] = useState(null);
 
     useEffect(() => {
         // Generate years from 1900 to current year
@@ -20,13 +23,35 @@ const HomePage = () => {
         const yearOptions = Array.from({ length: currentYear - 1899 }, (_, i) => currentYear - i);
         setYears(yearOptions);
 
-        // Sample genres - in a real app, these would come from the API
+        // Set hardcoded genres since the endpoint may not exist yet
         setGenres([
-            'Action', 'Adventure', 'Animation', 'Comedy', 'Crime',
-            'Documentary', 'Drama', 'Family', 'Fantasy', 'History',
-            'Horror', 'Music', 'Mystery', 'Romance', 'Science Fiction',
-            'Thriller', 'War', 'Western'
+            'ACTION', 'ADVENTURE', 'ANIMATION', 'COMEDY', 'CRIME',
+            'DOCUMENTARY', 'DRAMA', 'FAMILY', 'FANTASY', 'HISTORY',
+            'HORROR', 'MUSIC', 'MYSTERY', 'ROMANCE', 'SCIENCE_FICTION',
+            'TV_MOVIE', 'THRILLER', 'WAR', 'WESTERN'
         ]);
+
+        // Fetch movies for the banner
+        fetch('http://localhost:3000/api/movies')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to fetch movies');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Filter movies with valid poster images
+                const moviesWithPosters = data.filter(movie => movie.imgUrl && movie.imgUrl.trim() !== '');
+
+                if (moviesWithPosters.length > 0) {
+                    // Select one random movie for the banner
+                    const randomIndex = Math.floor(Math.random() * moviesWithPosters.length);
+                    setBannerMovie(moviesWithPosters[randomIndex]);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching banner movie:', error);
+            });
     }, []);
 
     const handleChange = (e) => {
@@ -39,13 +64,15 @@ const HomePage = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        setLoading(true);
+        setError(null);
 
-        // Build query string with all filters that match the controller's endpoint parameters
+        // Build query string with all filters
         const params = new URLSearchParams();
         if (formData.title) params.append('title', formData.title);
         if (formData.director) params.append('director', formData.director);
-        if (formData.cast) params.append('cast', formData.cast); // This matches the controller parameter
-        if (formData.year) params.append('year', formData.year); // This matches the controller parameter
+        if (formData.cast) params.append('cast', formData.cast);
+        if (formData.year) params.append('year', formData.year);
         if (formData.genre) params.append('genre', formData.genre);
 
         // Make API call to backend
@@ -57,8 +84,7 @@ const HomePage = () => {
                 return response.json();
             })
             .then(data => {
-                console.log("Search Results:", data);
-
+                setLoading(false);
                 // Navigate to the movie list page with search results
                 navigate({
                     pathname: '/movies',
@@ -67,20 +93,27 @@ const HomePage = () => {
                 });
             })
             .catch(error => {
+                setLoading(false);
+                setError('Error searching for movies. Please try again.');
                 console.error('Error fetching search results:', error);
-                alert('Error searching for movies. Please try again.');
             });
     };
 
     return (
         <div className="home-page">
-            <div className="hero-section">
-                <h1>Movie Feast</h1>
-                <p>Discover thousands of movies for your entertainment</p>
+            <div className="hero-section" style={bannerMovie ? {
+                backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${bannerMovie.imgUrl})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center'
+            } : {}}>
+                <h1>Movie Feaster</h1>
+                <p>Discover your next favorite movie</p>
             </div>
 
             <div className="search-section">
-                <h2>Find Your Perfect Movie</h2>
+                <h2>Find Movies</h2>
+                {error && <div className="error-message">{error}</div>}
+
                 <form className="movie-filter-form" onSubmit={handleSubmit}>
                     <div className="form-row">
                         <div className="form-group">
@@ -145,26 +178,33 @@ const HomePage = () => {
                                 onChange={handleChange}
                             >
                                 <option value="">Select a genre</option>
-                                {genres.map(genre => (
-                                    <option key={genre} value={genre}>{genre}</option>
-                                ))}
+                                {genres.map(genre => {
+                                    // Convert enum values to user-friendly display
+                                    const displayName = genre.replace(/_/g, ' ').toLowerCase()
+                                        .split(' ')
+                                        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                                        .join(' ');
+
+                                    return (
+                                        <option key={genre} value={genre}>
+                                            {displayName}
+                                        </option>
+                                    );
+                                })}
                             </select>
                         </div>
                     </div>
 
                     <div className="form-actions">
-                        <button type="submit" className="search-button">
-                            Search Movies
+                        <button
+                            type="submit"
+                            className="search-button"
+                            disabled={loading}
+                        >
+                            {loading ? 'Searching...' : 'Search Movies'}
                         </button>
                     </div>
                 </form>
-            </div>
-
-            <div className="featured-section">
-                <h2>Featured Movies</h2>
-                <div className="featured-movies">
-                    {/* Featured movies would be populated from the backend */}
-                </div>
             </div>
         </div>
     );

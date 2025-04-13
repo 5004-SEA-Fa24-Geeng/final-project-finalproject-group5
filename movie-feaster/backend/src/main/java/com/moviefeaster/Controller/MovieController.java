@@ -3,13 +3,17 @@ package com.moviefeaster.Controller;
 import com.moviefeaster.Model.*;
 import com.moviefeaster.Service.MovieModel;
 import com.moviefeaster.Service.MovieParser;
+import com.moviefeaster.Utils.DataFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.io.ByteArrayOutputStream;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * MovieController handles all user interactions coming from the view.
@@ -134,5 +138,71 @@ public class MovieController implements MovieControllerInterface {
         }
     }
 
+    @GetMapping("/genres")
+    public List<String> getAllGenres() {
+        return Arrays.stream(Genre.values())
+                .map(Enum::name)
+                .collect(Collectors.toList());
+    }
+
+    @GetMapping("")
+    public List<Movie> getAllMovies() {
+        return model.getMovies();
+    }
+
+    @GetMapping("/{id}")
+    public Movie getMovieById(@PathVariable int id) {
+        for (Movie movie : model.getMovies()) {
+            if (movie.getId() == id) {
+                return movie;
+            }
+        }
+        throw new IllegalArgumentException("Movie not found with ID: " + id);
+    }
+
+    @GetMapping("/export")
+    public ResponseEntity<byte[]> exportMovies(@RequestParam(defaultValue = "PRETTY") String format) {
+        try {
+            Format outputFormat = Format.containsValues(format);
+            if (outputFormat == null) {
+                outputFormat = Format.PRETTY;
+            }
+
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            List<Movie> movies = model.getProcessedMovies() != null ? model.getProcessedMovies() : model.getMovies();
+
+            DataFormatter.write(movies, outputFormat, outputStream);
+
+            String contentType;
+            String filename;
+
+            switch (outputFormat) {
+                case JSON:
+                    contentType = "application/json";
+                    filename = "movies.json";
+                    break;
+                case XML:
+                    contentType = "application/xml";
+                    filename = "movies.xml";
+                    break;
+                case CSV:
+                    contentType = "text/csv";
+                    filename = "movies.csv";
+                    break;
+                default:
+                    contentType = "text/plain";
+                    filename = "movies.txt";
+                    break;
+            }
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.parseMediaType(contentType));
+            headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
+
+            return new ResponseEntity<>(outputStream.toByteArray(), headers, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
 }

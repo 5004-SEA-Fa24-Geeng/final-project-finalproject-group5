@@ -42,6 +42,15 @@
     color: #333;
 }
 
+.error-message {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 0.75rem 1.25rem;
+    margin-bottom: 1rem;
+    border-radius: 4px;
+    border: 1px solid #f5c6cb;
+}
+
 .movie-filter-form {
     max-width: 1000px;
     margin: 0 auto;
@@ -73,6 +82,7 @@
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 1rem;
+    color: #666666;
 }
 
 .form-actions {
@@ -96,20 +106,9 @@
     background-color: #c82333;
 }
 
-.featured-section {
-    padding: 3rem;
-    background-color: #f8f9fa;
-}
-
-.featured-section h2 {
-    text-align: center;
-    margin-bottom: 2rem;
-}
-
-.featured-movies {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 2rem;
+.search-button:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
 }
 
 /* Media queries for responsive design */
@@ -122,8 +121,7 @@
         font-size: 1.2rem;
     }
 
-    .search-section,
-    .featured-section {
+    .search-section {
         padding: 2rem 1rem;
     }
 

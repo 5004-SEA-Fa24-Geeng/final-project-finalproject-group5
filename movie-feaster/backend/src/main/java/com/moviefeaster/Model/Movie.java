@@ -259,13 +259,14 @@ public class Movie {
      * @return A list of in-app ratings.
      */
     public double getInAppRating() {
-        double count = 0;
+        if (InAppRating.isEmpty()) {
+            return 0.0;
+        }
         double sum = 0;
         for (Double rating : InAppRating) {
             sum += rating;
-            count++;
         }
-        return count / sum;
+        return sum / InAppRating.size();
     }
 
     /**
