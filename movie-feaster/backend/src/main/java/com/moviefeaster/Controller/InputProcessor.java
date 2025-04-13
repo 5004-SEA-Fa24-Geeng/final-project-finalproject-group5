@@ -21,7 +21,7 @@ public class InputProcessor implements InputProcessorInterface {
      * @return Trimmed name or null.
      */
     @Override
-    public String optionalParseName(String input) {
+    public String optionalParseTitle(String input) {
         return (input == null || input.isBlank()) ? null : input.trim();
     }
 

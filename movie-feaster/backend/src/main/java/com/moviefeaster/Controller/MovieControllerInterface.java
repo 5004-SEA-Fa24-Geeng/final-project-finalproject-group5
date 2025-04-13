@@ -31,6 +31,8 @@ public interface MovieControllerInterface {
             @RequestParam(required = false) String genre
     );
 
+    List<Movie> handleSort(@RequestParam(required = false) String sortType);
+
 //    /**
 //     * Handles the selection of a specific movie from the result list.
 //     *
