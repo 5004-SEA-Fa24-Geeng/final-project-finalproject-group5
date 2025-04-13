@@ -2,7 +2,6 @@ package com.moviefeaster.Service;
 
 import com.moviefeaster.Utils.*;
 import com.moviefeaster.Model.*;
-import com.moviefeaster.Service.*;
 import org.springframework.stereotype.Service;
 
 
@@ -95,7 +94,6 @@ public class MovieModel implements MovieModelInterface {
      * data that pull from TMDB api.
      * @param newFilter whether to use a movie list that is filtered or the original data that pull from TMDB api.
      * @param filtersStrategy  filtersStrategy filtered strategies that with filter type and corresponding values.
-     * @return Filtered movies list.
      */
     public void searchByFilter(boolean newFilter, Map<MovieFilterType, Object> filtersStrategy) {
         if (filtersStrategy == null) {
@@ -117,13 +115,12 @@ public class MovieModel implements MovieModelInterface {
      * @param sortType the sorting strategy to be applied to the movie list
      */
     public void sortMovieList(MovieSorterType sortType) {
-        // If no sort type, return original data.
         if (sortType == null) {
             return;
         }
 
         List<Movie> moviesToSort = this.processedMovies;
-        List<Movie> sortedMovies = switch (sortType) {
+        this.processedMovies = switch (sortType) {
             case TITLE_ASC -> MovieSorter.sortByTitle(moviesToSort);
             case TITLE_DESC -> MovieSorter.sortByTitleDescending(moviesToSort);
             case YEAR_ASC -> MovieSorter.sortByYearAscending(moviesToSort);
@@ -133,10 +130,12 @@ public class MovieModel implements MovieModelInterface {
             case INAPP_RATING_ASC -> MovieSorter.sortByInAppRatingAscending(moviesToSort);
             case INAPP_RATING_DESC -> MovieSorter.sortByInAppRating(moviesToSort);
         };
-
-        this.processedMovies = sortedMovies;
     }
 
+    /**
+     * Set the default sorting type for the movie list.
+     * @param defaultMovieSorterType default sorting type.
+     */
     public void setDefaultMovieSorterType(MovieSorterType defaultMovieSorterType) {
         this.defaultMovieSorterType = defaultMovieSorterType;
     }

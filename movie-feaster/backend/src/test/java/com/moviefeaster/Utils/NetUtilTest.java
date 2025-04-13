@@ -3,9 +3,11 @@ package com.moviefeaster.Utils;
 import com.moviefeaster.Service.*;
 import com.moviefeaster.Utils.*;
 import org.junit.jupiter.api.Test;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class NetUtilTest {
@@ -52,5 +54,41 @@ public class NetUtilTest {
         // You can use the mock data for assertions
         assertNotNull(mockStream);
         System.out.println("Mock test passed!");
+    }
+
+    @Test
+    public void testTop50MoviesJsonFormat() throws IOException {
+        InputStream stream = NetUtil.getTop50MoviesJson();
+        assertNotNull(stream, "API response stream should not be null");
+
+        byte[] data = stream.readAllBytes();
+        String json = new String(data);
+
+        // Check if it's a valid JSON array format
+        assertTrue(json.trim().startsWith("[") && json.trim().endsWith("]"),
+                "Response should be a JSON array");
+
+        // Check the data contains expected fields like 'title' and 'id'
+        assertTrue(json.contains("\"title\""), "Each movie entry should contain a title");
+        assertTrue(json.contains("\"id\""), "Each movie entry should contain an id");
+
+        // Basic size check
+        assertTrue(json.length() > 500, "Response should contain substantial data");
+
+        System.out.println("Top 50 Movies JSON array test passed, length: " + json.length());
+    }
+
+    @Test
+    public void testGetTop50MoviesJsonTwice() throws IOException {
+        InputStream firstCall = NetUtil.getTop50MoviesJson();
+        InputStream secondCall = NetUtil.getTop50MoviesJson();
+
+        assertNotNull(firstCall);
+        assertNotNull(secondCall);
+
+        String first = new String(firstCall.readAllBytes());
+        String second = new String(secondCall.readAllBytes());
+
+        assertEquals(first, second, "Consecutive API calls should return the same result for consistency (unless API changes)");
     }
 }

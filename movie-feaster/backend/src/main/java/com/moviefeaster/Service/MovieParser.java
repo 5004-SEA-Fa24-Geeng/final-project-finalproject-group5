@@ -26,7 +26,7 @@ public final class MovieParser {
     private static List<MovieSummary> moviesSummary;
 
     /** The number of movies we're trying to parse */
-    private static int numberOfMovies = 600;
+    private static final int numberOfMovies = 200;
 
     /** The root image URL to TMDB poster. */
     private static final String IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
@@ -126,7 +126,10 @@ public final class MovieParser {
         }
     }
 
-    /** Converts genre IDs into a list of Genre enums. */
+    /** Converts genre IDs into a list of Genre enums.
+     * @param genreIds the set of genreID that need to be coverted.
+     * @return the list of Genre that is converted.
+     */
     private static List<Genre> convertGenreIds(Set<Integer> genreIds) {
         List<Genre> genres = new ArrayList<>();
         for (Integer id : genreIds) {
