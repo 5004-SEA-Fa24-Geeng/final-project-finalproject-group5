@@ -16,6 +16,12 @@
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
+    align-items: center;
+}
+
+.filter-summary p {
+    margin: 0;
+    font-weight: 500;
 }
 
 .filter-tag {
@@ -55,10 +61,73 @@
     100% { transform: rotate(360deg); }
 }
 
-.results-count {
+.results-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.controls-container {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.sort-control,
+.download-control {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.sort-control label,
+.download-control label {
+    color: #555;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.sort-select,
+.download-select {
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: white;
+    color: #333;
+    font-size: 0.9rem;
+}
+
+.download-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-size: 0.9rem;
+}
+
+.download-button:hover {
+    background-color: #0069d9;
+}
+
+.download-button:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+}
+
+.results-count {
+    margin-bottom: 0;
     color: #666;
     font-size: 1.1rem;
+}
+
+.results-count p {
+    margin: 0;
 }
 
 .no-results {
@@ -82,4 +151,26 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 2rem;
+}
+
+@media (max-width: 768px) {
+    .results-controls {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .controls-container {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .sort-control,
+    .download-control {
+        width: 100%;
+    }
+
+    .sort-select,
+    .download-select {
+        flex-grow: 1;
+    }
 }

@@ -57,6 +57,12 @@
     }
 }
 
+.movie-poster-section {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
 .movie-poster {
     width: 100%;
     max-width: 300px;
@@ -82,6 +88,62 @@
     border-radius: 8px;
 }
 
+.rating-section {
+    background-color: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.rating-section h3 {
+    margin-bottom: 1rem;
+    color: #555;
+    font-size: 1.2rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.5rem;
+    text-align: center;
+}
+
+.star-rating {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.rating-star {
+    color: #ddd;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.rating-star:hover,
+.rating-star.active {
+    color: #ffc107;
+}
+
+.rating-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: block;
+    margin: 0 auto;
+}
+
+.rating-button:hover {
+    background-color: #0069d9;
+}
+
+.rating-button:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+}
+
 .movie-info {
     display: flex;
     flex-direction: column;
@@ -104,9 +166,16 @@
     align-items: center;
     margin-bottom: 1.5rem;
     gap: 1rem;
+    flex-wrap: wrap;
 }
 
-.movie-genre {
+.movie-genres {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.genre-item {
     background-color: #f0f0f0;
     padding: 0.4rem 0.8rem;
     border-radius: 50px;
@@ -145,16 +214,126 @@
     color: #444;
 }
 
-.movie-cast, .movie-genres {
+.movie-cast {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
+    margin-top: 0.5rem;
 }
 
-.cast-item, .genre-item {
+.cast-item {
     background-color: #f8f9fa;
     padding: 0.3rem 0.6rem;
     border-radius: 4px;
     font-size: 0.9rem;
     color: #555;
+}
+
+/* In-App User Ratings styling */
+.user-ratings {
+    margin-top: 0.5rem;
+}
+
+.user-ratings p {
+    color: #666;
+}
+
+.rating-summary {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.average-rating {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.rating-stars {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.rating-stars .star {
+    color: #ddd;
+    font-size: 1.5rem;
+}
+
+.rating-stars .star.filled {
+    color: #ffc107;
+}
+
+.rating-count {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* Comments section */
+.comments-section {
+    margin-top: 0.5rem;
+}
+
+.comments-list {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 1.5rem;
+}
+
+.comment-item {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    border-left: 3px solid #007bff;
+}
+
+.comment-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.comment-input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    resize: vertical;
+    font-family: inherit;
+    font-size: 1rem;
+}
+
+.comment-button {
+    align-self: flex-start;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.comment-button:hover {
+    background-color: #0069d9;
+}
+
+.comment-button:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+}
+
+.error-message {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid #f5c6cb;
+    margin-bottom: 2rem;
+}
+
+.error-message h2 {
+    margin-bottom: 1rem;
 }

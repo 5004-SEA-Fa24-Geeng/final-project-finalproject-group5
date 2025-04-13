@@ -46,6 +46,16 @@ public class MovieModel implements MovieModelInterface {
         return this.movies;
     }
 
+    /** Get a single movie by ID. */
+    public Movie getMovieById(int id) {
+        for (Movie movie : this.movies) {
+            if (movie.getId() == id) {
+                return movie;
+            }
+        }
+        return null;
+    }
+
     /** Get the processed movies that applied sorter and filter. */
     public List<Movie> getProcessedMovies() {
         return this.processedMovies;

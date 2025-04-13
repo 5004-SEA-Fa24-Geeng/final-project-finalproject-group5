@@ -2,15 +2,25 @@ import React from 'react';
 import './MovieCard.css';
 
 const MovieCard = ({ movie, onClick }) => {
+    // Format genres for display
+    const formatGenre = (genre) => {
+        if (!genre) return '';
+        // Convert SCIENCE_FICTION to Science Fiction
+        return genre.replace(/_/g, ' ').toLowerCase()
+            .split(' ')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+    };
+
     // Display first genre if available
     const primaryGenre = movie.genres && movie.genres.length > 0
-        ? movie.genres[0].name
+        ? formatGenre(movie.genres[0])
         : null;
 
     // Display first director if available
     const primaryDirector = movie.directors && movie.directors.length > 0
         ? movie.directors[0]
-        : null;
+        : 'Unknown Director';
 
     return (
         <div className="movie-card" onClick={onClick}>
@@ -38,11 +48,9 @@ const MovieCard = ({ movie, onClick }) => {
                     )}
                 </div>
 
-                {primaryDirector && (
-                    <div className="movie-directors">
-                        Director: {primaryDirector}
-                    </div>
-                )}
+                <div className="movie-directors">
+                    Director: {primaryDirector}
+                </div>
 
                 <div className="movie-overview">
                     <p>{movie.overview && movie.overview.length > 120
