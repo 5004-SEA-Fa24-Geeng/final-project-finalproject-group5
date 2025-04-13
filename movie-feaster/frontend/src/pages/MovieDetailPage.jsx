@@ -3,6 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import './MovieDetailPage.css';
 
 const MovieDetailPage = () => {
+    const BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
     const { id } = useParams();
     const navigate = useNavigate();
     const [movie, setMovie] = useState(null);
@@ -21,7 +23,7 @@ const MovieDetailPage = () => {
             setLoading(true);
 
             // Try to get all movies and filter by id
-            const response = await fetch('http://localhost:3000/api/movies/search');
+            const response = await fetch(`${BASE_URL}/api/movies/search`);
 
             if (!response.ok) {
                 throw new Error('Failed to fetch movies');
@@ -65,7 +67,7 @@ const MovieDetailPage = () => {
 
         try {
             setCommentSubmitting(true);
-            const response = await fetch(`http://localhost:3000/api/movies/${id}/comment`, {
+            const response = await fetch(`${BASE_URL}/api/movies/${id}/comment`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -99,7 +101,7 @@ const MovieDetailPage = () => {
 
         try {
             setRatingSubmitting(true);
-            const response = await fetch(`http://localhost:3000/api/movies/${id}/rating`, {
+            const response = await fetch(`${BASE_URL}/api/movies/${id}/rating`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
