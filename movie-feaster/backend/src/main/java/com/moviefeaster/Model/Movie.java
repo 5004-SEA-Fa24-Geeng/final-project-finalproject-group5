@@ -40,9 +40,7 @@ public class Movie {
     /** In-App rating information provided by users*/
     private List<Double> InAppRating;
 
-    /** Relative path to movie's poster. For details, see below.
-     * https://www.themoviedb.org/talk/62933de3df86a834e0a960ff?utm_source=chatgpt.com
-     */
+    /** URL movie's poster. */
     private String imgUrl;
 
 
@@ -59,10 +57,11 @@ public class Movie {
      * @param genres         List of genres
      * @param overview       Overview of movie
      * @param castings       List of cast members
-     * @param imgUrl         Relative path to movie's poster
+     * @param imgUrl         URL of movie's poster
      */
     public Movie(int id, String title, List<String> directors, int year, double rating,
                  List<Genre> genres, String overview, List<String> castings, String imgUrl) {
+        // The ID is a primary key. Cannot be null.
         this.id = id;
         this.title = (title != null && !title.isBlank()) ? title : "Unknown Title";
         this.directors = (directors != null) ? directors : new ArrayList<>();
@@ -171,7 +170,6 @@ public class Movie {
             this.rating = rating;
         }
     }
-
 
     /**
      * Gets the genres of the movie.

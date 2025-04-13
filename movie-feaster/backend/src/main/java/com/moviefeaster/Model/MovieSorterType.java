@@ -13,12 +13,23 @@ public enum MovieSorterType {
     INAPP_RATING_ASC("inapp_rating_asc"),
     INAPP_RATING_DESC("inapp_rating_desc");
 
+    /** The string representation of the sorting type. */
     private final String value;
 
+    /**
+     * Constructs an enum constant with the associated string value.
+     *
+     * @param value the string identifier for the sorting type
+     */
     MovieSorterType(String value) {
         this.value = value;
     }
 
+    /**
+     * Returns the string value associated with this sorting type.
+     *
+     * @return the string representation (e.g., "rating_desc")
+     */
     public String getValue() {
         return value;
     }

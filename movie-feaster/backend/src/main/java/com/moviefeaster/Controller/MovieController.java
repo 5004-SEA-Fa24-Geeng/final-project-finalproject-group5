@@ -92,6 +92,11 @@ public class MovieController implements MovieControllerInterface {
         return model.getProcessedMovies();
     }
 
+    /**
+     * Handles sort request. Only one sort type can be applied on.
+     *
+     * @param sortType    The sort type that wanted to apply on from the view.
+     */
     @Override
     @GetMapping("/sort")
     public List<Movie> handleSort(
