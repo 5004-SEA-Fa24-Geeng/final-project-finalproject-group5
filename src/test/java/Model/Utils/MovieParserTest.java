@@ -10,7 +10,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class MovieParserTest {
 
     @Test
-<<<<<<< HEAD
     void getParsedMoviesSummary() {
 
         Collection<MovieParser.MovieSummary> parsedMovies = MovieParser.getParsedMoviesSummary();
@@ -24,8 +23,6 @@ class MovieParserTest {
     }
 
     @Test
-=======
->>>>>>> 7f2050b2caa3bcc0af826d42c144c0b19862b098
     void getParsedMovies() {
         Collection<Movie> parsedMovies = MovieParser.getMoviesFromApi();
 

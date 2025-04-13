@@ -116,8 +116,9 @@ class MovieFilterTest {
 
         // Test partial match
         result = MovieFilter.filterByDirector(testMovies, "Fra");
-        assertEquals(1, result.size());
+        assertEquals(2, result.size());
         assertTrue(result.contains(movie1));
+        assertTrue(result.contains(movie2));
     }
 
     @Test

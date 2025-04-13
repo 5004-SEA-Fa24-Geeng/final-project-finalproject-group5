@@ -24,12 +24,10 @@ public final class MovieParser {
     /** The placeholder class for original JSON structure */
     private static List<MovieSummary> moviesSummary;
 
-<<<<<<< HEAD
-=======
+
     /** The number of movies we're trying to parse */
     private static int numberOfMovies = 600;
 
->>>>>>> 7f2050b2caa3bcc0af826d42c144c0b19862b098
     /** The root image URL to TMDB poster. */
     private static final String IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
 
@@ -56,22 +54,19 @@ public final class MovieParser {
     }
 
     /**
-<<<<<<< HEAD
      * Parses the top 50 movies JSON into a list of MovieSummary objects.
-=======
      * Parses the top N movies JSON into a list of MovieSummary objects.
->>>>>>> 7f2050b2caa3bcc0af826d42c144c0b19862b098
      */
     private static void parseMovies() {
         try (InputStream jsonStream = NetUtil.getTop50MoviesJson()) {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode root = mapper.readTree(jsonStream);
 
-<<<<<<< HEAD
+
             JsonNode results = root.path("results");
 
             moviesSummary = mapper.readerForListOf(MovieSummary.class).readValue(results);
-=======
+
             if (root.isArray()) {
                 // JSON is a raw array
                 moviesSummary = mapper.readerForListOf(MovieSummary.class).readValue(root);
@@ -80,7 +75,7 @@ public final class MovieParser {
                 JsonNode results = root.path("results");
                 moviesSummary = mapper.readerForListOf(MovieSummary.class).readValue(results);
             }
->>>>>>> 7f2050b2caa3bcc0af826d42c144c0b19862b098
+
         } catch (IOException e) {
             e.printStackTrace();
             moviesSummary = Collections.emptyList();
@@ -130,14 +125,13 @@ public final class MovieParser {
 
             }
             movies.add(new Movie(MovieID, title, directors, year, rating, genre, overview, castings, imgUrl));
-<<<<<<< HEAD
-=======
+
 
             // Break if we've reached our target number of movies
             if (movies.size() >= numberOfMovies) {
                 break;
             }
->>>>>>> 7f2050b2caa3bcc0af826d42c144c0b19862b098
+
         }
     }
 
@@ -153,11 +147,10 @@ public final class MovieParser {
 
     /** Inner class to map individual movie entries from TMDb API. */
     @JsonIgnoreProperties(ignoreUnknown = true)
-<<<<<<< HEAD
+
     protected static class MovieSummary {
-=======
+
     public static class MovieSummary {
->>>>>>> 7f2050b2caa3bcc0af826d42c144c0b19862b098
 
         @JsonProperty("id")
         private int movieID;
