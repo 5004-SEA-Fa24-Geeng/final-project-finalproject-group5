@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 package Controller;
 
 import Model.Genre;
@@ -136,7 +135,7 @@ public class MovieController implements MovieControllerInterface {
         }
     }
 }
-=======
+
 //package Controller;
 //
 //import Model.Genre;
@@ -274,4 +273,4 @@ public class MovieController implements MovieControllerInterface {
 //        }
 //    }
 //}
->>>>>>> 7f2050b2caa3bcc0af826d42c144c0b19862b098
+

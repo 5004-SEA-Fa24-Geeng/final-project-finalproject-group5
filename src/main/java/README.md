@@ -150,6 +150,35 @@ class InputProcessor {
     +optionalParseType(String) Genre
 }
 
+class MovieFilter {
+    -MovieFilter()
+    +filterByTitle(List<Movie>, String) List<Movie> 
+    +filterByExactTitle(List<Movie>, String) List<Movie> 
+    +filterByDirector(List<Movie>, String) List<Movie> 
+    +filterByYear(List<Movie>, int) List<Movie>
+    +filterByYearRange(List<Movie>, int, int) List<Movie> 
+    +filterByMinRating(List<Movie>, float) List<Movie> 
+    +filterByMaxRating(List<Movie>, float) List<Movie> 
+    +filterByGenre(List<Movie>, String) List<Movie> 
+    +filterByActor(List<Movie>, String) List<Movie> 
+    +filterByCommentKeyword(List<Movie>, String) List<Movie> 
+    +filterByMinInAppRating(List<Movie>, double) List<Movie> 
+    +combineAnd(List<Movie>, List<Movie>) List<Movie> 
+}
+
+class MovieSorter {
+    -MovieSorter()
+    +sortByTitle(List<Movie>) List<Movie> 
+    +sortByTitleDescending(List<Movie>) List<Movie> 
+    +sortByRating(List<Movie>) List<Movie> 
+    +sortByRatingAscending(List<Movie>) List<Movie> 
+    +sortByYear(List<Movie>) List<Movie> 
+    +sortByYearAscending(List<Movie>) List<Movie>
+    +sortByInAppRating(List<Movie>) List<Movie>
+    +sortByInAppRatingAscending(List<Movie>) List<Movie> 
+    +getTopN(List<Movie>, int) List<Movie> 
+}
+
 %% Relationships
 MovieInfoApp --> MovieController
 
@@ -167,6 +196,9 @@ MovieParser --> NetUtils
 
 DataFormatter --> Format
 DataFormatter --> XMLWrapper
+
+MovieModel ..> MovieFilter : uses
+MovieModel ..> MovieSorter : uses
 ```
 
 
