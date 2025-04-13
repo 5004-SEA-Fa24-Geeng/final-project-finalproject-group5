@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import MovieCard from '../components/MovieCard';
 import './MovieListPage.css';
@@ -15,6 +15,36 @@ const MovieListPage = () => {
     const [downloadFormat, setDownloadFormat] = useState('PRETTY');
     const [downloading, setDownloading] = useState(false);
 
+    // Parse filters from URL parameters
+    const parseFiltersFromUrl = useCallback(() => {
+        const queryParams = new URLSearchParams(location.search);
+        const filterParams = {};
+
+        queryParams.forEach((value, key) => {
+            // Only add non-empty values and ignore sort parameter
+            if (key !== 'sort' && value && value.trim() !== '') {
+                filterParams[key] = value;
+            }
+        });
+
+        // Extract sort parameter if available
+        const sortParam = queryParams.get('sort');
+        if (sortParam) {
+            setSortOption(sortParam);
+        }
+
+        return filterParams;
+    }, [location.search]);
+
+    // Load data with current filters
+    const loadDataWithCurrentFilters = useCallback(() => {
+        const currentFilters = parseFiltersFromUrl();
+        setFilters(currentFilters);
+
+        const queryParams = new URLSearchParams(location.search);
+        fetchMovies(queryParams);
+    }, [parseFiltersFromUrl, location.search]);
+
     useEffect(() => {
         // Check if we have search results from navigation state
         if (location.state && location.state.searchResults) {
@@ -23,58 +53,63 @@ const MovieListPage = () => {
             setLoading(false);
 
             // Parse query parameters to display filters
-            const queryParams = new URLSearchParams(location.search);
-            const filterParams = {};
-
-            queryParams.forEach((value, key) => {
-                filterParams[key] = value;
-            });
-
+            const filterParams = parseFiltersFromUrl();
             setFilters(filterParams);
             return;
         }
 
-        // Parse query parameters from URL
-        const queryParams = new URLSearchParams(location.search);
-        const filterParams = {};
-
-        queryParams.forEach((value, key) => {
-            filterParams[key] = value;
-        });
-
-        setFilters(filterParams);
-
-        // Fetch movies based on filters
-        fetchMovies(queryParams);
-    }, [location.search, location.state]);
-
-    // Apply sorting whenever sort option or movies change
-    useEffect(() => {
-        if (movies.length > 0) {
-            const sortedMovies = sortMovies(movies, sortOption);
-            setDisplayedMovies(sortedMovies);
-        }
-    }, [sortOption, movies]);
+        // Load data based on URL parameters
+        loadDataWithCurrentFilters();
+    }, [location.search, location.state, loadDataWithCurrentFilters, parseFiltersFromUrl]);
 
     const fetchMovies = async (queryParams) => {
         try {
             setLoading(true);
             setError(null);
 
-            const response = await fetch(`http://localhost:3000/api/movies/search?${queryParams.toString()}`);
+            try {
+                // Get the sort parameter from the query params
+                const sortParam = queryParams.get('sort');
 
-            if (!response.ok) {
-                throw new Error('Failed to fetch movies');
+                // Decide which endpoint to use
+                let endpoint = 'http://localhost:3000/api/movies/search';
+
+                // If we have a sort parameter (and it's not 'default'), use the sort endpoint
+                if (sortParam && sortParam !== 'default') {
+                    // Convert from frontend sort format (title-asc) to backend format (title_asc)
+                    const backendSortParam = sortParam.replace('-', '_');
+                    endpoint = `http://localhost:3000/api/movies/sort?sortType=${backendSortParam}`;
+
+                    // For the sort endpoint, we need to include all the filter parameters as well
+                    // to maintain the filtered set of movies
+                    const filterKeys = ['title', 'director', 'cast', 'year', 'genre'];
+                    filterKeys.forEach(key => {
+                        const value = queryParams.get(key);
+                        if (value) {
+                            endpoint += `&${key}=${encodeURIComponent(value)}`;
+                        }
+                    });
+                }
+
+                const response = await fetch(endpoint);
+
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch movies: ${response.status} ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                setMovies(data);
+                setDisplayedMovies(data);
+            } catch (networkErr) {
+                throw new Error(`Network error: ${networkErr.message || 'Could not connect to server'}`);
             }
-
-            const data = await response.json();
-            setMovies(data);
-            setDisplayedMovies(data);
-            setLoading(false);
         } catch (err) {
             setError(err.message);
-            setLoading(false);
             console.error('Error fetching movies:', err);
+            setMovies([]);
+            setDisplayedMovies([]);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -90,7 +125,8 @@ const MovieListPage = () => {
             });
 
             if (!response.ok) {
-                throw new Error('Failed to download movie data');
+                const errorText = await response.text();
+                throw new Error(`Failed to download movie data: ${response.status} ${response.statusText}. ${errorText}`);
             }
 
             // Handle file download
@@ -103,11 +139,10 @@ const MovieListPage = () => {
             a.click();
             a.remove();
             window.URL.revokeObjectURL(url);
-
-            setDownloading(false);
         } catch (err) {
             console.error('Error downloading file:', err);
-            alert('Failed to download file. Please try again.');
+            alert(`Failed to download file: ${err.message}`);
+        } finally {
             setDownloading(false);
         }
     };
@@ -127,55 +162,40 @@ const MovieListPage = () => {
     };
 
     const handleSortChange = (e) => {
-        setSortOption(e.target.value);
-    };
+        const newSortOption = e.target.value;
+        setSortOption(newSortOption);
 
-    // Function to sort movies based on selected option
-    const sortMovies = (movieList, option) => {
-        const moviesCopy = [...movieList];
+        // Update URL with new sort parameter
+        const queryParams = new URLSearchParams(location.search);
 
-        switch(option) {
-            case 'title-asc':
-                return moviesCopy.sort((a, b) => a.title.localeCompare(b.title));
-            case 'title-desc':
-                return moviesCopy.sort((a, b) => b.title.localeCompare(a.title));
-            case 'year-asc':
-                return moviesCopy.sort((a, b) => a.year - b.year);
-            case 'year-desc':
-                return moviesCopy.sort((a, b) => b.year - a.year);
-            case 'rating-asc':
-                return moviesCopy.sort((a, b) => a.rating - b.rating);
-            case 'rating-desc':
-                return moviesCopy.sort((a, b) => b.rating - a.rating);
-            case 'inapp-rating-asc':
-                return moviesCopy.sort((a, b) => {
-                    const aRating = a.InAppRating && a.InAppRating.length > 0 ?
-                        a.InAppRating.reduce((sum, rating) => sum + rating, 0) / a.InAppRating.length : 0;
-                    const bRating = b.InAppRating && b.InAppRating.length > 0 ?
-                        b.InAppRating.reduce((sum, rating) => sum + rating, 0) / b.InAppRating.length : 0;
-                    return aRating - bRating;
-                });
-            case 'inapp-rating-desc':
-                return moviesCopy.sort((a, b) => {
-                    const aRating = a.InAppRating && a.InAppRating.length > 0 ?
-                        a.InAppRating.reduce((sum, rating) => sum + rating, 0) / a.InAppRating.length : 0;
-                    const bRating = b.InAppRating && b.InAppRating.length > 0 ?
-                        b.InAppRating.reduce((sum, rating) => sum + rating, 0) / b.InAppRating.length : 0;
-                    return bRating - aRating;
-                });
-            default:
-                return moviesCopy;
+        if (newSortOption === 'default') {
+            queryParams.delete('sort');
+        } else {
+            queryParams.set('sort', newSortOption);
         }
+
+        // Navigate to the same page with updated query parameters
+        navigate({
+            pathname: location.pathname,
+            search: queryParams.toString()
+        });
     };
 
     // Function to format filter values for display
     const formatFilterValue = (key, value) => {
+        if (!value) return '';
+
         if (key === 'genre') {
-            // Convert SCIENCE_FICTION to Science Fiction
-            return value.replace(/_/g, ' ').toLowerCase()
-                .split(' ')
-                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                .join(' ');
+            try {
+                // Convert SCIENCE_FICTION to Science Fiction
+                return value.replace(/_/g, ' ').toLowerCase()
+                    .split(' ')
+                    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                    .join(' ');
+            } catch (err) {
+                console.error('Error formatting genre:', err);
+                return value;
+            }
         }
         return value;
     };
@@ -192,6 +212,23 @@ const MovieListPage = () => {
         return displayNames[key] || key;
     };
 
+    const handleRemoveFilter = (key) => {
+        console.log('Removing filter:', key);
+
+        // Create a new URLSearchParams object from current location.search
+        const queryParams = new URLSearchParams(location.search);
+
+        // Remove the specified filter
+        queryParams.delete(key);
+        console.log('New query params:', queryParams.toString());
+
+        // Update the URL with the new query parameters
+        navigate({
+            pathname: location.pathname,
+            search: queryParams.toString()
+        });
+    };
+
     return (
         <div className="movie-list-page">
             <div className="list-header">
@@ -200,9 +237,22 @@ const MovieListPage = () => {
                     <div className="filter-summary">
                         <p>Filters:</p>
                         {Object.entries(filters).map(([key, value]) => (
-                            value && <span key={key} className="filter-tag">
-                                {getFilterDisplayName(key)}: {formatFilterValue(key, value)}
-                            </span>
+                            value && (
+                                <span key={key} className="filter-tag">
+                                    <span className="filter-content">
+                                        {getFilterDisplayName(key)}: {formatFilterValue(key, value)}
+                                    </span>
+                                    <span
+                                        className="filter-remove"
+                                        onClick={() => handleRemoveFilter(key)}
+                                        role="button"
+                                        tabIndex="0"
+                                        aria-label={`Remove ${getFilterDisplayName(key)} filter`}
+                                    >
+                                        ×
+                                    </span>
+                                </span>
+                            )
                         ))}
                     </div>
                 )}

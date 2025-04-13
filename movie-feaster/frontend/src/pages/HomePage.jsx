@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import './HomePage.css';
 
 const HomePage = () => {
+    const BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3000';
+
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
         title: '',
@@ -32,7 +34,7 @@ const HomePage = () => {
         ]);
 
         // Fetch movies for the banner
-        fetch('http://localhost:3000/api/movies')
+        fetch(`${BASE_URL}/api/movies`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Failed to fetch movies');
@@ -41,7 +43,11 @@ const HomePage = () => {
             })
             .then(data => {
                 // Filter movies with valid poster images
-                const moviesWithPosters = data.filter(movie => movie.imgUrl && movie.imgUrl.trim() !== '');
+                const moviesWithPosters = data.filter(movie =>
+                    movie.imgUrl &&
+                    movie.imgUrl.trim() !== '' &&
+                    !movie.imgUrl.includes('placeholder')
+                );
 
                 if (moviesWithPosters.length > 0) {
                     // Select one random movie for the banner
@@ -52,7 +58,7 @@ const HomePage = () => {
             .catch(error => {
                 console.error('Error fetching banner movie:', error);
             });
-    }, []);
+    }, [BASE_URL]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -76,7 +82,7 @@ const HomePage = () => {
         if (formData.genre) params.append('genre', formData.genre);
 
         // Make API call to backend
-        fetch(`http://localhost:3000/api/movies/search?${params.toString()}`)
+        fetch(`${BASE_URL}/api/movies/search?${params.toString()}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -101,13 +107,21 @@ const HomePage = () => {
 
     return (
         <div className="home-page">
-            <div className="hero-section" style={bannerMovie ? {
-                backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${bannerMovie.imgUrl})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center'
-            } : {}}>
+            <div
+                className="hero-section"
+                style={bannerMovie ? {
+                    backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${bannerMovie.imgUrl})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center top'
+                } : {}}
+            >
                 <h1>Movie Feaster</h1>
                 <p>Discover your next favorite movie</p>
+                {bannerMovie && (
+                    <div className="featured-movie">
+                        <p> {bannerMovie.title} ({bannerMovie.year})</p>
+                    </div>
+                )}
             </div>
 
             <div className="search-section">
