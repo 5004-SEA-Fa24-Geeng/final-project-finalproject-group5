@@ -24,16 +24,34 @@ public enum Genre {
     WAR(10752),
     WESTERN(37);
 
+    /** The unique TMDb genre ID associated with this genre. */
     private final int id;
 
+    /**
+     * Constructs an enum constant with the given genre ID.
+     * The ID conforms with TMDB database genre ID.
+     *
+     * @param id the TMDb genre ID associated with the genre.
+     */
     Genre(int id) {
         this.id = id;
     }
 
+    /**
+     * Returns the TMDb genre ID associated with this enum constant.
+     *
+     * @return the integer ID of the genre
+     */
     public int getId() {
         return id;
     }
 
+    /**
+     * Retrieves the corresponding enum based on the provided genre ID.
+     *
+     * @param id the TMDb genre ID
+     * @return the corresponding enum, or null if no match is found
+     */
     public static Genre fromId(int id) {
         for (Genre genre : values()) {
             if (genre.id == id) {
@@ -43,6 +61,13 @@ public enum Genre {
         return null;
     }
 
+    /**
+     * Retrieves the corresponding enum based on the name of the genre.
+     * This comparison is case-sensitive and must match the enum name exactly.
+     *
+     * @param name the name of the genre (e.g., "ACTION", "DRAMA")
+     * @return the corresponding enum, or Null if no match is found.
+     */
     public static Genre fromName(String name) {
         for (Genre genre : values()) {
             if (genre.name().equals(name)) {
