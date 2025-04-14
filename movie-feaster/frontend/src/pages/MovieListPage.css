@@ -192,4 +192,27 @@
     .download-select {
         flex-grow: 1;
     }
+    .already-rated-message {
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+
+    .already-rated-message p {
+        color: #28a745;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+    }
+
+    .rating-star.disabled {
+        color: #ffc107;
+        cursor: default;
+        opacity: 0.7;
+    }
+
+    /* Optional: Add a subtle indicator that the rating section is disabled */
+    .rating-section:has(.already-rated-message) {
+        background-color: #f8f9fa;
+        border: 1px solid #e9ecef;
+        opacity: 0.9;
+    }
 }

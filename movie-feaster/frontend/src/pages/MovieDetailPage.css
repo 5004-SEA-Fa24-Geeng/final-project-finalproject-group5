@@ -337,3 +337,38 @@
 .error-message h2 {
     margin-bottom: 1rem;
 }
+
+.already-rated-message {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.already-rated-message p {
+    color: #28a745;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+/* Fix for disabled active stars */
+.rating-star.disabled.active {
+    color: #ffc107; /* Yellow/gold color for active stars */
+}
+
+/* Make sure this rule appears after any other .rating-star.disabled rules */
+
+/* Additional styling for the refreshing state */
+.refreshing-ratings {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #007bff;
+}
+
+.mini-spinner {
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #007bff;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+}

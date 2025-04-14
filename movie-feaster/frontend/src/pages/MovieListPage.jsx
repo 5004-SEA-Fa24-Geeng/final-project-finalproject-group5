@@ -6,6 +6,8 @@ import './MovieListPage.css';
 const MovieListPage = () => {
     const location = useLocation();
     const navigate = useNavigate();
+    const BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
+
     const [movies, setMovies] = useState([]);
     const [displayedMovies, setDisplayedMovies] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -14,8 +16,6 @@ const MovieListPage = () => {
     const [sortOption, setSortOption] = useState('default');
     const [downloadFormat, setDownloadFormat] = useState('PRETTY');
     const [downloading, setDownloading] = useState(false);
-
-    const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
     // Parse filters from URL parameters
     const parseFiltersFromUrl = useCallback(() => {
@@ -91,6 +91,9 @@ const MovieListPage = () => {
                             endpoint += `&${key}=${encodeURIComponent(value)}`;
                         }
                     });
+                } else if (queryParams.toString()) {
+                    // If we have query parameters but no sort, append them to the search endpoint
+                    endpoint += `?${queryParams}`;
                 }
 
                 const response = await fetch(endpoint);
@@ -215,14 +218,11 @@ const MovieListPage = () => {
     };
 
     const handleRemoveFilter = (key) => {
-        console.log('Removing filter:', key);
-
         // Create a new URLSearchParams object from current location.search
         const queryParams = new URLSearchParams(location.search);
 
         // Remove the specified filter
         queryParams.delete(key);
-        console.log('New query params:', queryParams.toString());
 
         // Update the URL with the new query parameters
         navigate({
@@ -282,7 +282,6 @@ const MovieListPage = () => {
                                     onChange={handleSortChange}
                                     className="sort-select"
                                 >
-                                    <option value="default">Default</option>
                                     <option value="title-asc">Title (A-Z)</option>
                                     <option value="title-desc">Title (Z-A)</option>
                                     <option value="year-asc">Year (Oldest First)</option>
