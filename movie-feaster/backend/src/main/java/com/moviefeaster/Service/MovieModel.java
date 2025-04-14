@@ -94,27 +94,6 @@ public class MovieModel implements MovieModelInterface {
     }
 
     /**
-     * Filtered the movie list by filter strategy with an option to use a movie list that is filtered or the original
-     * data that pull from TMDB api.
-     * @param newFilter whether to use a movie list that is filtered or the original data that pull from TMDB api.
-     * @param filtersStrategy  filtersStrategy filtered strategies that with filter type and corresponding values.
-     */
-    public void searchByFilter(boolean newFilter, Map<MovieFilterType, Object> filtersStrategy) {
-        if (filtersStrategy == null) {
-            return;
-        }
-
-        if (this.processedMovies.isEmpty()) {
-            this.processedMovies = this.movies;
-        }
-
-
-        List<Movie> moviesToFilter = newFilter ? this.movies : this.processedMovies;
-        this.processedMovies = MovieFilterFacilitator.filter(moviesToFilter, filtersStrategy);
-        sortMovieList(defaultMovieSorterType);
-    }
-
-    /**
      * Sorts the movie list by sorting strategy with an option to use original data or processed data.
      *
      * @param sortType the sorting strategy to be applied to the movie list
