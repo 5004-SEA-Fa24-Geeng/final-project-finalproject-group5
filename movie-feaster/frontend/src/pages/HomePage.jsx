@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './HomePage.css';
 
-const HomePage = () => {
-    const BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3000';
+const BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 
+const HomePage = () => {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
         title: '',
@@ -25,13 +25,27 @@ const HomePage = () => {
         const yearOptions = Array.from({ length: currentYear - 1899 }, (_, i) => currentYear - i);
         setYears(yearOptions);
 
-        // Set hardcoded genres since the endpoint may not exist yet
-        setGenres([
-            'ACTION', 'ADVENTURE', 'ANIMATION', 'COMEDY', 'CRIME',
-            'DOCUMENTARY', 'DRAMA', 'FAMILY', 'FANTASY', 'HISTORY',
-            'HORROR', 'MUSIC', 'MYSTERY', 'ROMANCE', 'SCIENCE_FICTION',
-            'TV_MOVIE', 'THRILLER', 'WAR', 'WESTERN'
-        ]);
+        // Fetch genres from the backend API
+        fetch(`${BASE_URL}/api/movies/genres`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to fetch genres');
+                }
+                return response.json();
+            })
+            .then(data => {
+                setGenres(data);
+            })
+            .catch(error => {
+                console.error('Error fetching genres:', error);
+                // Fallback to hardcoded genres if API fails
+                setGenres([
+                    'ACTION', 'ADVENTURE', 'ANIMATION', 'COMEDY', 'CRIME',
+                    'DOCUMENTARY', 'DRAMA', 'FAMILY', 'FANTASY', 'HISTORY',
+                    'HORROR', 'MUSIC', 'MYSTERY', 'ROMANCE', 'SCIENCE_FICTION',
+                    'TV_MOVIE', 'THRILLER', 'WAR', 'WESTERN'
+                ]);
+            });
 
         // Fetch movies for the banner
         fetch(`${BASE_URL}/api/movies`)

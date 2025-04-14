@@ -15,6 +15,8 @@ const MovieListPage = () => {
     const [downloadFormat, setDownloadFormat] = useState('PRETTY');
     const [downloading, setDownloading] = useState(false);
 
+    const BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
     // Parse filters from URL parameters
     const parseFiltersFromUrl = useCallback(() => {
         const queryParams = new URLSearchParams(location.search);
@@ -72,13 +74,13 @@ const MovieListPage = () => {
                 const sortParam = queryParams.get('sort');
 
                 // Decide which endpoint to use
-                let endpoint = 'http://localhost:3000/api/movies/search';
+                let endpoint = `${BASE_URL}/api/movies/search`;
 
                 // If we have a sort parameter (and it's not 'default'), use the sort endpoint
                 if (sortParam && sortParam !== 'default') {
                     // Convert from frontend sort format (title-asc) to backend format (title_asc)
                     const backendSortParam = sortParam.replace('-', '_');
-                    endpoint = `http://localhost:3000/api/movies/sort?sortType=${backendSortParam}`;
+                    endpoint = `${BASE_URL}/api/movies/sort?sortType=${backendSortParam}`;
 
                     // For the sort endpoint, we need to include all the filter parameters as well
                     // to maintain the filtered set of movies
@@ -120,7 +122,7 @@ const MovieListPage = () => {
             const params = new URLSearchParams(location.search);
             params.append('format', downloadFormat);
 
-            const response = await fetch(`http://localhost:3000/api/movies/export?${params.toString()}`, {
+            const response = await fetch(`${BASE_URL}/api/movies/export?${params.toString()}`, {
                 method: 'GET',
             });
 
