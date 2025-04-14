@@ -65,6 +65,11 @@ public class MovieController implements MovieControllerInterface {
 
         Map<MovieFilterType, Object> filterStrategy = new HashMap<>();
 
+        if (parsedTitle == null && parsedDirector == null &&
+                parsedCast == null && parsedYear == null && parsedGenre == null) {
+            return model.getMovies();
+        }
+
         if (parsedTitle != null && !parsedTitle.isEmpty()) {
             filterStrategy.put(MovieFilterType.TITLE_KEYWORD, parsedTitle);
         }
