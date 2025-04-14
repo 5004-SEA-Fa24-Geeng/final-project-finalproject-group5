@@ -18,13 +18,11 @@ const MovieDetailPage = () => {
     const [commentSubmitting, setCommentSubmitting] = useState(false);
     const [userRating, setUserRating] = useState(0);
     const [ratingSubmitting, setRatingSubmitting] = useState(false);
+    const [hasRated, setHasRated] = useState(false); // Track if user has already rated
+    const [refreshing, setRefreshing] = useState(false); // Track when we're refreshing data
+    const [ratingCount, setRatingCount] = useState(0); // Track rating count locally
 
     // Helper functions
-    const calculateAverageRating = useCallback((ratings) => {
-        if (!ratings || ratings.length === 0) return 0;
-        return ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length;
-    }, []);
-
     const formatGenre = useCallback((genre) => {
         if (!genre) return '';
         const genreName = typeof genre === 'string' ? genre : (genre.name || '');
@@ -35,27 +33,77 @@ const MovieDetailPage = () => {
             .join(' ');
     }, []);
 
+    // Check if user has already rated this movie and retrieve their rating
+    const checkUserHasRated = useCallback(() => {
+        // In a real app, you would check against the user ID
+        // For now, we'll use localStorage to track ratings by movie ID
+        const ratedMovies = JSON.parse(localStorage.getItem('ratedMovies') || '[]');
+        const hasAlreadyRated = ratedMovies.includes(parseInt(id));
+        setHasRated(hasAlreadyRated);
+
+        // If user has rated, get their stored rating value
+        if (hasAlreadyRated) {
+            const storedUserRating = localStorage.getItem(`movieUserRating_${id}`);
+            if (storedUserRating) {
+                setUserRating(parseInt(storedUserRating));
+            }
+        }
+
+        // Also retrieve stored rating count
+        const storedCount = localStorage.getItem(`movieRatingCount_${id}`);
+        if (storedCount) {
+            setRatingCount(parseInt(storedCount));
+        }
+    }, [id]);
+
     // Data fetching
-    const fetchMovie = async () => {
+    const fetchMovie = useCallback(async (isRefresh = false) => {
         try {
-            setLoading(true);
-            const response = await fetch(`${BASE_URL}/api/movies/${id}`);
+            // Only show loading spinner for initial load, not for refreshes
+            if (!isRefresh) {
+                setLoading(true);
+            } else {
+                setRefreshing(true);
+            }
+
+            // Add a cache-busting parameter to avoid getting cached responses
+            const cacheParam = `_nocache=${Date.now()}`;
+            const response = await fetch(`${BASE_URL}/api/movies/${id}?${cacheParam}`);
 
             if (!response.ok) {
                 throw new Error('Failed to fetch movie details');
             }
 
             const data = await response.json();
+            console.log('Fetched movie data:', data); // Log the fetched data to debug
+
+            // Update state with new data
             setMovie(data);
-            setLoading(false);
+
+            // Clear appropriate loading state
+            if (!isRefresh) {
+                setLoading(false);
+            } else {
+                setRefreshing(false);
+            }
+
+            // Check if user has rated after fetching movie
+            checkUserHasRated();
         } catch (err) {
+            console.error('Error fetching movie:', err);
             setError(err.message);
-            setLoading(false);
+            if (!isRefresh) {
+                setLoading(false);
+            } else {
+                setRefreshing(false);
+            }
         }
-    };
+    }, [BASE_URL, id, checkUserHasRated]);
+
     useEffect(() => {
         fetchMovie();
-    }, [id]);
+    }, [fetchMovie]);
+
     // Event handlers
     const handleGoBack = () => {
         navigate(-1);
@@ -66,6 +114,7 @@ const MovieDetailPage = () => {
     };
 
     const handleRatingChange = (value) => {
+        if (hasRated) return; // Prevent rating change if already rated
         setUserRating(value);
     };
 
@@ -88,8 +137,8 @@ const MovieDetailPage = () => {
             }
 
             setComment('');
+            await fetchMovie(true); // Use refresh mode for comment updates too
             alert('Comment submitted successfully!');
-            await fetchMovie();
         } catch (err) {
             console.error('Error submitting comment:', err);
             alert('Failed to submit comment. Please try again.');
@@ -104,26 +153,64 @@ const MovieDetailPage = () => {
             return;
         }
 
+        if (hasRated) {
+            alert('You have already rated this movie');
+            return;
+        }
+
         try {
             setRatingSubmitting(true);
+
+            // Looking at the MovieController.java, the endpoint expects a double value
             const response = await fetch(`${BASE_URL}/api/movies/${id}/rating`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ rating: userRating }),
+                body: userRating.toString(), // Send the rating as a string value
             });
 
             if (!response.ok) {
                 throw new Error('Failed to submit rating');
             }
 
-            alert('Rating submitted successfully!');
-            await fetchMovie();
+            // Store that user has rated this movie
+            const ratedMovies = JSON.parse(localStorage.getItem('ratedMovies') || '[]');
+            ratedMovies.push(parseInt(id));
+            localStorage.setItem('ratedMovies', JSON.stringify(ratedMovies));
+
+            // Store the user's rating value for this movie
+            localStorage.setItem(`movieUserRating_${id}`, userRating.toString());
+
+            // Store rating count locally (temporary solution until backend provides it)
+            const currentCount = parseInt(localStorage.getItem(`movieRatingCount_${id}`) || '0');
+            const newCount = currentCount + 1;
+            localStorage.setItem(`movieRatingCount_${id}`, newCount.toString());
+            setRatingCount(newCount);
+
+            // Update UI to show user has rated
+            setHasRated(true);
+
+            // We don't reset userRating so the stars will stay filled
+            // setUserRating(0);
+
+            // Small delay to ensure backend has processed the rating
+            // before we try to fetch the updated data
+            setTimeout(async () => {
+                try {
+                    // Fetch updated movie data (including new ratings)
+                    // Pass true to indicate this is a refresh, not initial load
+                    await fetchMovie(true);
+
+                    // Show success message AFTER data is refreshed
+                    alert('Rating submitted successfully!');
+                } finally {
+                    setRatingSubmitting(false);
+                }
+            }, 300); // 300ms delay
         } catch (err) {
             console.error('Error submitting rating:', err);
             alert('Failed to submit rating. Please try again.');
-        } finally {
             setRatingSubmitting(false);
         }
     };
@@ -166,10 +253,6 @@ const MovieDetailPage = () => {
         );
     }
 
-    // Calculate ratings for UI
-    const averageInAppRating = movie.InAppRating ?
-        calculateAverageRating(movie.InAppRating) : 0;
-
     // Main render
     return (
         <div className="movie-detail-page">
@@ -192,24 +275,42 @@ const MovieDetailPage = () => {
 
                     <div className="rating-section">
                         <h3>Rate This Movie</h3>
-                        <div className="star-rating">
-                            {[1, 2, 3, 4, 5].map((star) => (
-                                <span
-                                    key={star}
-                                    className={`rating-star ${userRating >= star ? 'active' : ''}`}
-                                    onClick={() => handleRatingChange(star)}
+                        {hasRated ? (
+                            <div className="already-rated-message">
+                                <p>Thank you for rating this movie!</p>
+                                <div className="star-rating">
+                                    {[1, 2, 3, 4, 5].map((star) => (
+                                        <span
+                                            key={star}
+                                            className={`rating-star disabled ${userRating >= star ? 'active' : ''}`}
+                                        >
+                                            ★
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+                        ) : (
+                            <>
+                                <div className="star-rating">
+                                    {[1, 2, 3, 4, 5].map((star) => (
+                                        <span
+                                            key={star}
+                                            className={`rating-star ${userRating >= star ? 'active' : ''}`}
+                                            onClick={() => handleRatingChange(star)}
+                                        >
+                                            ★
+                                        </span>
+                                    ))}
+                                </div>
+                                <button
+                                    className="rating-button"
+                                    onClick={handleRatingSubmit}
+                                    disabled={ratingSubmitting || userRating === 0}
                                 >
-                                    ★
-                                </span>
-                            ))}
-                        </div>
-                        <button
-                            className="rating-button"
-                            onClick={handleRatingSubmit}
-                            disabled={ratingSubmitting || userRating === 0}
-                        >
-                            {ratingSubmitting ? 'Submitting...' : 'Submit Rating'}
-                        </button>
+                                    {ratingSubmitting ? 'Submitting...' : 'Submit Rating'}
+                                </button>
+                            </>
+                        )}
                     </div>
                 </div>
 
@@ -270,28 +371,25 @@ const MovieDetailPage = () => {
                         <div className="detail-group">
                             <h3>In-App User Ratings</h3>
                             <div className="user-ratings">
-                                {movie.InAppRating && movie.InAppRating.length > 0 ? (
-                                    <div>
-                                        <div className="rating-summary">
-                                            <span className="average-rating">
-                                                {averageInAppRating.toFixed(1)}
-                                            </span>
-                                            <div className="rating-stars">
-                                                {[1, 2, 3, 4, 5].map((star) => (
-                                                    <span
-                                                        key={star}
-                                                        className={`star ${
-                                                            averageInAppRating >= star - 0.25 ? 'filled' :
-                                                                averageInAppRating >= star - 0.75 ? 'half-filled' : ''
-                                                        }`}
-                                                    >
-                                                        ★
-                                                    </span>
-                                                ))}
-                                            </div>
-                                            <span className="rating-count">
-                                                ({movie.InAppRating.length} {movie.InAppRating.length === 1 ? 'rating' : 'ratings'})
-                                            </span>
+                                {refreshing ? (
+                                    <div className="refreshing-ratings">
+                                        <p>Updating ratings...</p>
+                                        <div className="mini-spinner"></div>
+                                    </div>
+                                ) : movie.InAppRating > 0 ? (
+                                    <div className="rating-summary">
+                                        <p>App Rating: {parseFloat(movie.InAppRating).toFixed(1)} (Total ratings: {ratingCount || '?'})</p>
+                                        <div className="rating-stars">
+                                            {[1, 2, 3, 4, 5].map((star) => (
+                                                <span
+                                                    key={star}
+                                                    className={`star ${
+                                                        movie.InAppRating >= star ? 'filled' : ''
+                                                    }`}
+                                                >
+                                                    ★
+                                                </span>
+                                            ))}
                                         </div>
                                     </div>
                                 ) : (
@@ -306,9 +404,36 @@ const MovieDetailPage = () => {
                             <div className="comments-section">
                                 {movie.comments && movie.comments.length > 0 ? (
                                     <ul className="comments-list">
-                                        {movie.comments.map((comment, index) => (
-                                            <li key={index} className="comment-item">{comment}</li>
-                                        ))}
+                                        {movie.comments.map((comment, index) => {
+                                            // Clean up comment format - remove curly braces and format properly
+                                            let cleanComment = comment;
+
+                                            // Handle different possible formats of comments
+                                            if (typeof comment === 'string') {
+                                                // If the comment is a JSON string, parse it and extract content
+                                                if (comment.trim().startsWith('{') && comment.trim().endsWith('}')) {
+                                                    try {
+                                                        const parsedComment = JSON.parse(comment);
+                                                        if (parsedComment && typeof parsedComment === 'object') {
+                                                            // If we have a 'comment' property, use that
+                                                            cleanComment = parsedComment.comment || comment;
+                                                        }
+                                                    } catch (e) {
+                                                        // If parsing fails, just clean up the string
+                                                        cleanComment = comment.replace(/[{}"\s]*(comment:|comment=)?["\s]*/g, '').trim();
+                                                    }
+                                                } else {
+                                                    // Otherwise just remove any curly braces that might be present
+                                                    cleanComment = comment.replace(/[{}]/g, '').trim();
+                                                }
+                                            }
+
+                                            return (
+                                                <li key={index} className="comment-item">
+                                                    {cleanComment}
+                                                </li>
+                                            );
+                                        })}
                                     </ul>
                                 ) : (
                                     <p>No comments yet. Be the first to comment on this movie!</p>

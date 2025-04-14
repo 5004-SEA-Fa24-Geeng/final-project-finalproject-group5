@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './HomePage.css';
 
-const BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
-
 const HomePage = () => {
     const navigate = useNavigate();
+    const BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
+
     const [formData, setFormData] = useState({
         title: '',
         director: '',
@@ -129,7 +129,7 @@ const HomePage = () => {
                     backgroundPosition: 'center top'
                 } : {}}
             >
-                <h1>Movie Feaster</h1>
+                <h1>Movie Feast</h1>
                 <p>Discover your next favorite movie</p>
                 {bannerMovie && (
                     <div className="featured-movie">
