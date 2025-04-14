@@ -82,8 +82,8 @@
     color: #333;
 }
 
-.star-icon {
-    color: #ffc107;
+.popularity-icon {
+    color: #ff7700; /* Orange/red to indicate "hot" or popular */
     margin-right: 4px;
 }
 

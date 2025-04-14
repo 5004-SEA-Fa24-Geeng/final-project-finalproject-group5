@@ -319,10 +319,10 @@ const MovieListPage = () => {
                                     <option value="title-desc">Title (Z-A)</option>
                                     <option value="year-asc">Year (Oldest First)</option>
                                     <option value="year-desc">Year (Newest First)</option>
-                                    <option value="rating-asc">Rating (Low to High)</option>
-                                    <option value="rating-desc">Rating (High to Low)</option>
-                                    <option value="inapp-rating-asc">In-App Rating (Low to High)</option>
-                                    <option value="inapp-rating-desc">In-App Rating (High to Low)</option>
+                                    <option value="rating-asc">Popularity (Low to High)</option>
+                                    <option value="rating-desc">Popularity (High to Low)</option>
+                                    {/*<option value="inapp-rating-asc">In-App Rating (Low to High)</option>*/}
+                                    {/*<option value="inapp-rating-desc">In-App Rating (High to Low)</option>*/}
                                 </select>
                             </div>
                             <div className="download-control">
