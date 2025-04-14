@@ -30,7 +30,6 @@ public class MovieModel implements MovieModelInterface {
         this.processedMovies = new ArrayList<>();
         this.defaultMovieSorterType = MovieSorterType.TITLE_ASC;
         fetchMovies(); // Optionally auto-fetch at startup
-        this.processedMovies = this.movies;
     }
 
     /** Fetch movie's data from TMDB api and ingest into movie's field.
@@ -83,7 +82,9 @@ public class MovieModel implements MovieModelInterface {
      */
     @Override
     public void searchByFilter(Map<MovieFilterType, Object> filtersStrategy) {
-        if (filtersStrategy == null) {
+        if (filtersStrategy == null || filtersStrategy.isEmpty()) {
+            this.processedMovies = this.movies;
+            sortMovieList(this.defaultMovieSorterType);
             return;
         }
 

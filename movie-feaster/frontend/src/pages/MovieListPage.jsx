@@ -70,39 +70,54 @@ const MovieListPage = () => {
             setError(null);
 
             try {
-                // Get the sort parameter from the query params
+                // Step 1: First perform search with filters
+                let searchEndpoint = `${BASE_URL}/api/movies/search`;
+
+                // Create search params without the sort parameter
+                const searchParams = new URLSearchParams();
+                queryParams.forEach((value, key) => {
+                    if (key !== 'sort' && value) {
+                        searchParams.append(key, value);
+                    }
+                });
+
+                // Add search params if they exist
+                if (searchParams.toString()) {
+                    searchEndpoint += `?${searchParams.toString()}`;
+                }
+
+                console.log('Fetching from search endpoint:', searchEndpoint);
+                const searchResponse = await fetch(searchEndpoint);
+
+                if (!searchResponse.ok) {
+                    throw new Error(`Failed to fetch movies: ${searchResponse.status} ${searchResponse.statusText}`);
+                }
+
+                let data = await searchResponse.json();
+
+                // Step 2: If sort parameter exists, sort the results
                 const sortParam = queryParams.get('sort');
-
-                // Decide which endpoint to use
-                let endpoint = `${BASE_URL}/api/movies/search`;
-
-                // If we have a sort parameter (and it's not 'default'), use the sort endpoint
                 if (sortParam && sortParam !== 'default') {
-                    // Convert from frontend sort format (title-asc) to backend format (title_asc)
                     const backendSortParam = sortParam.replace('-', '_');
-                    endpoint = `${BASE_URL}/api/movies/sort?sortType=${backendSortParam}`;
+                    const sortEndpoint = `${BASE_URL}/api/movies/sort?sortType=${backendSortParam}`;
 
-                    // For the sort endpoint, we need to include all the filter parameters as well
-                    // to maintain the filtered set of movies
-                    const filterKeys = ['title', 'director', 'cast', 'year', 'genre'];
-                    filterKeys.forEach(key => {
-                        const value = queryParams.get(key);
-                        if (value) {
-                            endpoint += `&${key}=${encodeURIComponent(value)}`;
+                    // Add any filter parameters to ensure consistency
+                    queryParams.forEach((value, key) => {
+                        if (key !== 'sort' && value) {
+                            searchParams.append(key, value);
                         }
                     });
-                } else if (queryParams.toString()) {
-                    // If we have query parameters but no sort, append them to the search endpoint
-                    endpoint += `?${queryParams}`;
+
+                    console.log('Fetching from sort endpoint:', sortEndpoint);
+                    const sortResponse = await fetch(sortEndpoint);
+
+                    if (sortResponse.ok) {
+                        data = await sortResponse.json();
+                    } else {
+                        console.error('Sort request failed, using unsorted results');
+                    }
                 }
 
-                const response = await fetch(endpoint);
-
-                if (!response.ok) {
-                    throw new Error(`Failed to fetch movies: ${response.status} ${response.statusText}`);
-                }
-
-                const data = await response.json();
                 setMovies(data);
                 setDisplayedMovies(data);
             } catch (networkErr) {
@@ -224,6 +239,23 @@ const MovieListPage = () => {
         // Remove the specified filter
         queryParams.delete(key);
 
+        // Check if there are any remaining filters
+        let hasRemainingFilters = false;
+        queryParams.forEach((value, paramKey) => {
+            if (paramKey !== 'sort' && value && value.trim() !== '') {
+                hasRemainingFilters = true;
+            }
+        });
+
+        // If no filters remain and we have a sort, keep the sort
+        // Otherwise, use the search endpoint without sort
+        if (!hasRemainingFilters) {
+            // Only keep sort if it exists, otherwise URL will be clean
+            if (!queryParams.has('sort')) {
+                queryParams.delete('sort');
+            }
+        }
+
         // Update the URL with the new query parameters
         navigate({
             pathname: location.pathname,
@@ -282,6 +314,7 @@ const MovieListPage = () => {
                                     onChange={handleSortChange}
                                     className="sort-select"
                                 >
+                                    <option value="default">Default</option>
                                     <option value="title-asc">Title (A-Z)</option>
                                     <option value="title-desc">Title (Z-A)</option>
                                     <option value="year-asc">Year (Oldest First)</option>
