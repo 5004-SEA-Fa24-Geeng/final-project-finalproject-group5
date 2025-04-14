@@ -90,9 +90,7 @@ public class MovieController implements MovieControllerInterface {
             filterStrategy.put(MovieFilterType.GENRE, parsedGenre.toString());
         }
 
-        // Use a clean search if we have filters, otherwise return all movies
-        boolean useNewFilter = !filterStrategy.isEmpty();
-        model.searchByFilter(useNewFilter, filterStrategy);
+        model.searchByFilter(filterStrategy);
 
         return model.getProcessedMovies();
     }
