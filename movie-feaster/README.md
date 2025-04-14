@@ -13,9 +13,9 @@ This project consists of:
 ### Prerequisites
 - Java 17+
 - Node.js 16+
-- Docker (optional)
 
 ### Running the Backend
+Create `.env` with TMDB_API_TOKEN
 
 ```bash
 cd backend
@@ -23,19 +23,12 @@ cd backend
 ```
 
 ### Running the Frontend
+Create `.env` with REACT_APP_API_BASE_URL=http://localhost:8080
 
 ```bash
 cd frontend
 npm install
 npm start
-```
-
-### Using Docker Compose (Optional)
-
-To run the entire application using Docker:
-
-```bash
-docker-compose up
 ```
 
 ## API Endpoints
@@ -47,9 +40,6 @@ docker-compose up
 
 ### Backend
 - Spring Boot
-- Spring Data JPA
-- H2 Database
 
 ### Frontend
 - React
-- Axios for API calls
