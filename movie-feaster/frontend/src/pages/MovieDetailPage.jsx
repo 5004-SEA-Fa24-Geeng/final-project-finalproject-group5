@@ -1,54 +1,62 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './MovieDetailPage.css';
 
 const MovieDetailPage = () => {
-    const BASE_URL = process.env.REACT_APP_API_BASE_URL;
+    // Constants
+    const BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 
+    // Hooks
     const { id } = useParams();
     const navigate = useNavigate();
+
+    // State
     const [movie, setMovie] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
-    // Separate states for comment and rating
     const [comment, setComment] = useState('');
     const [commentSubmitting, setCommentSubmitting] = useState(false);
-
     const [userRating, setUserRating] = useState(0);
     const [ratingSubmitting, setRatingSubmitting] = useState(false);
 
-    const fetchMovieDetails = async () => {
+    // Helper functions
+    const calculateAverageRating = useCallback((ratings) => {
+        if (!ratings || ratings.length === 0) return 0;
+        return ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length;
+    }, []);
+
+    const formatGenre = useCallback((genre) => {
+        if (!genre) return '';
+        const genreName = typeof genre === 'string' ? genre : (genre.name || '');
+        return genreName.replace(/_/g, ' ')
+            .toLowerCase()
+            .split(' ')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+    }, []);
+
+    // Data fetching
+    const fetchMovie = async () => {
         try {
             setLoading(true);
-
-            // Try to get all movies and filter by id
-            const response = await fetch(`${BASE_URL}/api/movies/search`);
+            const response = await fetch(`${BASE_URL}/api/movies/${id}`);
 
             if (!response.ok) {
-                throw new Error('Failed to fetch movies');
+                throw new Error('Failed to fetch movie details');
             }
 
-            const movies = await response.json();
-            const foundMovie = movies.find(movie => movie.id === parseInt(id));
-
-            if (!foundMovie) {
-                throw new Error('Movie not found');
-            }
-
-            setMovie(foundMovie);
+            const data = await response.json();
+            setMovie(data);
             setLoading(false);
         } catch (err) {
-            console.error('Error fetching movie:', err);
             setError(err.message);
             setLoading(false);
         }
     };
-
     useEffect(() => {
-        fetchMovieDetails();
+        fetchMovie();
     }, [id]);
-
+    // Event handlers
     const handleGoBack = () => {
         navigate(-1);
     };
@@ -72,19 +80,16 @@ const MovieDetailPage = () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(comment),
+                body: JSON.stringify({ comment }),
             });
 
             if (!response.ok) {
                 throw new Error('Failed to submit comment');
             }
 
-            // Clear the comment field after successful submission
             setComment('');
             alert('Comment submitted successfully!');
-
-            // Refresh movie data to get updated comments
-            await fetchMovieDetails();
+            await fetchMovie();
         } catch (err) {
             console.error('Error submitting comment:', err);
             alert('Failed to submit comment. Please try again.');
@@ -106,7 +111,7 @@ const MovieDetailPage = () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(userRating),
+                body: JSON.stringify({ rating: userRating }),
             });
 
             if (!response.ok) {
@@ -114,10 +119,7 @@ const MovieDetailPage = () => {
             }
 
             alert('Rating submitted successfully!');
-            setUserRating(0); // Reset rating input
-
-            // Refresh movie data to get updated ratings
-            await fetchMovieDetails();
+            await fetchMovie();
         } catch (err) {
             console.error('Error submitting rating:', err);
             alert('Failed to submit rating. Please try again.');
@@ -126,20 +128,7 @@ const MovieDetailPage = () => {
         }
     };
 
-    // Format genre for display
-    const formatGenre = (genre) => {
-        if (!genre) return '';
-
-        // Handle if genre is a string or an object
-        const genreName = typeof genre === 'string' ? genre : (genre.name || '');
-
-        return genreName.replace(/_/g, ' ')
-            .toLowerCase()
-            .split(' ')
-            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-            .join(' ');
-    };
-
+    // Render loading state
     if (loading) {
         return (
             <div className="movie-detail-page loading">
@@ -149,6 +138,7 @@ const MovieDetailPage = () => {
         );
     }
 
+    // Render error state
     if (error) {
         return (
             <div className="movie-detail-page error">
@@ -163,6 +153,7 @@ const MovieDetailPage = () => {
         );
     }
 
+    // Render not found state
     if (!movie) {
         return (
             <div className="movie-detail-page not-found">
@@ -175,6 +166,11 @@ const MovieDetailPage = () => {
         );
     }
 
+    // Calculate ratings for UI
+    const averageInAppRating = movie.InAppRating ?
+        calculateAverageRating(movie.InAppRating) : 0;
+
+    // Main render
     return (
         <div className="movie-detail-page">
             <button className="back-button" onClick={handleGoBack}>
@@ -182,13 +178,14 @@ const MovieDetailPage = () => {
             </button>
 
             <div className="movie-detail-container">
+                {/* Poster and Rating Section */}
                 <div className="movie-poster-section">
                     <div className="movie-poster">
                         {movie.imgUrl ? (
                             <img src={movie.imgUrl} alt={`${movie.title} poster`} />
                         ) : (
                             <div className="placeholder-poster">
-                                <span>{movie.title.charAt(0)}</span>
+                                <span>{movie.title ? movie.title.charAt(0) : 'M'}</span>
                             </div>
                         )}
                     </div>
@@ -216,9 +213,10 @@ const MovieDetailPage = () => {
                     </div>
                 </div>
 
+                {/* Movie Information Section */}
                 <div className="movie-info">
                     <h1 className="movie-title">
-                        {movie.title} <span className="movie-year">({movie.year})</span>
+                        {movie.title} {movie.year && <span className="movie-year">({movie.year})</span>}
                     </h1>
 
                     <div className="movie-meta">
@@ -240,13 +238,17 @@ const MovieDetailPage = () => {
                     </div>
 
                     <div className="movie-details">
+                        {/* Directors */}
                         <div className="detail-group">
                             <h3>Director{movie.directors && movie.directors.length > 1 ? 's' : ''}</h3>
-                            <p>{movie.directors && movie.directors.length > 0
-                                ? movie.directors.join(', ')
-                                : 'Not available'}</p>
+                            <p>
+                                {movie.directors && movie.directors.length > 0
+                                    ? movie.directors.join(', ')
+                                    : 'Not available'}
+                            </p>
                         </div>
 
+                        {/* Cast */}
                         {movie.castings && movie.castings.length > 0 && (
                             <div className="detail-group">
                                 <h3>Cast</h3>
@@ -258,12 +260,13 @@ const MovieDetailPage = () => {
                             </div>
                         )}
 
+                        {/* Overview */}
                         <div className="detail-group">
                             <h3>Overview</h3>
                             <p className="movie-description">{movie.overview || 'No description available.'}</p>
                         </div>
 
-                        {/* In-App User Ratings section */}
+                        {/* User Ratings */}
                         <div className="detail-group">
                             <h3>In-App User Ratings</h3>
                             <div className="user-ratings">
@@ -271,22 +274,24 @@ const MovieDetailPage = () => {
                                     <div>
                                         <div className="rating-summary">
                                             <span className="average-rating">
-                                                {(movie.InAppRating.reduce((sum, rating) => sum + rating, 0) / movie.InAppRating.length).toFixed(1)}
+                                                {averageInAppRating.toFixed(1)}
                                             </span>
                                             <div className="rating-stars">
-                                                {[1, 2, 3, 4, 5].map((star) => {
-                                                    const averageRating = movie.InAppRating.reduce((sum, rating) => sum + rating, 0) / movie.InAppRating.length;
-                                                    return (
-                                                        <span
-                                                            key={star}
-                                                            className={`star ${averageRating >= star ? 'filled' : ''}`}
-                                                        >
-                                                            ★
-                                                        </span>
-                                                    );
-                                                })}
+                                                {[1, 2, 3, 4, 5].map((star) => (
+                                                    <span
+                                                        key={star}
+                                                        className={`star ${
+                                                            averageInAppRating >= star - 0.25 ? 'filled' :
+                                                                averageInAppRating >= star - 0.75 ? 'half-filled' : ''
+                                                        }`}
+                                                    >
+                                                        ★
+                                                    </span>
+                                                ))}
                                             </div>
-                                            <span className="rating-count">({movie.InAppRating.length} {movie.InAppRating.length === 1 ? 'rating' : 'ratings'})</span>
+                                            <span className="rating-count">
+                                                ({movie.InAppRating.length} {movie.InAppRating.length === 1 ? 'rating' : 'ratings'})
+                                            </span>
                                         </div>
                                     </div>
                                 ) : (
@@ -295,7 +300,7 @@ const MovieDetailPage = () => {
                             </div>
                         </div>
 
-                        {/* Comments section */}
+                        {/* Comments */}
                         <div className="detail-group">
                             <h3>Comments</h3>
                             <div className="comments-section">
