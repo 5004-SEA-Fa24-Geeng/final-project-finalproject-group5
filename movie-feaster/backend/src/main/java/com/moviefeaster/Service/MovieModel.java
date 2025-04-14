@@ -87,7 +87,6 @@ public class MovieModel implements MovieModelInterface {
             return;
         }
 
-
         List<Movie> moviesToFilter = this.movies;
 
         this.processedMovies = MovieFilterFacilitator.filter(moviesToFilter, filtersStrategy);
