@@ -42,8 +42,8 @@ const MovieCard = ({ movie, onClick }) => {
                     <span className="movie-year">{movie.year}</span>
                     {movie.rating > 0 && (
                         <span className="movie-rating">
-                            <span className="star-icon">★</span>
-                            {movie.rating.toFixed(1)}
+                            <span className="popularity-icon">👥</span>
+                            {movie.rating.toFixed(0)}
                         </span>
                     )}
                 </div>
