@@ -4,6 +4,7 @@ import com.moviefeaster.Model.*;
 import com.moviefeaster.Service.MovieModel;
 import com.moviefeaster.Service.MovieParser;
 import com.moviefeaster.Utils.DataFormatter;
+import com.moviefeaster.Utils.MovieSorter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -64,11 +65,6 @@ public class MovieController implements MovieControllerInterface {
         Genre parsedGenre = inputProcessor.optionalParseGenre(genre);
 
         Map<MovieFilterType, Object> filterStrategy = new HashMap<>();
-
-        if (parsedTitle == null && parsedDirector == null &&
-                parsedCast == null && parsedYear == null && parsedGenre == null) {
-            return model.getMovies();
-        }
 
         if (parsedTitle != null && !parsedTitle.isEmpty()) {
             filterStrategy.put(MovieFilterType.TITLE_KEYWORD, parsedTitle);
