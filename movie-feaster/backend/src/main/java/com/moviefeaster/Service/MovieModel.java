@@ -30,6 +30,7 @@ public class MovieModel implements MovieModelInterface {
         this.processedMovies = new ArrayList<>();
         this.defaultMovieSorterType = MovieSorterType.TITLE_ASC;
         fetchMovies(); // Optionally auto-fetch at startup
+        this.processedMovies = this.movies;
     }
 
     /** Fetch movie's data from TMDB api and ingest into movie's field.
@@ -85,7 +86,11 @@ public class MovieModel implements MovieModelInterface {
         if (filtersStrategy == null) {
             return;
         }
-        this.processedMovies = MovieFilterFacilitator.filter(this.movies, filtersStrategy);
+
+
+        List<Movie> moviesToFilter = this.movies;
+
+        this.processedMovies = MovieFilterFacilitator.filter(moviesToFilter, filtersStrategy);
         sortMovieList(this.defaultMovieSorterType);
     }
 
@@ -103,6 +108,7 @@ public class MovieModel implements MovieModelInterface {
         if (this.processedMovies.isEmpty()) {
             this.processedMovies = this.movies;
         }
+
 
         List<Movie> moviesToFilter = newFilter ? this.movies : this.processedMovies;
         this.processedMovies = MovieFilterFacilitator.filter(moviesToFilter, filtersStrategy);

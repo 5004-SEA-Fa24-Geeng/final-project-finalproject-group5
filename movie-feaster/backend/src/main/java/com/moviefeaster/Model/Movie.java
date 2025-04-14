@@ -66,7 +66,7 @@ public class Movie {
         this.title = (title != null && !title.isBlank()) ? title : "Unknown Title";
         this.directors = (directors != null) ? directors : new ArrayList<>();
         this.year = (year > 1800) ? year : 0;
-        this.rating = (rating >= 0.0 && rating <= 10.0) ? rating : 0.0;
+        this.rating = (rating >= 0.0 && rating <= 10000.0) ? rating : 0.0;
         this.genres = (genres != null) ? genres : new ArrayList<>();
         this.overview = overview != null && !overview.isBlank() ? overview : "No Overview";
         this.castings = (castings != null) ? castings : new ArrayList<>();

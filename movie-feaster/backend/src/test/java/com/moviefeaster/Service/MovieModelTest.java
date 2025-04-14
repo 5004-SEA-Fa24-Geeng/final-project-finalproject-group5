@@ -73,10 +73,27 @@ class MovieModelTest {
     @Test
     void testSearchByFilter_withNewFilterFlag() {
         model.fetchMovies();
+
         Map<MovieFilterType, Object> filters = new HashMap<>();
-        filters.put(MovieFilterType.TITLE_KEYWORD, "The");
-        model.searchByFilter(true, filters);
+        filters.put(MovieFilterType.TITLE_KEYWORD, "3");
+
+        model.searchByFilter(filters);
         List<Movie> results = model.getProcessedMovies();
+
+        for (Movie result: results) {
+            System.out.println(result);
+        }
+
+        // --------
+        System.out.println("new");
+
+        Map<MovieFilterType, Object> filters1 = new HashMap<>();
+        model.searchByFilter(filters);
+        List<Movie> results1 = model.getProcessedMovies();
+
+        for (Movie result1: results1) {
+            System.out.println(result1);
+        }
         assertNotNull(results);
     }
 

@@ -23,10 +23,6 @@ public class MovieFilterFacilitator {
      * @return list of movies that match the applied filters
      */
     public static List<Movie> filter(List<Movie> movies, Map<MovieFilterType, Object> filters) {
-        if (movies == null || filters == null || filters.isEmpty()) {
-            return movies != null ? new ArrayList<>(movies) : new ArrayList<>();
-        }
-
         List<Movie> result = new ArrayList<>(movies);
 
         for (Map.Entry<MovieFilterType, Object> entry : filters.entrySet()) {
