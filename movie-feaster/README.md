@@ -34,7 +34,13 @@ npm start
 ## API Endpoints
 
 - `GET /api/movies` - Get all movies
-- `GET /api/movies/{id}` - Get movie by ID
+- `GET /api/movies/{id}` - Get a movie by ID
+- `GET /api/movies/search` - Get filtered movies
+- `GET /api/movies/sort` - Get sorted and filtered movies
+- `GET /api/movies/export` - Retrieve the HTTP response containing the list of movies in the outputStream as a byte array
+- `GET /api/movies/genres` - Get all genre types
+- `POST /api/movies/{movieId}/comment` - Update user comment
+- `POST /api/movies/{movieId}/rating` - Update user In-App rating
 
 ## Technologies Used
 
