@@ -132,20 +132,34 @@ class MovieModelInterface {
   +UpdateComments(int, String) void
   +UpdateRating(int, double) void
 }
-class MovieParser {
-  +getMoviesFromApi() List~Movie~
+class MovieParser { 
+    +getMoviesFromApi() List~Movie~
+    +getParsedMoviesSummary() Collection~MovieSummary~
 }
 class MovieFeasterApplication {
-  +main(String[]) void
+    +main(String[]) void
 }
 
 %% === UTILS ===
 class DataFormatter {
-  +write(Collection~Movie~, Format, OutputStream) void
+    +formatSingleMovie(Movie) String
+    +formatMovieList(Collection<Movie>) String
+    +write(Collection<Movie>, Format, OutputStream) void
+    -writeXmlData(Collection<Movie>, OutputStream) void
+    -writeJsonData(Collection<Movie>, OutputStream) void
+    -writeCsvData(Collection<Movie>, OutputStream) void
+    -joinDirectors(Movie) String
+    -joinGenres(Movie) String
+    -joinCastings(Movie) String
+    -joinComments(Movie) String
+    -formatCsvField(String) String
 }
 class MovieXMLWrapper {
-  +getMovie() Collection~Movie~
-  +setMovie(Collection~Movie~) void
+    -Collection<Movie> movie
+    +MovieXMLWrapper()
+    +MovieXMLWrapper(Collection<Movie>)
+    +getMovie() Collection<Movie>
+    +setMovie(Collection<Movie>) void
 }
 class NetUtil {
   +getTop50MoviesJson() InputStream
@@ -155,10 +169,31 @@ class MovieFilterFacilitator {
   +applyFilters(List~Movie~, Map~MovieFilterType, Object~) List~Movie~
 }
 class MovieFilter {
-  +filter(List~Movie~, MovieFilterType, Object) List~Movie~
+    -MovieFilter()
+    +filterByTitle(List<Movie>, String) List<Movie>
+    +filterByExactTitle(List<Movie>, String) List<Movie>
+    +filterByDirector(List<Movie>, String) List<Movie>
+    +filterByYear(List<Movie>, int) List<Movie>
+    +filterByYearRange(List<Movie>, int, int) List<Movie>
+    +filterByMinRating(List<Movie>, float) List<Movie>
+    +filterByMaxRating(List<Movie>, float) List<Movie>
+    +filterByGenre(List<Movie>, String) List<Movie>
+    +filterByActor(List<Movie>, String) List<Movie>
+    +filterByCommentKeyword(List<Movie>, String) List<Movie>
+    +filterByMinInAppRating(List<Movie>, double) List<Movie>
+    +combineAnd(List<Movie>, List<Movie>) List<Movie>
 }
 class MovieSorter {
-  +sort(List~Movie~, MovieSorterType) void
+    -MovieSorter()
+    +sortByTitle(List<Movie>) List<Movie>
+    +sortByTitleDescending(List<Movie>) List<Movie>
+    +sortByRating(List<Movie>) List<Movie>
+    +sortByRatingAscending(List<Movie>) List<Movie>
+    +sortByYear(List<Movie>) List<Movie>
+    +sortByYearAscending(List<Movie>) List<Movie>
+    +sortByInAppRating(List<Movie>) List<Movie>
+    +sortByInAppRatingAscending(List<Movie>) List<Movie>
+    +getTopN(List<Movie>, int) List<Movie>
 }
 
 %% === RELATIONSHIPS ===
@@ -173,6 +208,7 @@ MovieModel --> MovieModelInterface
 MovieModel --> MovieParser
 MovieModel --> MovieFilterFacilitator
 MovieModel --> MovieSorter
+MovieModel --> MovieFilter
 MovieModel --> Movie
 Movie --> Genre
 Movie --> Format
