@@ -210,6 +210,7 @@ MovieModel --> MovieFilterFacilitator
 MovieModel --> MovieSorter
 MovieModel --> MovieFilter
 MovieModel --> Movie
+MovieModel --> DataFormatter
 Movie --> Genre
 Movie --> Format
 MovieParser --> NetUtil
