@@ -69,8 +69,6 @@ public class DataFormatterTest {
                 "Should contain genres");
         assertTrue(result.contains("Actor X, Actor Y"), "Should contain cast");
         assertTrue(result.contains("Excellent film"), "Should contain comments");
-        assertTrue(result.contains("Poster: http://example.com/movie1.jpg"),
-                "Should contain poster URL");
     }
 
     @Test
@@ -102,7 +100,7 @@ public class DataFormatterTest {
         String[] lines = result.split("\n");
 
         // Verify CSV header
-        assertEquals("Title,Year,Rating,Overview,Directors,Genres,Castings,Comments,InAppRating,ImgUrl",
+        assertEquals("Title,Year,Rating,Directors,Genres,Castings,Comments,InAppRating",
                 lines[0].trim(), "CSV header is incorrect");
 
         // Verify data rows

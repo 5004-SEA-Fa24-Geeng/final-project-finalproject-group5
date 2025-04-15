@@ -12,9 +12,9 @@ class MovieParserTest {
     void getParsedMovies() {
         List<Movie> parsedMovies = MovieParser.getMoviesFromApi();
 
-        for (Movie movie : parsedMovies) {
-            System.out.println(movie);
-        }
+//        for (Movie movie : parsedMovies) {
+//            System.out.println(movie);
+//        }
 
         assertNotNull(parsedMovies, "Parsed movies should not be null");
         assertFalse(parsedMovies.isEmpty(), "Parsed movies list should not be empty");
