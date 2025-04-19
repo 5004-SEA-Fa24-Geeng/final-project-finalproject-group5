@@ -358,9 +358,9 @@ const MovieListPage = () => {
                         <div className="movie-grid">
                             {displayedMovies.map(movie => (
                                 <MovieCard
-                                    key={movie.id}
+                                    key={movie.movieId}
                                     movie={movie}
-                                    onClick={() => handleMovieClick(movie.id)}
+                                    onClick={() => handleMovieClick(movie.movieId)}
                                 />
                             ))}
                         </div>

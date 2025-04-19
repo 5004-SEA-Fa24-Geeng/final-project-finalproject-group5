@@ -1,6 +1,6 @@
-package com.moviefeaster.Controller;
+package com.moviefeaster.controller;
 
-import com.moviefeaster.Model.*;
+import com.moviefeaster.model.*;
 
 /**
  * Interface for parsing and validating user input from the view
@@ -30,7 +30,7 @@ public interface InputProcessorInterface {
      * @param input The raw user input.
      * @return Trimmed cast name or null.
      */
-    public String optionalParseCast(String input);
+    String optionalParseCast(String input);
 
     /**
      * Parses and validates the year input.

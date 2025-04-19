@@ -1,7 +1,7 @@
-package com.moviefeaster.Utils;
+package com.moviefeaster.utils;
 
-import com.moviefeaster.Model.*;
-import com.moviefeaster.Service.*;
+import com.moviefeaster.model.*;
+import com.moviefeaster.service.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collection;

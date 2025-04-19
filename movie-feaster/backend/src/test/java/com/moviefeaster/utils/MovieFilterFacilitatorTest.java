@@ -1,8 +1,8 @@
-package com.moviefeaster.Utils;
+package com.moviefeaster.utils;
 
-import com.moviefeaster.Model.Genre;
-import com.moviefeaster.Model.Movie;
-import com.moviefeaster.Model.MovieFilterType;
+import com.moviefeaster.model.Genre;
+import com.moviefeaster.model.Movie;
+import com.moviefeaster.model.MovieFilterType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

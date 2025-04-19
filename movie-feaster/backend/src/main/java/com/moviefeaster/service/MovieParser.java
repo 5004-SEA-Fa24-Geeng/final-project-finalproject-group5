@@ -1,12 +1,14 @@
-package com.moviefeaster.Service;
+package com.moviefeaster.service;
 
-import com.moviefeaster.Model.*;
-import com.moviefeaster.Utils.*;
+import com.moviefeaster.model.*;
+import com.moviefeaster.utils.*;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,14 +21,16 @@ import java.util.*;
 @Service
 public final class MovieParser {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(MovieParser.class);
+
     /** The deserialized and cleaned list of Movies. */
-    private static List<Movie> movies = new ArrayList<>();
+    private static final List<Movie> movies = new ArrayList<>();
 
     /** The placeholder class for original JSON structure */
     private static List<MovieSummary> moviesSummary;
 
     /** The number of movies we're trying to parse */
-    private static final int numberOfMovies = 200;
+    private static final int NUMBER_OF_MOVIES = 200;
 
     /** The root image URL to TMDB poster. */
     private static final String IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
@@ -40,7 +44,7 @@ public final class MovieParser {
             parseMovies();
             cleanMovieSummary();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("Failed to parse movies from API", e);
         }
         return movies;
     }
@@ -58,19 +62,17 @@ public final class MovieParser {
      */
     private static void parseMovies() {
         try (InputStream jsonStream = NetUtil.getTop50MoviesJson()) {
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode root = mapper.readTree(jsonStream);
+            final ObjectMapper mapper = new ObjectMapper();
+            final JsonNode root = mapper.readTree(jsonStream);
 
             if (root.isArray()) {
-                // JSON is a raw array
                 moviesSummary = mapper.readerForListOf(MovieSummary.class).readValue(root);
             } else {
-                // JSON has a "results" wrapper
-                JsonNode results = root.path("results");
+                final JsonNode results = root.path("results");
                 moviesSummary = mapper.readerForListOf(MovieSummary.class).readValue(results);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("Error while parsing movie summary", e);
             moviesSummary = Collections.emptyList();
         }
     }
@@ -80,61 +82,57 @@ public final class MovieParser {
      * @throws IOException If the NetUtil unable to connect TMDB api to acquire a crew list by ID.
      */
     private static void cleanMovieSummary() throws IOException {
-        for (MovieSummary movie : moviesSummary) {
-            int MovieID = movie.getMovieID();
-            String title = movie.getTitle();
+        for (final MovieSummary movie : moviesSummary) {
+            final int movieId = movie.getMovieID();
+            final String title = movie.getTitle();
 
-            // Parsing the year from the date form
-            String releaseDate = movie.getReleaseDate();
-            LocalDate date = LocalDate.parse(releaseDate);
-            int year = date.getYear();
+            final String releaseDate = movie.getReleaseDate();
+            final LocalDate date = LocalDate.parse(releaseDate);
+            final int year = date.getYear();
 
-            List<Genre> genre = convertGenreIds(movie.getGenreID());
-            String overview = movie.getOverview();
-            List<String> directors = new ArrayList<>();
-            List<String> castings = new ArrayList<>();
-            double rating = movie.getRating();
-            String imgUrl = IMAGE_BASE_URL + movie.getPosterPath();
+            final List<Genre> genre = convertGenreIds(movie.getGenreID());
+            final String overview = movie.getOverview();
+            final List<String> directors = new ArrayList<>();
+            final List<String> castings = new ArrayList<>();
+            final double rating = movie.getRating();
+            final String imgUrl = IMAGE_BASE_URL + movie.getPosterPath();
 
-            // Map crew (directors and castings).
-            InputStream crewJson = NetUtil.getCrewJsonStream(movie.getMovieID()); // movie ID
-            if (crewJson != null) {
-                ObjectMapper mapper = new ObjectMapper();
-                JsonNode root = mapper.readTree(crewJson);
+            try (InputStream crewJson = NetUtil.getCrewJsonStream(movie.getMovieID())) {
+                if (crewJson != null) {
+                    final ObjectMapper mapper = new ObjectMapper();
+                    final JsonNode root = mapper.readTree(crewJson);
 
-                JsonNode crewArray = root.get("crew");
-                for (JsonNode member : crewArray) {
-                    if ("Director".equals(member.get("job").asText())) {
-                        directors.add(member.get("name").asText());
+                    final JsonNode crewArray = root.get("crew");
+                    for (final JsonNode member : crewArray) {
+                        if ("Director".equals(member.get("job").asText())) {
+                            directors.add(member.get("name").asText());
+                        }
+                    }
+
+                    final JsonNode castArray = root.get("cast");
+                    for (final JsonNode actor : castArray) {
+                        final String actorName = actor.get("name").asText();
+                        castings.add(actorName);
                     }
                 }
-
-                // Cast
-                JsonNode castArray = root.get("cast");
-                for (JsonNode actor : castArray) {
-                    String actorName = actor.get("name").asText();
-                    castings.add(actorName);
-                }
-
             }
-            movies.add(new Movie(MovieID, title, directors, year, rating, genre, overview, castings, imgUrl));
 
-            // Break if we've reached our target number of movies
-            if (movies.size() >= numberOfMovies) {
+            movies.add(new Movie(movieId, title, directors, year, rating, genre, overview, castings, imgUrl));
+
+            if (movies.size() >= NUMBER_OF_MOVIES) {
                 break;
             }
         }
     }
 
-    /** Converts genre IDs into a list of Genre enums.
-     * @param genreIds the set of genreID that need to be coverted.
-     * @return the list of Genre that is converted.
-     */
-    private static List<Genre> convertGenreIds(Set<Integer> genreIds) {
-        List<Genre> genres = new ArrayList<>();
-        for (Integer id : genreIds) {
-            Genre g = Genre.fromId(id);
-            if (g != null) genres.add(g);
+    /** Converts genre IDs into a list of Genre enums. */
+    private static List<Genre> convertGenreIds(final Set<Integer> genreIds) {
+        final List<Genre> genres = new ArrayList<>();
+        for (final Integer id : genreIds) {
+            final Genre genre = Genre.fromId(id);
+            if (genre != null) {
+                genres.add(genre);
+            }
         }
         return genres;
     }
@@ -164,130 +162,59 @@ public final class MovieParser {
         @JsonProperty("poster_path")
         private String posterPath;
 
-
-        /**
-         * Gets the movie ID.
-         *
-         * @return the movie ID
-         */
         public int getMovieID() {
             return movieID;
         }
 
-        /**
-         * Sets the movie ID.
-         *
-         * @param movieID the movie ID to set
-         */
-        public void setMovieID(int movieID) {
+        public void setMovieID(final int movieID) {
             this.movieID = movieID;
         }
 
-        /**
-         * Gets the title of the movie.
-         *
-         * @return the movie title
-         */
         public String getTitle() {
             return title;
         }
 
-        /**
-         * Sets the title of the movie.
-         *
-         * @param title the movie title to set
-         */
-        public void setTitle(String title) {
+        public void setTitle(final String title) {
             this.title = title;
         }
 
-        /**
-         * Gets the overview of the movie.
-         *
-         * @return the movie overview
-         */
         public String getOverview() {
             return overview;
         }
 
-        /**
-         * Sets the overview of the movie.
-         *
-         * @param overview the movie overview to set
-         */
-        public void setOverview(String overview) {
+        public void setOverview(final String overview) {
             this.overview = overview;
         }
 
-        /**
-         * Gets the release date of the movie.
-         *
-         * @return the release date as a string
-         */
         public String getReleaseDate() {
             return releaseDate;
         }
 
-        /**
-         * Sets the release date of the movie.
-         *
-         * @param releaseDate the release date to set
-         */
-        public void setReleaseDate(String releaseDate) {
+        public void setReleaseDate(final String releaseDate) {
             this.releaseDate = releaseDate;
         }
 
-        /**
-         * Gets the popularity rating of the movie.
-         *
-         * @return the popularity rating as a double
-         */
         public double getRating() {
             return rating;
         }
 
-        /**
-         * Sets the popularity rating of the movie.
-         *
-         * @param rating the popularity rating to set
-         */
-        public void setRating(double rating) {
+        public void setRating(final double rating) {
             this.rating = rating;
         }
 
-        /**
-         * Gets the genre IDs associated with the movie.
-         *
-         * @return a set of genre IDs
-         */
         public Set<Integer> getGenreID() {
             return genreID;
         }
 
-        /**
-         * Sets the genre IDs associated with the movie.
-         *
-         * @param genreID a set of genre IDs to set
-         */
-        public void setGenreID(Set<Integer> genreID) {
+        public void setGenreID(final Set<Integer> genreID) {
             this.genreID = genreID;
         }
 
-        /**
-         * Gets the path to the movie poster.
-         *
-         * @return the poster path as a string
-         */
         public String getPosterPath() {
             return posterPath;
         }
 
-        /**
-         * Sets the path to the movie poster.
-         *
-         * @param posterPath the poster path to set
-         */
-        public void setPosterPath(String posterPath) {
+        public void setPosterPath(final String posterPath) {
             this.posterPath = posterPath;
         }
 
@@ -297,7 +224,7 @@ public final class MovieParser {
                     "movieID=" + movieID +
                     ", title='" + title + '\'' +
                     ", overview='" + overview + '\'' +
-                    ", releaseDate=" + releaseDate + '\'' +
+                    ", releaseDate='" + releaseDate + '\'' +
                     ", genreID=" + genreID +
                     ", posterPath='" + posterPath + '\'' +
                     '}';

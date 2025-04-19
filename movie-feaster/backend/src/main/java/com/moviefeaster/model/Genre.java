@@ -1,4 +1,4 @@
-package com.moviefeaster.Model;
+package com.moviefeaster.model;
 
 /**
  * Enum to represent genre. It conforms with the genre ID that movie data provided by api.
@@ -33,7 +33,7 @@ public enum Genre {
      *
      * @param id the TMDb genre ID associated with the genre.
      */
-    Genre(int id) {
+    Genre(final int id) {
         this.id = id;
     }
 
@@ -49,16 +49,18 @@ public enum Genre {
     /**
      * Retrieves the corresponding enum based on the provided genre ID.
      *
-     * @param id the TMDb genre ID
+     * @param genreId the TMDb genre ID
      * @return the corresponding enum, or null if no match is found
      */
-    public static Genre fromId(int id) {
-        for (Genre genre : values()) {
-            if (genre.id == id) {
-                return genre;
+    public static Genre fromId(final int genreId) {
+        Genre result = null;
+        for (final Genre genre : values()) {
+            if (genre.id == genreId) {
+                result = genre;
+                break;
             }
         }
-        return null;
+        return result;
     }
 
     /**
@@ -66,14 +68,16 @@ public enum Genre {
      * This comparison is case-sensitive and must match the enum name exactly.
      *
      * @param name the name of the genre (e.g., "ACTION", "DRAMA")
-     * @return the corresponding enum, or Null if no match is found.
+     * @return the corresponding enum, or null if no match is found.
      */
-    public static Genre fromName(String name) {
-        for (Genre genre : values()) {
+    public static Genre fromName(final String name) {
+        Genre result = null;
+        for (final Genre genre : values()) {
             if (genre.name().equals(name)) {
-                return genre;
+                result = genre;
+                break;
             }
         }
-        return null;
+        return result;
     }
 }

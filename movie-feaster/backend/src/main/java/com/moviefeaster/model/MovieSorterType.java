@@ -1,4 +1,4 @@
-package com.moviefeaster.Model;
+package com.moviefeaster.model;
 
 /**
  * Enum representing available movie sorting strategies.
@@ -13,7 +13,9 @@ public enum MovieSorterType {
     INAPP_RATING_ASC("inapp_rating_asc"),
     INAPP_RATING_DESC("inapp_rating_desc");
 
-    /** The string representation of the sorting type. */
+    /**
+     * The string representation of the sorting type.
+     */
     private final String value;
 
     /**
@@ -21,7 +23,7 @@ public enum MovieSorterType {
      *
      * @param value the string identifier for the sorting type
      */
-    MovieSorterType(String value) {
+    MovieSorterType(final String value) {
         this.value = value;
     }
 
@@ -40,12 +42,14 @@ public enum MovieSorterType {
      * @param value the string representation like "title_asc"
      * @return matching MovieSorterType or null if not found
      */
-    public static MovieSorterType fromValue(String value) {
-        for (MovieSorterType type : values()) {
+    public static MovieSorterType fromValue(final String value) {
+        MovieSorterType result = null;
+        for (final MovieSorterType type : values()) {
             if (type.value.equalsIgnoreCase(value)) {
-                return type;
+                result = type;
+                break;
             }
         }
-        return null;
+        return result;
     }
 }

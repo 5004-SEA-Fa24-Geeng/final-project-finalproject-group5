@@ -1,7 +1,5 @@
-package com.moviefeaster.Utils;
+package com.moviefeaster.utils;
 
-import com.moviefeaster.Service.*;
-import com.moviefeaster.Utils.*;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;

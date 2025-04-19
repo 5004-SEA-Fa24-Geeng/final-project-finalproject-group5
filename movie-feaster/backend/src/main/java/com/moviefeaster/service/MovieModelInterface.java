@@ -1,8 +1,7 @@
-package com.moviefeaster.Service;
+package com.moviefeaster.service;
 
-import com.moviefeaster.Model.*;
+import com.moviefeaster.model.*;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -33,14 +32,13 @@ public interface MovieModelInterface {
      * @param movieID ID of movie that the comments are given.
      * @param comment comments.
      */
-    void UpdateComments(int movieID, String comment);
+    void updateComments(final int movieID, final String comment);
 
     /**
      * Update in-App rating with given rating.
      * @param movieID ID of movie that the rating is given.
      * @param rating rating from user.
      */
-    void UpdateRating(int movieID, double rating);
-
+    void updateRating(final int movieID, final double rating);
 
 }

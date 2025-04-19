@@ -1,20 +1,22 @@
-package com.moviefeaster.Utils;
+package com.moviefeaster.utils;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Collection;
 import javax.annotation.Nonnull;
+import java.util.logging.Logger;
 
-import com.moviefeaster.Model.*;
+import com.moviefeaster.model.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.moviefeaster.Utils.MovieXMLWrapper;
 
 /**
  * A class to format movie data in different ways.
  */
 public final class DataFormatter {
+
+    private static final Logger logger = Logger.getLogger(DataFormatter.class.getName());
 
     /**
      * Private constructor to prevent instantiation.
@@ -23,68 +25,64 @@ public final class DataFormatter {
         // empty
     }
 
-
     /**
      * Format a single movie record as a human-readable string.
      *
      * @param movie the movie to format
      * @return formatted string of the movie data
      */
-    public static String formatSingleMovie(@Nonnull Movie movie) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("\nTitle: ").append(movie.getTitle()).append("\n");
-        sb.append("Year: ").append(movie.getYear()).append("\n");
-        sb.append("Rating: ").append(movie.getRating()).append("\n");
+    public static String formatSingleMovie(final @Nonnull Movie movie) {
+        final StringBuilder descriptionBuilder = new StringBuilder();
+        descriptionBuilder.append("\nTitle: ").append(movie.getTitle()).append("\n");
+        descriptionBuilder.append("Year: ").append(movie.getYear()).append("\n");
+        descriptionBuilder.append("Rating: ").append(movie.getRating()).append("\n");
 
         // Format directors
-        sb.append("Directors: ");
+        descriptionBuilder.append("Directors: ");
         if (movie.getDirectors().isEmpty()) {
-            sb.append("Unknown\n");
+            descriptionBuilder.append("Unknown\n");
         } else {
-            sb.append(String.join(", ", movie.getDirectors())).append("\n");
+            descriptionBuilder.append(String.join(", ", movie.getDirectors())).append("\n");
         }
 
         // Format genres
-        sb.append("Genres: ");
+        descriptionBuilder.append("Genres: ");
         if (movie.getGenres().isEmpty()) {
-            sb.append("Unknown\n");
+            descriptionBuilder.append("Unknown\n");
         } else {
-            StringBuilder genreBuilder = new StringBuilder();
-            boolean first = true;
-            for (Genre genre : movie.getGenres()) {
-                if (!first) {
+            final StringBuilder genreBuilder = new StringBuilder();
+            boolean isFirstGenre = true;
+            for (final Genre genre : movie.getGenres()) {
+                if (!isFirstGenre) {
                     genreBuilder.append(", ");
                 }
-                first = false;
+                isFirstGenre = false;
                 genreBuilder.append(genre.toString());
             }
-            sb.append(genreBuilder.toString()).append("\n");
+            descriptionBuilder.append(genreBuilder).append("\n");
         }
 
         // Format castings
-        sb.append("Cast: ");
+        descriptionBuilder.append("Cast: ");
         if (movie.getCastings().isEmpty()) {
-            sb.append("Unknown\n");
+            descriptionBuilder.append("Unknown\n");
         } else {
-            sb.append(String.join(", ", movie.getCastings())).append("\n");
+            descriptionBuilder.append(String.join(", ", movie.getCastings())).append("\n");
         }
 
         // Format comments
         if (!movie.getComments().isEmpty()) {
-            sb.append("Comments:\n");
-            for (String comment : movie.getComments()) {
-                sb.append("  - ").append(comment).append("\n");
+            descriptionBuilder.append("Comments:\n");
+            for (final String comment : movie.getComments()) {
+                descriptionBuilder.append("  - ").append(comment).append("\n");
             }
         }
 
-        // Format app rating
-        sb.append("App Rating: ").append(movie.getInAppRating()).append(" ")
-                .append("(Total ratings: ").append(movie.getInAppRating()).append(")\n");
+        descriptionBuilder.append("App Rating: ").append(movie.getInAppRating())
+                .append(" (Total ratings: ").append(movie.getInAppRating()).append(")\n");
 
-
-        return sb.toString();  // Return the formatted movie data as a string
+        return descriptionBuilder.toString();
     }
-
 
     /**
      * Format a collection of movies as a human-readable string.
@@ -92,66 +90,40 @@ public final class DataFormatter {
      * @param movies the movies to format
      * @return formatted string of the movie list
      */
-    public static String formatMovieList(Collection<Movie> movies) {
-        StringBuilder sb = new StringBuilder();
-        for (Movie movie : movies) {
-            sb.append(formatSingleMovie(movie));  // Use formatSingleMovie for each movie
-            sb.append("-------------------\n");
+    public static String formatMovieList(final Collection<Movie> movies) {
+        final StringBuilder movieListBuilder = new StringBuilder();
+        for (final Movie movie : movies) {
+            movieListBuilder.append(formatSingleMovie(movie));
+            movieListBuilder.append("-------------------\n");
         }
-        return sb.toString();  // Return the formatted movie list as a string
+        return movieListBuilder.toString();
     }
 
-
-    /**
-     * Write the movie data as XML.
-     * Uses XmlMapper to wrap movies into XMLWrapper objects.
-     *
-     * @param movies the movies to write
-     * @param out the output stream to write to
-     */
-    private static void writeXmlData(Collection<Movie> movies, OutputStream out) {
+    private static void writeXmlData(final Collection<Movie> movies, final OutputStream outputStream) {
         try {
-            XmlMapper mapper = new XmlMapper();
-            MovieXMLWrapper wrapper = new MovieXMLWrapper(movies);
-            mapper.writerWithDefaultPrettyPrinter().writeValue(out, wrapper);
-        } catch (Exception e) {
-            System.err.println("Error writing XML data: " + e.getMessage());
+            final XmlMapper mapper = new XmlMapper();
+            final MovieXMLWrapper wrapper = new MovieXMLWrapper(movies);
+            mapper.writerWithDefaultPrettyPrinter().writeValue(outputStream, wrapper);
+        } catch (final Exception e) {
+            logger.severe("Error writing XML data: " + e.getMessage());
         }
     }
 
-
-    /**
-     * Write the movie data as JSON.
-     * Uses ObjectMapper to serialize movies directly to JSON.
-     *
-     * @param movies the movies to write
-     * @param out the output stream to write to
-     */
-    private static void writeJsonData(Collection<Movie> movies, OutputStream out) {
+    private static void writeJsonData(final Collection<Movie> movies, final OutputStream outputStream) {
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.writerWithDefaultPrettyPrinter().writeValue(out, movies);
-        } catch (Exception e) {
-            System.err.println("Error writing JSON data: " + e.getMessage());
+            final ObjectMapper mapper = new ObjectMapper();
+            mapper.writerWithDefaultPrettyPrinter().writeValue(outputStream, movies);
+        } catch (final Exception e) {
+            logger.severe("Error writing JSON data: " + e.getMessage());
         }
     }
 
+    private static void writeCsvData(final Collection<Movie> movies, final OutputStream outputStream) {
+        final PrintStream printStream = new PrintStream(outputStream);
+        printStream.println("Title,Year,Rating,Directors,Genres,Castings,Comments,InAppRating");
 
-    /**
-     * Write the movie data as CSV.
-     *
-     * @param movies the movies to write
-     * @param out the output stream to write to
-     */
-    private static void writeCsvData(Collection<Movie> movies, OutputStream out) {
-        PrintStream pout = new PrintStream(out);
-
-        // Write header
-        pout.println("Title,Year,Rating,Directors,Genres,Castings,Comments,InAppRating");
-
-        // Write movie records
-        for (Movie movie : movies) {
-            pout.printf("%s,%d,%.1f,%s,%s,%s,%s,%.1f%n",
+        for (final Movie movie : movies) {
+            printStream.printf("%s,%d,%.1f,%s,%s,%s,%s,%.1f%n",
                     formatCsvField(movie.getTitle()),
                     movie.getYear(),
                     movie.getRating(),
@@ -163,56 +135,39 @@ public final class DataFormatter {
         }
     }
 
-    /**
-     * Join directors into a semicolon-separated string.
-     */
-    private static String joinDirectors(Movie movie) {
+    private static String joinDirectors(final Movie movie) {
         return String.join("; ", movie.getDirectors());
     }
 
-    /**
-     * Join genres into a semicolon-separated string.
-     */
-    private static String joinGenres(Movie movie) {
-        StringBuilder result = new StringBuilder();
-        boolean first = true;
-        for (Genre genre : movie.getGenres()) {
-            if (!first) {
+    private static String joinGenres(final Movie movie) {
+        final StringBuilder result = new StringBuilder();
+        boolean isFirst = true;
+        for (final Genre genre : movie.getGenres()) {
+            if (!isFirst) {
                 result.append("; ");
             }
-            first = false;
+            isFirst = false;
             result.append(genre.toString());
         }
         return result.toString();
     }
 
-    /**
-     * Join castings into a semicolon-separated string.
-     */
-    private static String joinCastings(Movie movie) {
+    private static String joinCastings(final Movie movie) {
         return String.join("; ", movie.getCastings());
     }
 
-    /**
-     * Join comments into a semicolon-separated string.
-     */
-    private static String joinComments(Movie movie) {
+    private static String joinComments(final Movie movie) {
         return String.join("; ", movie.getComments());
     }
 
-    /**
-     * Format CSV fields and handle special characters.
-     *
-     * @param field the CSV field to format
-     * @return formatted CSV field
-     */
-    private static String formatCsvField(String field) {
+    private static String formatCsvField(final String input) {
+        String field = input;
         if (field == null) {
             return "";
         }
         if (field.contains(",") || field.contains("\"") || field.contains("\n")) {
-            field = field.replace("\"", "\"\"");
-            return "\"" + field + "\"";
+            final String escaped = field.replace("\"", "\"\"");
+            return "\"" + escaped + "\"";
         }
         return field;
     }
@@ -222,30 +177,29 @@ public final class DataFormatter {
      *
      * @param movies the movies to write
      * @param format the format to write the movies in
-     * @param out the output stream to write to
+     * @param outputStream the output stream to write to
      */
-    public static void write(@Nonnull Collection<Movie> movies, @Nonnull Format format,
-                             @Nonnull OutputStream out) {
+    public static void write(final @Nonnull Collection<Movie> movies,
+                             final @Nonnull Format format,
+                             final @Nonnull OutputStream outputStream) {
         switch (format) {
             case XML:
-                writeXmlData(movies, out);
+                writeXmlData(movies, outputStream);
                 break;
             case JSON:
-                writeJsonData(movies, out);
+                writeJsonData(movies, outputStream);
                 break;
             case CSV:
-                writeCsvData(movies, out);
+                writeCsvData(movies, outputStream);
                 break;
             default:
-                String formattedMovies = formatMovieList(movies);
-                try (PrintStream ps = new PrintStream(out)) {
-                    ps.print(formattedMovies);
-                } catch (Exception e) {
-                    System.err.println("Error writing formatted data: " + e.getMessage());
+                final String formattedMovies = formatMovieList(movies);
+                try (PrintStream printStream = new PrintStream(outputStream)) {
+                    printStream.print(formattedMovies);
+                } catch (final Exception e) {
+                    logger.severe("Error writing formatted data: " + e.getMessage());
                 }
                 break;
         }
     }
 }
-
-

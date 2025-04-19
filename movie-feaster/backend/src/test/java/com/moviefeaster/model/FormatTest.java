@@ -1,4 +1,4 @@
-package com.moviefeaster.Model;
+package com.moviefeaster.model;
 
 import org.junit.jupiter.api.Test;
 

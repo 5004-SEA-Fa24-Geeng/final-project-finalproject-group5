@@ -1,6 +1,4 @@
-package com.moviefeaster.Model;
-
-import com.moviefeaster.Model.*;
+package com.moviefeaster.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +9,7 @@ import java.util.List;
 public class Movie {
 
     /** ID of the movie */
-    private int id;
+    private int movieId;
 
     /** Title of the movie */
     private String title;
@@ -38,18 +36,17 @@ public class Movie {
     private List<String> comments;
 
     /** In-App rating information provided by users*/
-    private List<Double> InAppRating;
+    private List<Double> inAppRating;
 
     /** URL movie's poster. */
     private String imgUrl;
-
 
     /**
      * Constructs a Movie instance with the given details with safeguard.
      * If the information is unable to be acquired from api. It will be constructed
      * with default value.
      *
-     * @param id             ID of the movie
+     * @param movieId        ID of the movie
      * @param title          Title of the movie
      * @param directors      List of directors
      * @param year           Year the movie was released
@@ -59,20 +56,20 @@ public class Movie {
      * @param castings       List of cast members
      * @param imgUrl         URL of movie's poster
      */
-    public Movie(int id, String title, List<String> directors, int year, double rating,
-                 List<Genre> genres, String overview, List<String> castings, String imgUrl) {
-        // The ID is a primary key. Cannot be null.
-        this.id = id;
-        this.title = (title != null && !title.isBlank()) ? title : "Unknown Title";
-        this.directors = (directors != null) ? directors : new ArrayList<>();
-        this.year = (year > 1800) ? year : 0;
-        this.rating = (rating >= 0.0 && rating <= 10000.0) ? rating : 0.0;
-        this.genres = (genres != null) ? genres : new ArrayList<>();
+    public Movie(final int movieId, final String title, final List<String> directors, final int year,
+                 final double rating, final List<Genre> genres, final String overview,
+                 final List<String> castings, final String imgUrl) {
+        this.movieId = movieId;
+        this.title = title != null && !title.isBlank() ? title : "Unknown Title";
+        this.directors = directors != null ? directors : new ArrayList<>();
+        this.year = year > 1800 ? year : 0;
+        this.rating = rating >= 0.0 && rating <= 10_000.0 ? rating : 0.0;
+        this.genres = genres != null ? genres : new ArrayList<>();
         this.overview = overview != null && !overview.isBlank() ? overview : "No Overview";
-        this.castings = (castings != null) ? castings : new ArrayList<>();
+        this.castings = castings != null ? castings : new ArrayList<>();
         this.comments = new ArrayList<>();
-        this.InAppRating = new ArrayList<>();
-        this.imgUrl = (imgUrl != null) ? imgUrl : "";
+        this.inAppRating = new ArrayList<>();
+        this.imgUrl = imgUrl != null ? imgUrl : "";
     }
 
     /**
@@ -80,17 +77,17 @@ public class Movie {
      *
      * @return the movie ID
      */
-    public int getId() {
-        return id;
+    public int getMovieId() {
+        return movieId;
     }
 
     /**
      * Sets the ID of the movie.
      *
-     * @param id the movie ID to set
+     * @param movieId the movie ID to set
      */
-    public void setId(int id) {
-        this.id = id;
+    public void setMovieId(final int movieId) {
+        this.movieId = movieId;
     }
 
     /**
@@ -107,7 +104,7 @@ public class Movie {
      *
      * @param title The movie title. Must not be blank.
      */
-    public void setTitle(String title) {
+    public void setTitle(final String title) {
         if (title != null && !title.isBlank()) {
             this.title = title;
         }
@@ -127,8 +124,8 @@ public class Movie {
      *
      * @param directors A list of directors. Null list will be replaced with an empty list.
      */
-    public void setDirectors(List<String> directors) {
-        this.directors = (directors != null) ? directors : new ArrayList<>();
+    public void setDirectors(final List<String> directors) {
+        this.directors = directors != null ? directors : new ArrayList<>();
     }
 
     /**
@@ -145,7 +142,7 @@ public class Movie {
      *
      * @param year Release year (must be > 1800 to be accepted).
      */
-    public void setYear(int year) {
+    public void setYear(final int year) {
         if (year > 1800) {
             this.year = year;
         }
@@ -165,7 +162,7 @@ public class Movie {
      *
      * @param rating Rating between 0.0 and 10.0.
      */
-    public void setRating(double rating) {
+    public void setRating(final double rating) {
         if (rating >= 0.0 && rating <= 10.0) {
             this.rating = rating;
         }
@@ -185,8 +182,8 @@ public class Movie {
      *
      * @param genres A list of genres. Null value will be replaced with an empty list.
      */
-    public void setGenres(List<Genre> genres) {
-        this.genres = (genres != null) ? genres : new ArrayList<>();
+    public void setGenres(final List<Genre> genres) {
+        this.genres = genres != null ? genres : new ArrayList<>();
     }
 
     /**
@@ -203,7 +200,7 @@ public class Movie {
      *
      * @param overview a brief summary or description of the movie
      */
-    public void setOverview(String overview) {
+    public void setOverview(final String overview) {
         this.overview = overview;
     }
 
@@ -221,8 +218,8 @@ public class Movie {
      *
      * @param castings A list of cast members. Null list will be replaced with an empty list.
      */
-    public void setCastings(List<String> castings) {
-        this.castings = (castings != null) ? castings : new ArrayList<>();
+    public void setCastings(final List<String> castings) {
+        this.castings = castings != null ? castings : new ArrayList<>();
     }
 
     /**
@@ -239,15 +236,16 @@ public class Movie {
      *
      * @param comments A list of comments. Null list will be replaced with an empty list.
      */
-    public void setComments(List<String> comments) {
-        this.comments = (comments != null) ? comments : new ArrayList<>();
+    public void setComments(final List<String> comments) {
+        this.comments = comments != null ? comments : new ArrayList<>();
     }
 
     /**
      * Add a single comment to the user comments.
+     *
      * @param comment comment to add.
      */
-    public void addComment(String comment) {
+    public void addComment(final String comment) {
         this.comments.add(comment);
     }
 
@@ -257,23 +255,24 @@ public class Movie {
      * @return A list of in-app ratings.
      */
     public double getInAppRating() {
-        if (InAppRating.isEmpty()) {
-            return 0.0;
+        double average = 0.0;
+        if (!inAppRating.isEmpty()) {
+            double sum = 0.0;
+            for (final Double rating : inAppRating) {
+                sum += rating;
+            }
+            average = sum / inAppRating.size();
         }
-        double sum = 0;
-        for (Double rating : InAppRating) {
-            sum += rating;
-        }
-        return sum / InAppRating.size();
+        return average;
     }
 
     /**
      * Resets the list of in-app ratings.
      *
-     * @param inAppRating A list of in-app ratings. Null list will be replaced with an empty list.
+     * @param ratings A list of in-app ratings. Null list will be replaced with an empty list.
      */
-    public void setInAppRating(List<Double> inAppRating) {
-        this.InAppRating = (inAppRating != null) ? inAppRating : new ArrayList<>();
+    public void setInAppRating(final List<Double> ratings) {
+        this.inAppRating = ratings != null ? ratings : new ArrayList<>();
     }
 
     /**
@@ -281,8 +280,8 @@ public class Movie {
      *
      * @param rating Rating to add.
      */
-    public void addInAppRating(Double rating) {
-        this.InAppRating.add(rating);
+    public void addInAppRating(final Double rating) {
+        this.inAppRating.add(rating);
     }
 
     /**
@@ -299,25 +298,24 @@ public class Movie {
      *
      * @param imgUrl The image URL. Null value will be replaced with an empty string.
      */
-    public void setImgUrl(String imgUrl) {
-        this.imgUrl = (imgUrl != null) ? imgUrl : "";
+    public void setImgUrl(final String imgUrl) {
+        this.imgUrl = imgUrl != null ? imgUrl : "";
     }
 
     @Override
     public String toString() {
-        return "Movie{" +
-                "id=" + id + ", " +
-                "title='" + title + '\'' +
-                ", directors=" + directors +
-                ", year=" + year +
-                ", rating=" + rating +
-                ", genres=" + genres +
-                ", castings=" + castings +
-                ", comments=" + comments +
-                ", InAppRating=" + InAppRating +
-                ", updatedAverageInAppRating=" + getInAppRating() +
-                ", imgUrl='" + imgUrl + '\'' +
-                '}';
+        return "Movie{"
+                + "movieId=" + movieId
+                + ", title='" + title + '\''
+                + ", directors=" + directors
+                + ", year=" + year
+                + ", rating=" + rating
+                + ", genres=" + genres
+                + ", castings=" + castings
+                + ", comments=" + comments
+                + ", inAppRating=" + inAppRating
+                + ", updatedAverageInAppRating=" + getInAppRating()
+                + ", imgUrl='" + imgUrl + '\''
+                + '}';
     }
-
 }

@@ -1,8 +1,8 @@
-package com.moviefeaster.Utils;
+package com.moviefeaster.utils;
 
 import java.util.Collection;
 
-import com.moviefeaster.Model.Movie;
+import com.moviefeaster.model.Movie;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import org.springframework.stereotype.Service;
@@ -32,7 +32,7 @@ public class MovieXMLWrapper {
      *
      * @param movies the collection of movies to wrap
      */
-    public MovieXMLWrapper(Collection<Movie> movies) {
+    public MovieXMLWrapper(final Collection<Movie> movies) {
         this.movie = movies;
     }
 
@@ -50,7 +50,7 @@ public class MovieXMLWrapper {
      *
      * @param movie the movie collection to set
      */
-    public void setMovie(Collection<Movie> movie) {
+    public void setMovie(final Collection<Movie> movie) {
         this.movie = movie;
     }
 }

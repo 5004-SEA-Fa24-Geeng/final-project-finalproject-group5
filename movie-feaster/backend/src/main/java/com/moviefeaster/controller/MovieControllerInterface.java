@@ -1,7 +1,6 @@
-package com.moviefeaster.Controller;
+package com.moviefeaster.controller;
 
-import com.moviefeaster.Model.Movie;
-import org.springframework.web.bind.annotation.GetMapping;
+import com.moviefeaster.model.Movie;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;

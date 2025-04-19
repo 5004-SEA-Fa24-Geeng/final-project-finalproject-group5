@@ -1,10 +1,11 @@
-package com.moviefeaster.Utils;
+package com.moviefeaster.utils;
 
-import com.moviefeaster.Model.*;
+import com.moviefeaster.model.*;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Movie filter class, providing intuitive static filtering methods
@@ -12,75 +13,69 @@ import java.util.List;
 public class MovieFilter {
     // Private constructor to prevent instantiation
     private MovieFilter() {
-        //empty
+        // empty
     }
-
 
     /**
      * Filter movies with titles containing a specific keyword
      *
-     * @param movies the list of movies to filter
+     * @param movies  the list of movies to filter
      * @param keyword the title keyword
      * @return list of movies that match the condition
      */
-    public static List<Movie> filterByTitle(List<Movie> movies, String keyword) {
+    public static List<Movie> filterByTitle(final List<Movie> movies, final String keyword) {
+        final List<Movie> results = new ArrayList<>();
         if (movies == null || keyword == null) {
-            return new ArrayList<>();
+            return results;
         }
-        List<Movie> results = new ArrayList<>();
 
-        String lowerCaseKeyword = keyword.toLowerCase();
-        for (Movie movie : movies) {
-            if (movie.getTitle().toLowerCase().contains(lowerCaseKeyword)) {
+        final String lowerCaseKeyword = keyword.toLowerCase(Locale.ROOT);
+        for (final Movie movie : movies) {
+            if (movie.getTitle().toLowerCase(Locale.ROOT).contains(lowerCaseKeyword)) {
                 results.add(movie);
             }
         }
         return results;
     }
-
 
     /**
      * Filter movies with an exact title match (case insensitive)
      *
      * @param movies the list of movies to filter
-     * @param title the exact movie title
+     * @param title  the exact movie title
      * @return list of movies that match the condition
      */
-    public static List<Movie> filterByExactTitle(List<Movie> movies, String title) {
+    public static List<Movie> filterByExactTitle(final List<Movie> movies, final String title) {
+        final List<Movie> results = new ArrayList<>();
         if (movies == null || title == null) {
-            return new ArrayList<>();
+            return results;
         }
-        List<Movie> results = new ArrayList<>();
 
-        String lowerCaseTitle = title.toLowerCase();
-
-        for (Movie movie : movies) {
-            if (movie.getTitle().toLowerCase().equals(lowerCaseTitle)) {
+        for (final Movie movie : movies) {
+            if (movie.getTitle().equalsIgnoreCase(title)) {
                 results.add(movie);
             }
         }
         return results;
     }
 
-
     /**
      * Filter movies directed by a specific director
      *
-     * @param movies the list of movies to filter
+     * @param movies       the list of movies to filter
      * @param directorName the director name
      * @return list of movies that match the condition
      */
-    public static List<Movie> filterByDirector(List<Movie> movies, String directorName) {
+    public static List<Movie> filterByDirector(final List<Movie> movies, final String directorName) {
+        final List<Movie> results = new ArrayList<>();
         if (movies == null || directorName == null) {
-            return new ArrayList<>();
+            return results;
         }
-        List<Movie> results = new ArrayList<>();
 
-        String lowerCaseDirectorName = directorName.toLowerCase();
-
-        for (Movie movie : movies) {
-            for (String director : movie.getDirectors()) {
-                if (director.toLowerCase().contains(lowerCaseDirectorName)) {
+        final String directorNameLower = directorName.toLowerCase(Locale.ROOT);
+        for (final Movie movie : movies) {
+            for (final String director : movie.getDirectors()) {
+                if (director.toLowerCase(Locale.ROOT).contains(directorNameLower)) {
                     results.add(movie);
                     break;
                 }
@@ -89,21 +84,20 @@ public class MovieFilter {
         return results;
     }
 
-
     /**
      * Filter movies from a specific year
      *
      * @param movies the list of movies to filter
-     * @param year the release year
+     * @param year   the release year
      * @return list of movies that match the condition
      */
-    public static List<Movie> filterByYear(List<Movie> movies, int year) {
+    public static List<Movie> filterByYear(final List<Movie> movies, final int year) {
+        final List<Movie> results = new ArrayList<>();
         if (movies == null) {
-            return new ArrayList<>();
+            return results;
         }
-        List<Movie> results = new ArrayList<>();
 
-        for (Movie movie : movies) {
+        for (final Movie movie : movies) {
             if (movie.getYear() == year) {
                 results.add(movie);
             }
@@ -111,23 +105,24 @@ public class MovieFilter {
         return results;
     }
 
-
     /**
      * Filter movies within a specific year range
      *
-     * @param movies the list of movies to filter
+     * @param movies    the list of movies to filter
      * @param startYear the start year (inclusive)
-     * @param endYear the end year (inclusive)
+     * @param endYear   the end year (inclusive)
      * @return list of movies that match the condition
      */
-    public static List<Movie> filterByYearRange(List<Movie> movies, int startYear, int endYear) {
+    public static List<Movie> filterByYearRange(final List<Movie> movies,
+                                                final int startYear,
+                                                final int endYear) {
+        final List<Movie> results = new ArrayList<>();
         if (movies == null) {
-            return new ArrayList<>();
+            return results;
         }
-        List<Movie> results = new ArrayList<>();
 
-        for (Movie movie : movies) {
-            int year = movie.getYear();
+        for (final Movie movie : movies) {
+            final int year = movie.getYear();
             if (year >= startYear && year <= endYear) {
                 results.add(movie);
             }
@@ -138,17 +133,17 @@ public class MovieFilter {
     /**
      * Filter movies with a rating greater than or equal to a specified value
      *
-     * @param movies the list of movies to filter
+     * @param movies    the list of movies to filter
      * @param minRating the minimum rating
      * @return list of movies that match the condition
      */
-    public static List<Movie> filterByMinRating(List<Movie> movies, double minRating) {
+    public static List<Movie> filterByMinRating(final List<Movie> movies, final double minRating) {
+        final List<Movie> results = new ArrayList<>();
         if (movies == null) {
-            return new ArrayList<>();
+            return results;
         }
-        List<Movie> results = new ArrayList<>();
 
-        for (Movie movie : movies) {
+        for (final Movie movie : movies) {
             if (movie.getRating() >= minRating) {
                 results.add(movie);
             }
@@ -159,17 +154,17 @@ public class MovieFilter {
     /**
      * Filter movies with a rating less than or equal to a specified value
      *
-     * @param movies the list of movies to filter
+     * @param movies    the list of movies to filter
      * @param maxRating the maximum rating
      * @return list of movies that match the condition
      */
-    public static List<Movie> filterByMaxRating(List<Movie> movies, double maxRating) {
+    public static List<Movie> filterByMaxRating(final List<Movie> movies, final double maxRating) {
+        final List<Movie> results = new ArrayList<>();
         if (movies == null) {
-            return new ArrayList<>();
+            return results;
         }
-        List<Movie> results = new ArrayList<>();
 
-        for (Movie movie : movies) {
+        for (final Movie movie : movies) {
             if (movie.getRating() <= maxRating) {
                 results.add(movie);
             }
@@ -177,26 +172,23 @@ public class MovieFilter {
         return results;
     }
 
-
-
     /**
      * Filter movies of a specific genre
      *
      * @param movies the list of movies to filter
-     * @param genre the movie genre
+     * @param genre  the movie genre
      * @return list of movies that match the condition
      */
-    public static List<Movie> filterByGenre(List<Movie> movies, String genre) {
+    public static List<Movie> filterByGenre(final List<Movie> movies, final String genre) {
+        final List<Movie> results = new ArrayList<>();
         if (movies == null || genre == null) {
-            return new ArrayList<>();
+            return results;
         }
-        List<Movie> results = new ArrayList<>();
 
-        String lowerCaseGenre = genre.toLowerCase(); // Pre-process genre to lowercase
-
-        for (Movie movie : movies) {
-            for (Genre g : movie.getGenres()) {
-                if (g.toString().toLowerCase().contains(lowerCaseGenre)) {
+        final String genreLower = genre.toLowerCase(Locale.ROOT);
+        for (final Movie movie : movies) {
+            for (final Genre g : movie.getGenres()) {
+                if (g.toString().toLowerCase(Locale.ROOT).contains(genreLower)) {
                     results.add(movie);
                     break;
                 }
@@ -204,26 +196,24 @@ public class MovieFilter {
         }
         return results;
     }
-
 
     /**
      * Filter movies featuring a specific actor
      *
-     * @param movies the list of movies to filter
+     * @param movies    the list of movies to filter
      * @param actorName the actor name
      * @return list of movies that match the condition
      */
-    public static List<Movie> filterByActor(List<Movie> movies, String actorName) {
+    public static List<Movie> filterByActor(final List<Movie> movies, final String actorName) {
+        final List<Movie> results = new ArrayList<>();
         if (movies == null || actorName == null) {
-            return new ArrayList<>();
+            return results;
         }
-        List<Movie> results = new ArrayList<>();
 
-        String lowerCaseActorName = actorName.toLowerCase();
-
-        for (Movie movie : movies) {
-            for (String actor : movie.getCastings()) {
-                if (actor.toLowerCase().contains(lowerCaseActorName)) {
+        final String actorNameLower = actorName.toLowerCase(Locale.ROOT);
+        for (final Movie movie : movies) {
+            for (final String actor : movie.getCastings()) {
+                if (actor.toLowerCase(Locale.ROOT).contains(actorNameLower)) {
                     results.add(movie);
                     break;
                 }
@@ -231,26 +221,24 @@ public class MovieFilter {
         }
         return results;
     }
-
-
 
     /**
      * Filter movies with comments containing a specific keyword
      *
-     * @param movies the list of movies to filter
+     * @param movies  the list of movies to filter
      * @param keyword the comment keyword
      * @return list of movies that match the condition
      */
-    public static List<Movie> filterByCommentKeyword(List<Movie> movies, String keyword) {
+    public static List<Movie> filterByCommentKeyword(final List<Movie> movies, final String keyword) {
+        final List<Movie> results = new ArrayList<>();
         if (movies == null || keyword == null) {
-            return new ArrayList<>();
+            return results;
         }
-        List<Movie> results = new ArrayList<>();
 
-        String lowerCaseKeyword = keyword.toLowerCase();
-        for (Movie movie : movies) {
-            for (String comment : movie.getComments()) {
-                if (comment.toLowerCase().contains(lowerCaseKeyword)) {
+        final String keywordLower = keyword.toLowerCase(Locale.ROOT);
+        for (final Movie movie : movies) {
+            for (final String comment : movie.getComments()) {
+                if (comment.toLowerCase(Locale.ROOT).contains(keywordLower)) {
                     results.add(movie);
                     break;
                 }
@@ -259,29 +247,26 @@ public class MovieFilter {
         return results;
     }
 
-
-
     /**
      * Filter movies with an in-app rating greater than or equal to a specified value
      *
-     * @param movies the list of movies to filter
+     * @param movies    the list of movies to filter
      * @param minRating the minimum in-app rating
      * @return list of movies that match the condition
      */
-    public static List<Movie> filterByMinInAppRating(List<Movie> movies, double minRating) {
+    public static List<Movie> filterByMinInAppRating(final List<Movie> movies, final double minRating) {
+        final List<Movie> results = new ArrayList<>();
         if (movies == null) {
-            return new ArrayList<>();
+            return results;
         }
-        List<Movie> results = new ArrayList<>();
 
-        for (Movie movie : movies) {
+        for (final Movie movie : movies) {
             if (movie.getInAppRating() >= minRating) {
                 results.add(movie);
             }
         }
         return results;
     }
-
 
     /**
      * Combine multiple filter results (intersection)
@@ -290,20 +275,18 @@ public class MovieFilter {
      * @param list2 the second filter result
      * @return the intersection of the two lists
      */
-    public static List<Movie> combineAnd(List<Movie> list1, List<Movie> list2) {
+    public static List<Movie> combineAnd(final List<Movie> list1, final List<Movie> list2) {
+        final List<Movie> results = new ArrayList<>();
         if (list1 == null || list2 == null) {
-            return new ArrayList<>();
+            return results;
         }
 
-        List<Movie> results = new ArrayList<>();
-        HashSet<Movie> set = new HashSet<>(list2);
-
-        for (Movie movie : list1) {
+        final HashSet<Movie> set = new HashSet<>(list2);
+        for (final Movie movie : list1) {
             if (set.contains(movie)) {
                 results.add(movie);
             }
         }
         return results;
     }
-
 }

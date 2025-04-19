@@ -1,6 +1,4 @@
-package com.moviefeaster.Model;
-
-import com.moviefeaster.Utils.MovieFilter;
+package com.moviefeaster.model;
 
 /** Enum representing available movie filtering strategies. */
 public enum MovieFilterType {

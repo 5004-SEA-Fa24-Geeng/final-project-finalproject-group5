@@ -1,10 +1,9 @@
-package com.moviefeaster.Service;
+package com.moviefeaster.service;
 
-import com.moviefeaster.Model.Format;
-import com.moviefeaster.Model.Movie;
-import com.moviefeaster.Model.MovieSorterType;
-import com.moviefeaster.Model.MovieFilterType;
-import com.moviefeaster.Utils.MovieFilterFacilitator;
+import com.moviefeaster.model.Format;
+import com.moviefeaster.model.Movie;
+import com.moviefeaster.model.MovieSorterType;
+import com.moviefeaster.model.MovieFilterType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -41,8 +40,10 @@ class MovieModelTest {
     @Test
     void getMovieById() {
         Movie movie = model.getMovies().get(0);
-        Movie found = model.getMovieById(movie.getId());
-        assertEquals(movie.getId(), found.getId());
+        Movie found = model.getMovieById(movie.getMovieId());
+        System.out.println(movie);
+        System.out.println(found);
+        assertEquals(movie.getMovieId(), found.getMovieId());
     }
 
     @Test
@@ -107,7 +108,7 @@ class MovieModelTest {
 
     @Test
     void setDefaultMovieSorterType() {
-        model.setDefaultMovieSorterType(MovieSorterType.RATING_DESC);
+        model.setDefaultSortType(MovieSorterType.RATING_DESC);
         model.sortMovieList(MovieSorterType.RATING_DESC);
         assertNotNull(model.getProcessedMovies());
     }
@@ -116,7 +117,7 @@ class MovieModelTest {
     void updateComments() {
         model.fetchMovies();
         Movie movie = model.getMovies().get(0);
-        model.UpdateComments(movie.getId(), "Great movie!");
+        model.updateComments(movie.getMovieId(), "Great movie!");
         assertTrue(movie.getComments().contains("Great movie!"));
     }
 
@@ -125,7 +126,7 @@ class MovieModelTest {
         model.fetchMovies();
         Movie movie = model.getMovies().get(0);
         double initialAverage = movie.getInAppRating();
-        model.UpdateRating(movie.getId(), 4.5);
+        model.updateRating(movie.getMovieId(), 4.5);
         assertTrue(movie.getInAppRating() > initialAverage || movie.getInAppRating() == 4.5);
     }
 }

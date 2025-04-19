@@ -1,4 +1,4 @@
-package com.moviefeaster.Model;
+package com.moviefeaster.model;
 
 /**
  * Enum represents the input and output file format.
@@ -13,12 +13,14 @@ public enum Format {
      * @param value the value to check
      * @return the format if found, null otherwise
      */
-    public static Format containsValues(String value) {
-        for (Format format : Format.values()) {
+    public static Format containsValues(final String value) {
+        Format foundFormat = null;
+        for (final Format format : Format.values()) {
             if (format.toString().equalsIgnoreCase(value)) {
-                return format;
+                foundFormat = format;
+                break;
             }
         }
-        return null;
+        return foundFormat;
     }
 }

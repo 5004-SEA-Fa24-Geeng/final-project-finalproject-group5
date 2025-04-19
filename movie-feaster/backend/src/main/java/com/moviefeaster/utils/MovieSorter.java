@@ -1,6 +1,6 @@
-package com.moviefeaster.Utils;
+package com.moviefeaster.utils;
 
-import com.moviefeaster.Model.Movie;
+import com.moviefeaster.model.Movie;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -16,22 +16,23 @@ public class MovieSorter {
     private MovieSorter() {
     }
 
-
     /**
      * Sort movies by title (A-Z)
      *
      * @param movies the list of movies to sort
      * @return sorted list of movies
      */
-    public static List<Movie> sortByTitle(List<Movie> movies) {
+    public static List<Movie> sortByTitle(final List<Movie> movies) {
+        final List<Movie> result;
         if (movies == null) {
-            return new ArrayList<>();
+            result = new ArrayList<>();
+        } else {
+            final List<Movie> sortedMovies = new ArrayList<>(movies);
+            Collections.sort(sortedMovies, Comparator.comparing(Movie::getTitle));
+            result = sortedMovies;
         }
-        List<Movie> sortedMovies = new ArrayList<>(movies);
-        Collections.sort(sortedMovies, Comparator.comparing(Movie::getTitle));
-        return sortedMovies;
+        return result;
     }
-
 
     /**
      * Sort movies by title in descending order (Z-A)
@@ -39,15 +40,17 @@ public class MovieSorter {
      * @param movies the list of movies to sort
      * @return sorted list of movies
      */
-    public static List<Movie> sortByTitleDescending(List<Movie> movies) {
+    public static List<Movie> sortByTitleDescending(final List<Movie> movies) {
+        final List<Movie> result;
         if (movies == null) {
-            return new ArrayList<>();
+            result = new ArrayList<>();
+        } else {
+            final List<Movie> sortedMovies = new ArrayList<>(movies);
+            Collections.sort(sortedMovies, Comparator.comparing(Movie::getTitle).reversed());
+            result = sortedMovies;
         }
-        List<Movie> sortedMovies = new ArrayList<>(movies);
-        Collections.sort(sortedMovies, Comparator.comparing(Movie::getTitle).reversed());
-        return sortedMovies;
+        return result;
     }
-
 
     /**
      * Sort movies by rating (high to low)
@@ -55,15 +58,17 @@ public class MovieSorter {
      * @param movies the list of movies to sort
      * @return sorted list of movies
      */
-    public static List<Movie> sortByRating(List<Movie> movies) {
+    public static List<Movie> sortByRating(final List<Movie> movies) {
+        final List<Movie> result;
         if (movies == null) {
-            return new ArrayList<>();
+            result = new ArrayList<>();
+        } else {
+            final List<Movie> sortedMovies = new ArrayList<>(movies);
+            Collections.sort(sortedMovies, Comparator.comparing(Movie::getRating).reversed());
+            result = sortedMovies;
         }
-        List<Movie> sortedMovies = new ArrayList<>(movies);
-        Collections.sort(sortedMovies, Comparator.comparing(Movie::getRating).reversed());
-        return sortedMovies;
+        return result;
     }
-
 
     /**
      * Sort movies by rating in ascending order (low to high)
@@ -71,15 +76,17 @@ public class MovieSorter {
      * @param movies the list of movies to sort
      * @return sorted list of movies
      */
-    public static List<Movie> sortByRatingAscending(List<Movie> movies) {
+    public static List<Movie> sortByRatingAscending(final List<Movie> movies) {
+        final List<Movie> result;
         if (movies == null) {
-            return new ArrayList<>();
+            result = new ArrayList<>();
+        } else {
+            final List<Movie> sortedMovies = new ArrayList<>(movies);
+            Collections.sort(sortedMovies, Comparator.comparing(Movie::getRating));
+            result = sortedMovies;
         }
-        List<Movie> sortedMovies = new ArrayList<>(movies);
-        Collections.sort(sortedMovies, Comparator.comparing(Movie::getRating));
-        return sortedMovies;
+        return result;
     }
-
 
     /**
      * Sort movies by year (newest to oldest)
@@ -87,15 +94,17 @@ public class MovieSorter {
      * @param movies the list of movies to sort
      * @return sorted list of movies
      */
-    public static List<Movie> sortByYear(List<Movie> movies) {
+    public static List<Movie> sortByYear(final List<Movie> movies) {
+        final List<Movie> result;
         if (movies == null) {
-            return new ArrayList<>();
+            result = new ArrayList<>();
+        } else {
+            final List<Movie> sortedMovies = new ArrayList<>(movies);
+            Collections.sort(sortedMovies, Comparator.comparing(Movie::getYear).reversed());
+            result = sortedMovies;
         }
-        List<Movie> sortedMovies = new ArrayList<>(movies);
-        Collections.sort(sortedMovies, Comparator.comparing(Movie::getYear).reversed());
-        return sortedMovies;
+        return result;
     }
-
 
     /**
      * Sort movies by year in ascending order (oldest to newest)
@@ -103,15 +112,17 @@ public class MovieSorter {
      * @param movies the list of movies to sort
      * @return sorted list of movies
      */
-    public static List<Movie> sortByYearAscending(List<Movie> movies) {
+    public static List<Movie> sortByYearAscending(final List<Movie> movies) {
+        final List<Movie> result;
         if (movies == null) {
-            return new ArrayList<>();
+            result = new ArrayList<>();
+        } else {
+            final List<Movie> sortedMovies = new ArrayList<>(movies);
+            Collections.sort(sortedMovies, Comparator.comparing(Movie::getYear));
+            result = sortedMovies;
         }
-        List<Movie> sortedMovies = new ArrayList<>(movies);
-        Collections.sort(sortedMovies, Comparator.comparing(Movie::getYear));
-        return sortedMovies;
+        return result;
     }
-
 
     /**
      * Sort movies by in-app rating (high to low)
@@ -119,19 +130,21 @@ public class MovieSorter {
      * @param movies the list of movies to sort
      * @return sorted list of movies
      */
-    public static List<Movie> sortByInAppRating(List<Movie> movies) {
+    public static List<Movie> sortByInAppRating(final List<Movie> movies) {
+        final List<Movie> result;
         if (movies == null) {
-            return new ArrayList<>();
+            result = new ArrayList<>();
+        } else {
+            final List<Movie> sortedMovies = new ArrayList<>(movies);
+            sortedMovies.sort((m1, m2) -> {
+                final double rating1 = m1.getInAppRating();
+                final double rating2 = m2.getInAppRating();
+                return Double.compare(rating2, rating1); // High to low
+            });
+            result = sortedMovies;
         }
-        List<Movie> sortedMovies = new ArrayList<>(movies);
-        sortedMovies.sort((m1, m2) -> {
-            double rating1 = m1.getInAppRating();
-            double rating2 = m2.getInAppRating();
-            return Double.compare(rating2, rating1); // High to low
-        });
-        return sortedMovies;
+        return result;
     }
-
 
     /**
      * Sort movies by in-app rating in ascending order (low to high)
@@ -139,37 +152,38 @@ public class MovieSorter {
      * @param movies the list of movies to sort
      * @return sorted list of movies
      */
-    public static List<Movie> sortByInAppRatingAscending(List<Movie> movies) {
+    public static List<Movie> sortByInAppRatingAscending(final List<Movie> movies) {
+        final List<Movie> result;
         if (movies == null) {
-            return new ArrayList<>();
+            result = new ArrayList<>();
+        } else {
+            final List<Movie> sortedMovies = new ArrayList<>(movies);
+            sortedMovies.sort((m1, m2) -> {
+                final double rating1 = m1.getInAppRating();
+                final double rating2 = m2.getInAppRating();
+                return Double.compare(rating1, rating2); // Low to high
+            });
+            result = sortedMovies;
         }
-        List<Movie> sortedMovies = new ArrayList<>(movies);
-        sortedMovies.sort((m1, m2) -> {
-            double rating1 = m1.getInAppRating();
-            double rating2 = m2.getInAppRating();
-            return Double.compare(rating1, rating2); // Low to high
-        });
-        return sortedMovies;
+        return result;
     }
-
-
 
     /**
      * Get the top N movies from a sorted list
      *
      * @param movies the sorted list of movies
-     * @param n the number of movies to return
+     * @param numberOfMovies the number of movies to return
      * @return the top N movies
      */
-    public static List<Movie> getTopN(List<Movie> movies, int n) {
-        if (movies == null || n <= 0) {
-            return new ArrayList<>();
+    public static List<Movie> getTopN(final List<Movie> movies, final int numberOfMovies) {
+        final List<Movie> result;
+        if (movies == null || numberOfMovies <= 0) {
+            result = new ArrayList<>();
+        } else if (numberOfMovies >= movies.size()) {
+            result = new ArrayList<>(movies);
+        } else {
+            result = new ArrayList<>(movies.subList(0, numberOfMovies));
         }
-
-        if (n >= movies.size()) {
-            return new ArrayList<>(movies);
-        }
-
-        return new ArrayList<>(movies.subList(0, n));
+        return result;
     }
 }

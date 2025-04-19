@@ -1,110 +1,138 @@
-package com.moviefeaster.Service;
+package com.moviefeaster.service;
 
-import com.moviefeaster.Utils.*;
-import com.moviefeaster.Model.*;
+import com.moviefeaster.utils.*;
+import com.moviefeaster.model.*;
 import org.springframework.stereotype.Service;
 
+import jakarta.annotation.PostConstruct;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Locale;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Service model class that provides movie data fetching, filtering,
+ * sorting, and persistence functionalities.
+ */
 @Service
 public class MovieModel implements MovieModelInterface {
 
+    private static final Logger logger = LoggerFactory.getLogger(MovieModel.class);
+
     /** Movie's list */
     private List<Movie> movies;
+
     /** Filtered movies' list */
     private List<Movie> processedMovies;
+
     /** Default sorting type */
-    private MovieSorterType defaultMovieSorterType;
+    private MovieSorterType defaultSortType;
 
     /**
-     * Public constructor to prevent direct instantiation
+     * Public constructor initializes movie lists and default sort type.
      */
     public MovieModel() {
         this.movies = new ArrayList<>();
         this.processedMovies = new ArrayList<>();
-        this.defaultMovieSorterType = MovieSorterType.TITLE_ASC;
-        fetchMovies(); // Optionally auto-fetch at startup
+        this.defaultSortType = MovieSorterType.TITLE_ASC;
+        fetchMovies();
     }
 
-    /** Fetch movie's data from TMDB api and ingest into movie's field.
-     * Set the processed movies to an empty list.
+    /**
+     * Fetch movie's data from TMDB API and ingest into a movie list.
      */
     @Override
     public void fetchMovies() {
         this.movies = MovieParser.getMoviesFromApi();
     }
 
-    /** Get the original movies that pull from TMDB api. */
+    /**
+     * Get the original movies fetched from the TMDB API.
+     *
+     * @return list of original movies
+     */
     public List<Movie> getMovies() {
         return this.movies;
     }
 
-    /** Get a single movie by ID. */
-    public Movie getMovieById(int id) {
-        for (Movie movie : this.movies) {
-            if (movie.getId() == id) {
-                return movie;
+    /**
+     * Retrieve a single movie by ID.
+     *
+     * @param movieId the movie ID
+     * @return movie with matching ID or null if not found
+     */
+    public Movie getMovieById(final int movieId) {
+        Movie result = null;
+        for (final Movie movie : this.movies) {
+            if (movie.getMovieId() == movieId) {
+                result = movie;
+                break;
             }
         }
-        return null;
+        return result;
     }
 
-    /** Get the processed movies that applied sorter and filter. */
+    /**
+     * Get the filtered and/or sorted list of movies.
+     *
+     * @return list of processed movies
+     */
     public List<Movie> getProcessedMovies() {
         return this.processedMovies;
     }
 
-    /** Write movie's record to the local file with an option to use original data from TMDB api or processed data.
-     * @param format the format of the file
-     * @param useProcessedMovie if true, use processed data, otherwise, use original data.
+    /**
+     * Write movies to a local file in specified format.
+     *
+     * @param useProcessedMovie whether to use a processed or original list
+     * @param format            output file format
      */
     @Override
-    public void writeFile(boolean useProcessedMovie, Format format) {
-        List<Movie> moviesToWrite = useProcessedMovie ? this.processedMovies : this.movies;
+    public void writeFile(final boolean useProcessedMovie, final Format format) {
+        final List<Movie> moviesToWrite = useProcessedMovie ? this.processedMovies : this.movies;
 
-        try (OutputStream out = new FileOutputStream("output." + format.toString().toLowerCase())) {
+        try (OutputStream out = new FileOutputStream("output." + format.toString().toLowerCase(Locale.ROOT))) {
             DataFormatter.write(moviesToWrite, format, out);
-            System.out.println("Movie data written successfully in " + format + " format.");
+            logger.info("Movie data written successfully in {} format.", format);
         } catch (IOException e) {
-            System.err.println("Failed to write movie data: " + e.getMessage());
+            logger.error("Failed to write movie data: {}", e.getMessage());
         }
     }
 
     /**
-     * Filtered the movie list by filter strategy.
-     * @param filtersStrategy filtered strategies that with filter type and corresponding values.
+     * Apply filters to the movie list.
+     *
+     * @param filtersStrategy map of filter types to values
      */
     @Override
-    public void searchByFilter(Map<MovieFilterType, Object> filtersStrategy) {
+    public void searchByFilter(final Map<MovieFilterType, Object> filtersStrategy) {
         if (filtersStrategy == null || filtersStrategy.isEmpty()) {
             this.processedMovies = this.movies;
-            sortMovieList(this.defaultMovieSorterType);
+            sortMovieList(this.defaultSortType);
             return;
         }
 
-        List<Movie> moviesToFilter = this.movies;
-
+        final List<Movie> moviesToFilter = this.movies;
         this.processedMovies = MovieFilterFacilitator.filter(moviesToFilter, filtersStrategy);
-        sortMovieList(this.defaultMovieSorterType);
+        sortMovieList(this.defaultSortType);
     }
-
     /**
-     * Sorts the movie list by sorting strategy with an option to use original data or processed data.
+     * Sort the current processed movie list by the specified sort type.
      *
-     * @param sortType the sorting strategy to be applied to the movie list
+     * @param sortType sorting strategy to apply
      */
-    public void sortMovieList(MovieSorterType sortType) {
+    public void sortMovieList(final MovieSorterType sortType) {
         if (sortType == null) {
             return;
         }
 
-        List<Movie> moviesToSort = this.processedMovies;
+        final List<Movie> moviesToSort = this.processedMovies;
         this.processedMovies = switch (sortType) {
             case TITLE_ASC -> MovieSorter.sortByTitle(moviesToSort);
             case TITLE_DESC -> MovieSorter.sortByTitleDescending(moviesToSort);
@@ -118,39 +146,43 @@ public class MovieModel implements MovieModelInterface {
     }
 
     /**
-     * Set the default sorting type for the movie list.
-     * @param defaultMovieSorterType default sorting type.
+     * Set the default sorting strategy.
+     *
+     * @param defaultSortType default sorting type to use
      */
-    public void setDefaultMovieSorterType(MovieSorterType defaultMovieSorterType) {
-        this.defaultMovieSorterType = defaultMovieSorterType;
+    public void setDefaultSortType(final MovieSorterType defaultSortType) {
+        this.defaultSortType = defaultSortType;
     }
 
-    /** Update the inApp comment
-     * @param movieID movie's ID
-     * @param comment user's comment
+    /**
+     * Add a user comment to a specific movie.
+     *
+     * @param movieId the movie's ID
+     * @param comment the user's comment
      */
     @Override
-    public void UpdateComments(int movieID, String comment) {
-        for (Movie movie : this.movies) {
-            if (movie.getId() == movieID) {
+    public void updateComments(final int movieId, final String comment) {
+        for (final Movie movie : this.movies) {
+            if (movie.getMovieId() == movieId) {
                 movie.addComment(comment);
-                return;
+                break;
             }
         }
     }
 
-    /** Update the inApp rating
-     * @param movieID movie's ID
-     * @param rating user's rating
+    /**
+     * Add a user in-app rating to a specific movie.
+     *
+     * @param movieId the movie's ID
+     * @param rating  the user's rating
      */
     @Override
-    public void UpdateRating(int movieID, double rating) {
-        for (Movie movie : this.movies) {
-            if (movie.getId() == movieID) {
+    public void updateRating(final int movieId, final double rating) {
+        for (final Movie movie : this.movies) {
+            if (movie.getMovieId() == movieId) {
                 movie.addInAppRating(rating);
-                return;
+                break;
             }
         }
     }
-
 }

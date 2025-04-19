@@ -1,16 +1,16 @@
-package com.moviefeaster.Controller;
+package com.moviefeaster.controller;
 
-import com.moviefeaster.Model.*;
-import com.moviefeaster.Service.MovieModel;
-import com.moviefeaster.Service.MovieParser;
-import com.moviefeaster.Utils.DataFormatter;
-import com.moviefeaster.Utils.MovieSorter;
+import com.moviefeaster.model.*;
+import com.moviefeaster.service.MovieModel;
+import com.moviefeaster.utils.DataFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.util.*;
@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 @CrossOrigin(origins = "http://localhost:3000") // Allow cross-origin requests from frontend
 public class MovieController implements MovieControllerInterface {
 
+    private static final Logger logger = LoggerFactory.getLogger(MovieController.class);
     private final MovieModel model;
     private final InputProcessor inputProcessor;
 
@@ -34,7 +35,7 @@ public class MovieController implements MovieControllerInterface {
      * Constructs a new MovieController with the given model and view.
      */
     @Autowired
-    public MovieController(MovieModel model, InputProcessor inputProcessor) {
+    public MovieController(final MovieModel model, final InputProcessor inputProcessor) {
         this.model = model;
         this.inputProcessor = inputProcessor;
     }
@@ -42,103 +43,86 @@ public class MovieController implements MovieControllerInterface {
     /**
      * Handles a multi-filter search request. Each field is optional.
      * Input is parsed and validated using InputProcessor.
-     *
-     * @param title    The raw name input from the view.
-     * @param director The raw director input from the view.
-     * @param cast     The casts
-     * @param year     The raw year input from the view.
-     * @param genre    The raw type input from the view.
      */
     @Override
     @GetMapping("/search")
     public List<Movie> handleMultiFilterSearch(
-            @RequestParam(required = false) String title,
-            @RequestParam(required = false) String director,
-            @RequestParam(required = false) String cast,
-            @RequestParam(required = false) String year,
-            @RequestParam(required = false) String genre
+            @RequestParam(required = false) final String title,
+            @RequestParam(required = false) final String director,
+            @RequestParam(required = false) final String cast,
+            @RequestParam(required = false) final String year,
+            @RequestParam(required = false) final String genre
     ) {
-        String parsedTitle = inputProcessor.optionalParseTitle(title);
-        String parsedDirector = inputProcessor.optionalParseDirector(director);
-        String parsedCast = inputProcessor.optionalParseCast(cast);
-        Integer parsedYear = inputProcessor.optionalParseYear(year);
-        Genre parsedGenre = inputProcessor.optionalParseGenre(genre);
+        final String parsedTitle = inputProcessor.optionalParseTitle(title);
+        final String parsedDirector = inputProcessor.optionalParseDirector(director);
+        final String parsedCast = inputProcessor.optionalParseCast(cast);
+        final Integer parsedYear = inputProcessor.optionalParseYear(year);
+        final Genre parsedGenre = inputProcessor.optionalParseGenre(genre);
 
-        Map<MovieFilterType, Object> filterStrategy = new HashMap<>();
-
+        final Map<MovieFilterType, Object> filterStrategy = new HashMap<>();
         if (parsedTitle != null && !parsedTitle.isEmpty()) {
             filterStrategy.put(MovieFilterType.TITLE_KEYWORD, parsedTitle);
         }
-
         if (parsedDirector != null && !parsedDirector.isEmpty()) {
             filterStrategy.put(MovieFilterType.DIRECTOR, parsedDirector);
         }
-
         if (parsedCast != null && !parsedCast.isEmpty()) {
             filterStrategy.put(MovieFilterType.ACTOR, parsedCast);
         }
-
         if (parsedYear != null) {
             filterStrategy.put(MovieFilterType.YEAR, parsedYear);
         }
-
         if (parsedGenre != null) {
             filterStrategy.put(MovieFilterType.GENRE, parsedGenre.toString());
         }
 
         model.searchByFilter(filterStrategy);
-
         return model.getProcessedMovies();
     }
 
     /**
      * Handles sort request. Only one sort type can be applied on.
-     *
-     * @param sortType    The sort type that wanted to apply on from the view.
      */
     @Override
     @GetMapping("/sort")
-    public List<Movie> handleSort(
-            @RequestParam(required = false) String sortType
-    ) {
-        MovieSorterType toSortOn = MovieSorterType.fromValue(sortType);
+    public List<Movie> handleSort(@RequestParam(required = false) final String sortType) {
+        final MovieSorterType toSortOn = MovieSorterType.fromValue(sortType);
         model.sortMovieList(toSortOn);
         return model.getProcessedMovies();
     }
 
     /**
      * Handles user-submitted comment for a selected movie.
-     *
-     * @param movieId The ID of the movie to comment on.
-     * @param comment The comment text.
-     * @return  comment
      */
     @PostMapping("/{movieId}/comment")
     @Override
-    public String handleCommentSubmission(@PathVariable int movieId, @RequestBody String comment) {
+    public String handleCommentSubmission(
+            @PathVariable final int movieId,
+            @RequestBody final String comment
+    ) {
         if (comment == null || comment.isBlank()) {
             throw new IllegalArgumentException("Invalid comment.");
         }
-        model.UpdateComments(movieId, comment);
+        model.updateComments(movieId, comment);
         return comment;
     }
 
     /**
      * Handles user-submitted rating for a selected movie.
-     *
-     * @param movieId The ID of the movie to rate.
-     * @param rating  The rating value.
      */
     @PostMapping("/{movieId}/rating")
     @Override
-    public void handleRatingSubmission(@PathVariable int movieId, @RequestBody double rating) {
+    public void handleRatingSubmission(
+            @PathVariable final int movieId,
+            @RequestBody final double rating
+    ) {
         try {
             if (rating < 0.0 || rating > 5.0) {
                 throw new IllegalArgumentException("Invalid rating value.");
             }
-            model.UpdateRating(movieId, rating);
+            model.updateRating(movieId, rating);
         } catch (Exception e) {
-            System.out.println("Failed to update rating: " + e.getMessage());
+            logger.warn("Failed to update rating: {}", e.getMessage());
         }
     }
 
@@ -156,30 +140,30 @@ public class MovieController implements MovieControllerInterface {
 
     @GetMapping("/{id}")
     public Movie getMovieById(@PathVariable int id) {
-        for (Movie movie : model.getMovies()) {
-            if (movie.getId() == id) {
-                return movie;
-            }
-        }
-        throw new IllegalArgumentException("Movie not found with ID: " + id);
+        return model.getMovieById(id);
+//        for (Movie movie : model.getMovies()) {
+//            if (movie.getMovieId() == id) {
+//                return movie;
+//            }
+////        }
+//        throw new IllegalArgumentException("Movie not found with ID: " + id);
     }
 
     @GetMapping("/export")
-    public ResponseEntity<byte[]> exportMovies(@RequestParam(defaultValue = "PRETTY") String format) {
+    public ResponseEntity<byte[]> exportMovies(@RequestParam(defaultValue = "PRETTY") final String format) {
+        HttpHeaders headers = new HttpHeaders();
         try {
             Format outputFormat = Format.containsValues(format);
             if (outputFormat == null) {
                 outputFormat = Format.PRETTY;
             }
 
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            List<Movie> movies = model.getProcessedMovies() != null ? model.getProcessedMovies() : model.getMovies();
-
+            final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            final List<Movie> movies = model.getProcessedMovies() != null ? model.getProcessedMovies() : model.getMovies();
             DataFormatter.write(movies, outputFormat, outputStream);
 
-            String contentType;
-            String filename;
-
+            final String contentType;
+            final String filename;
             switch (outputFormat) {
                 case JSON:
                     contentType = "application/json";
@@ -199,14 +183,13 @@ public class MovieController implements MovieControllerInterface {
                     break;
             }
 
-            HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.parseMediaType(contentType));
             headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
 
             return new ResponseEntity<>(outputStream.toByteArray(), headers, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            logger.error("Failed to export movies: {}", e.getMessage());
+            return new ResponseEntity<>(headers, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
 }

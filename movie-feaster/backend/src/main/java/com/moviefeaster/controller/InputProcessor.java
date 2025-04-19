@@ -1,6 +1,6 @@
-package com.moviefeaster.Controller;
+package com.moviefeaster.controller;
 
-import com.moviefeaster.Model.*;
+import com.moviefeaster.model.*;
 import org.springframework.stereotype.Service;
 
 /**
@@ -11,9 +11,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class InputProcessor implements InputProcessorInterface {
 
-    // Default constructor (optional in Java, but makes it clear)
-    public InputProcessor() {}
-
     /**
      * Parses the movie name input. Returns null if input is blank.
      *
@@ -21,8 +18,11 @@ public class InputProcessor implements InputProcessorInterface {
      * @return Trimmed name or null.
      */
     @Override
-    public String optionalParseTitle(String input) {
-        return (input == null || input.isBlank()) ? null : input.trim();
+    public String optionalParseTitle(final String input) {
+        if (input == null || input.isBlank()) {
+            return null;
+        }
+        return input.trim();
     }
 
     /**
@@ -32,8 +32,11 @@ public class InputProcessor implements InputProcessorInterface {
      * @return Trimmed director name or null.
      */
     @Override
-    public String optionalParseDirector(String input) {
-        return (input == null || input.isBlank()) ? null : input.trim();
+    public String optionalParseDirector(final String input) {
+        if (input == null || input.isBlank()) {
+            return null;
+        }
+        return input.trim();
     }
 
     /**
@@ -43,10 +46,12 @@ public class InputProcessor implements InputProcessorInterface {
      * @return Trimmed cast name or null.
      */
     @Override
-    public String optionalParseCast(String input) {
-        return (input == null || input.isBlank()) ? null : input.trim();
+    public String optionalParseCast(final String input) {
+        if (input == null || input.isBlank()) {
+            return null;
+        }
+        return input.trim();
     }
-
 
     /**
      * Parses the year input. Returns null if input is blank.
@@ -57,26 +62,33 @@ public class InputProcessor implements InputProcessorInterface {
      * @throws IllegalArgumentException If year is not numeric or out of range.
      */
     @Override
-    public Integer optionalParseYear(String input) {
-        if (input == null || input.isBlank()) return null;
-        try {
-            int year = Integer.parseInt(input.trim());
-            if (year < 1800 || year > 2025)
-                throw new IllegalArgumentException("Year must be between 1800 and 2025.");
-            return year;
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Year must be a number.");
+    public Integer optionalParseYear(final String input) {
+        Integer parsedYear = null;
+        if (input != null && !input.isBlank()) {
+            try {
+                final int year = Integer.parseInt(input.trim());
+                if (year < 1800 || year > 2025) {
+                    throw new IllegalArgumentException("Year must be between 1800 and 2025.");
+                }
+                parsedYear = year;
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("Year must be a number.", e);
+            }
         }
+        return parsedYear;
     }
 
     /**
      * Parses the type/genre input. Returns null if input is blank.
      *
      * @param input The raw user input.
-     * @return Trimmed and lowercased type or null.
+     * @return Trimmed and matched Genre or null.
      */
     @Override
-    public Genre optionalParseGenre(String input) {
-        return (input == null || input.isBlank()) ? null : Genre.fromName(input.trim());
+    public Genre optionalParseGenre(final String input) {
+        if (input == null || input.isBlank()) {
+            return null;
+        }
+        return Genre.fromName(input.trim());
     }
 }

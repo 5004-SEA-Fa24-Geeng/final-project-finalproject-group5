@@ -1,6 +1,6 @@
-package com.moviefeaster.Service;
+package com.moviefeaster.service;
 
-import com.moviefeaster.Model.Movie;
+import com.moviefeaster.model.Movie;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
