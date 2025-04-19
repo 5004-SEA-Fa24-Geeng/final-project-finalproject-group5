@@ -35,24 +35,22 @@ const MovieDetailPage = () => {
 
     // Check if user has already rated this movie and retrieve their rating
     const checkUserHasRated = useCallback(() => {
-        // In a real app, you would check against the user ID
-        // For now, we'll use localStorage to track ratings by movie ID
-        const ratedMovies = JSON.parse(localStorage.getItem('ratedMovies') || '[]');
-        const hasAlreadyRated = ratedMovies.includes(parseInt(id));
-        setHasRated(hasAlreadyRated);
+        // Check specifically if this movie has a saved rating
+        const specificRating = localStorage.getItem(`movieUserRating_${id}`);
 
-        // If user has rated, get their stored rating value
-        if (hasAlreadyRated) {
-            const storedUserRating = localStorage.getItem(`movieUserRating_${id}`);
-            if (storedUserRating) {
-                setUserRating(parseInt(storedUserRating));
-            }
+        // Only mark as rated if we find an actual rating for this specific movie
+        if (specificRating) {
+            setHasRated(true);
+            setUserRating(parseInt(specificRating, 10));
+        } else {
+            setHasRated(false);
+            setUserRating(0);
         }
 
         // Also retrieve stored rating count
         const storedCount = localStorage.getItem(`movieRatingCount_${id}`);
         if (storedCount) {
-            setRatingCount(parseInt(storedCount));
+            setRatingCount(parseInt(storedCount, 10));
         }
     }, [id]);
 
@@ -332,8 +330,8 @@ const MovieDetailPage = () => {
                         )}
                         {movie.rating > 0 && (
                             <div className="movie-rating">
-                                <span className="star-icon">★</span>
-                                <span>{movie.rating.toFixed(1)}/10</span>
+                                <span className="star-icon">👥</span>
+                                <span>{movie.rating.toFixed(0)} watched</span>
                             </div>
                         )}
                     </div>
@@ -376,15 +374,15 @@ const MovieDetailPage = () => {
                                         <p>Updating ratings...</p>
                                         <div className="mini-spinner"></div>
                                     </div>
-                                ) : movie.InAppRating > 0 ? (
+                                ) : movie.inAppRating > 0 ? (
                                     <div className="rating-summary">
-                                        <p>App Rating: {parseFloat(movie.InAppRating).toFixed(1)} (Total ratings: {ratingCount || '?'})</p>
+                                        <p>App Rating: {parseFloat(movie.inAppRating).toFixed(1)} (Total ratings: {ratingCount || '?'})</p>
                                         <div className="rating-stars">
                                             {[1, 2, 3, 4, 5].map((star) => (
                                                 <span
                                                     key={star}
                                                     className={`star ${
-                                                        movie.InAppRating >= star ? 'filled' : ''
+                                                        movie.inAppRating >= star ? 'filled' : ''
                                                     }`}
                                                 >
                                                     ★

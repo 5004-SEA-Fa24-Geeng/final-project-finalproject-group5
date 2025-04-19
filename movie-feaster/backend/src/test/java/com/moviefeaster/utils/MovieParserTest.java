@@ -14,9 +14,9 @@ class MovieParserTest {
 
         Collection<MovieParser.MovieSummary> parsedMovies = MovieParser.getParsedMoviesSummary();
 
-        for (MovieParser.MovieSummary movie : parsedMovies) {
-            System.out.println(movie);
-        }
+//        for (MovieParser.MovieSummary movie : parsedMovies) {
+//            System.out.println(movie);
+//        }
 
         assertNotNull(parsedMovies, "Parsed movies should not be null");
         assertFalse(parsedMovies.isEmpty(), "Parsed movies list should not be empty");
@@ -26,9 +26,9 @@ class MovieParserTest {
     void getParsedMovies() {
         Collection<Movie> parsedMovies = MovieParser.getMoviesFromApi();
 
-        for (Movie movie : parsedMovies) {
-            System.out.println(movie);
-        }
+//        for (Movie movie : parsedMovies) {
+//            System.out.println(movie);
+//        }
 
         assertNotNull(parsedMovies, "Parsed movies should not be null");
         assertFalse(parsedMovies.isEmpty(), "Parsed movies list should not be empty");

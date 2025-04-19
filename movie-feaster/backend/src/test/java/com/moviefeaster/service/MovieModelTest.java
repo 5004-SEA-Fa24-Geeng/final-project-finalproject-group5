@@ -80,9 +80,9 @@ class MovieModelTest {
         model.searchByFilter(filters);
         List<Movie> results = model.getProcessedMovies();
 
-        for (Movie result: results) {
-            System.out.println(result);
-        }
+//        for (Movie result: results) {
+//            System.out.println(result);
+//        }
 
         // --------
         System.out.println("new");
@@ -91,9 +91,9 @@ class MovieModelTest {
         model.searchByFilter(filters);
         List<Movie> results1 = model.getProcessedMovies();
 
-        for (Movie result1: results1) {
-            System.out.println(result1);
-        }
+//        for (Movie result1: results1) {
+//            System.out.println(result1);
+//        }
         assertNotNull(results);
     }
 
