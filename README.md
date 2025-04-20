@@ -1,6 +1,12 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/IE0ITl4j)
 # Final Project for CS 5004 - Movie Feaster
 
+## Group Members
+- [Claire Liu](https://github.com/happy1claire)
+- [Liang Chieh Ho](https://github.com/JanaHo26)
+- Yiwen Hu
+- [Yu-Jing Wei](https://github.com/egsui)
+
 (remove this and add your sections/elements)
 This readme should contain the following information: 
 
@@ -13,7 +19,8 @@ Ask yourself, if you started here in the readme, would you have what you need to
 
 # Movie Feaster
 
-A web application for discovering and exploring movies.
+Movie Feaster is a full-stack web application that allows users to browse, filter, and view detailed movie information.
+Built with Spring Boot and React, it demonstrates modern web development practices, including routing, reusable components, API integration, and interactive UI features.
 
 ## Project Structure
 
