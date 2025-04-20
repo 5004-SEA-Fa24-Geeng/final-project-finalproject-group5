@@ -10,10 +10,17 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Test class for MovieFilterFacilitator utility.
+ */
 class MovieFilterFacilitatorTest {
 
+    /** List of test movies. */
     private List<Movie> movies;
 
+    /**
+     * Sets up test data before each test.
+     */
     @BeforeEach
     void setUp() {
         Movie m1 = new Movie(
@@ -60,6 +67,9 @@ class MovieFilterFacilitatorTest {
         movies = List.of(m1, m2, m3);
     }
 
+    /**
+     * Tests filtering movies by title keyword.
+     */
     @Test
     void filterByTitleKeyword() {
         Map<MovieFilterType, Object> filters = new HashMap<>();
@@ -70,6 +80,9 @@ class MovieFilterFacilitatorTest {
         assertEquals("The Matrix", filtered.get(0).getTitle());
     }
 
+    /**
+     * Tests filtering movies by exact title.
+     */
     @Test
     void filterByExactTitle() {
         Map<MovieFilterType, Object> filters = new HashMap<>();
@@ -80,6 +93,9 @@ class MovieFilterFacilitatorTest {
         assertEquals("Inception", filtered.get(0).getTitle());
     }
 
+    /**
+     * Tests filtering movies by director.
+     */
     @Test
     void filterByDirector() {
         Map<MovieFilterType, Object> filters = new HashMap<>();
@@ -90,6 +106,9 @@ class MovieFilterFacilitatorTest {
         assertEquals("Inception", filtered.get(0).getTitle());
     }
 
+    /**
+     * Tests filtering movies by actor.
+     */
     @Test
     void filterByActor() {
         Map<MovieFilterType, Object> filters = new HashMap<>();
@@ -100,6 +119,9 @@ class MovieFilterFacilitatorTest {
         assertEquals("The Matrix", filtered.get(0).getTitle());
     }
 
+    /**
+     * Tests filtering movies by year.
+     */
     @Test
     void filterByYear() {
         Map<MovieFilterType, Object> filters = new HashMap<>();
@@ -110,6 +132,9 @@ class MovieFilterFacilitatorTest {
         assertEquals("The Matrix", filtered.get(0).getTitle());
     }
 
+    /**
+     * Tests filtering movies by year range.
+     */
     @Test
     void filterByYearRange() {
         Map<MovieFilterType, Object> filters = new HashMap<>();
@@ -119,6 +144,9 @@ class MovieFilterFacilitatorTest {
         assertEquals(2, filtered.size());
     }
 
+    /**
+     * Tests filtering movies by genre.
+     */
     @Test
     void filterByGenre() {
         Map<MovieFilterType, Object> filters = new HashMap<>();
@@ -129,6 +157,9 @@ class MovieFilterFacilitatorTest {
         assertEquals("Barbie", filtered.get(0).getTitle());
     }
 
+    /**
+     * Tests filtering movies by minimum rating.
+     */
     @Test
     void filterByMinRating() {
         Map<MovieFilterType, Object> filters = new HashMap<>();
@@ -138,6 +169,9 @@ class MovieFilterFacilitatorTest {
         assertEquals(2, filtered.size());
     }
 
+    /**
+     * Tests filtering movies by maximum rating.
+     */
     @Test
     void filterByMaxRating() {
         Map<MovieFilterType, Object> filters = new HashMap<>();
@@ -148,6 +182,9 @@ class MovieFilterFacilitatorTest {
         assertEquals("Barbie", filtered.get(0).getTitle());
     }
 
+    /**
+     * Tests filtering movies by comment keyword with no matches.
+     */
     @Test
     void filterByCommentKeywordComments() {
         Map<MovieFilterType, Object> filters = new HashMap<>();
@@ -157,6 +194,9 @@ class MovieFilterFacilitatorTest {
         assertEquals(0, filtered.size());
     }
 
+    /**
+     * Tests filtering movies by comment keyword with matches.
+     */
     @Test
     void filterByCommentKeywordMatchComments() {
         Map<MovieFilterType, Object> filters = new HashMap<>();
@@ -166,8 +206,11 @@ class MovieFilterFacilitatorTest {
         assertEquals(1, filtered.size());
     }
 
+    /**
+     * Tests filtering movies by minimum in-app rating when some movies have no ratings.
+     */
     @Test
-    void filterByMinInAppRating_noRatingsYet() {
+    void filterByMinInAppRatingNoRatingsYet() {
         Map<MovieFilterType, Object> filters = new HashMap<>();
         filters.put(MovieFilterType.MIN_INAPP_RATING, 4.0);
 

@@ -14,15 +14,25 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Test class for MovieModel service.
+ */
 class MovieModelTest {
 
+    /** MovieModel instance for testing. */
     private MovieModel model;
 
+    /**
+     * Sets up test data before each test.
+     */
     @BeforeEach
     void setUp() {
         model = new MovieModel();
     }
 
+    /**
+     * Tests fetching movies from the model.
+     */
     @Test
     void fetchMovies() {
         model.fetchMovies();
@@ -31,12 +41,18 @@ class MovieModelTest {
         assertFalse(movies.isEmpty(), "Movies list should not be empty after fetching");
     }
 
+    /**
+     * Tests getting movies from the model.
+     */
     @Test
     void getMovies() {
         List<Movie> movies = model.getMovies();
         assertNotNull(movies);
     }
 
+    /**
+     * Tests getting a movie by ID.
+     */
     @Test
     void getMovieById() {
         Movie movie = model.getMovies().get(0);
@@ -46,12 +62,18 @@ class MovieModelTest {
         assertEquals(movie.getMovieId(), found.getMovieId());
     }
 
+    /**
+     * Tests getting processed movies from the model.
+     */
     @Test
     void getProcessedMovies() {
         List<Movie> processed = model.getProcessedMovies();
         assertNotNull(processed);
     }
 
+    /**
+     * Tests writing movies to a file.
+     */
     @Test
     void writeFile() {
         model.fetchMovies();
@@ -61,6 +83,9 @@ class MovieModelTest {
         outputFile.delete(); // Clean up
     }
 
+    /**
+     * Tests searching movies by filter.
+     */
     @Test
     void searchByFilter() {
         model.fetchMovies();
@@ -71,8 +96,11 @@ class MovieModelTest {
         assertNotNull(results);
     }
 
+    /**
+     * Tests searching movies by filter with new filter flag.
+     */
     @Test
-    void testSearchByFilter_withNewFilterFlag() {
+    void searchByFilterWithNewFilterFlag() {
         model.fetchMovies();
 
         Map<MovieFilterType, Object> filters = new HashMap<>();
@@ -81,10 +109,6 @@ class MovieModelTest {
         model.searchByFilter(filters);
         List<Movie> results = model.getProcessedMovies();
 
-//        for (Movie result: results) {
-//            System.out.println(result);
-//        }
-
         // --------
         System.out.println("new");
 
@@ -92,12 +116,12 @@ class MovieModelTest {
         model.searchByFilter(filters);
         List<Movie> results1 = model.getProcessedMovies();
 
-//        for (Movie result1: results1) {
-//            System.out.println(result1);
-//        }
         assertNotNull(results);
     }
 
+    /**
+     * Tests sorting the movie list.
+     */
     @Test
     void sortMovieList() {
         model.fetchMovies();
@@ -106,6 +130,9 @@ class MovieModelTest {
         assertNotNull(sorted);
     }
 
+    /**
+     * Tests setting the default movie sorter type.
+     */
     @Test
     void setDefaultMovieSorterType() {
         model.setDefaultSortType(MovieSorterType.RATING_DESC);
@@ -113,6 +140,9 @@ class MovieModelTest {
         assertNotNull(model.getProcessedMovies());
     }
 
+    /**
+     * Tests updating movie comments.
+     */
     @Test
     void updateComments() {
         model.fetchMovies();
@@ -121,6 +151,9 @@ class MovieModelTest {
         assertTrue(movie.getComments().contains("Great movie!"));
     }
 
+    /**
+     * Tests updating movie ratings.
+     */
     @Test
     void updateRating() {
         model.fetchMovies();

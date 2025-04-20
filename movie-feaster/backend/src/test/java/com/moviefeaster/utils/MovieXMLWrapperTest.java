@@ -37,7 +37,7 @@ class MovieXMLWrapperTest {
 
 
     @Test
-    void setMovie_shouldUpdateCollection() {
+    void setMovieShouldUpdateCollection() {
         MovieXMLWrapper wrapper = new MovieXMLWrapper(null);
         assertNull(wrapper.getMovie());
 
@@ -52,7 +52,7 @@ class MovieXMLWrapperTest {
 
 
     @Test
-    void setMovie_shouldUpdateStoredReference() {
+    void setMovieShouldUpdateStoredReference() {
         MovieXMLWrapper wrapper = new MovieXMLWrapper(Collections.emptyList());
         Movie movie = new Movie(1, "Test", Collections.emptyList(),
                 2020, 8.0, Collections.emptyList(),

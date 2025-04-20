@@ -7,13 +7,23 @@ import java.io.ByteArrayOutputStream;
 import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Test class for DataFormatter utility.
+ */
 public class DataFormatterTest {
 
+    /** Test movie with complete data. */
     private Movie movie1;
+    /** Test movie with different data. */
     private Movie movie2;
+    /** Collection of test movies. */
     private Collection<Movie> testMovies;
+    /** Output stream for testing write operations. */
     private ByteArrayOutputStream outputStream;
 
+    /**
+     * Sets up test data before each test.
+     */
     @BeforeEach
     public void setUp() {
         // Initialize Movie 1 with complete data
@@ -55,8 +65,11 @@ public class DataFormatterTest {
         outputStream = new ByteArrayOutputStream();
     }
 
+    /**
+     * Tests formatting of a single movie with all fields.
+     */
     @Test
-    public void SingleMovie_containsAllFields() {
+    public void singleMovieContainsAllFields() {
         String result = DataFormatter.formatSingleMovie(movie1);
 
         // Verify all core fields are present
@@ -70,8 +83,11 @@ public class DataFormatterTest {
         assertTrue(result.contains("Excellent film"), "Should contain comments");
     }
 
+    /**
+     * Tests formatting of a movie list containing multiple movies.
+     */
     @Test
-    public void MovieList_containsAllMovies() {
+    public void movieListContainsAllMovies() {
         String result = DataFormatter.formatMovieList(testMovies);
 
         // Verify both movies are present
@@ -83,6 +99,9 @@ public class DataFormatterTest {
                 "Should have separator between movies");
     }
 
+    /**
+     * Tests writing movies in pretty format.
+     */
     @Test
     public void writePretty() {
         DataFormatter.write(testMovies, Format.PRETTY, outputStream);
@@ -92,6 +111,9 @@ public class DataFormatterTest {
         assertTrue(result.contains("Movie 2"), "Default format should contain Movie 2");
     }
 
+    /**
+     * Tests writing movies in CSV format.
+     */
     @Test
     public void writeCsv() {
         DataFormatter.write(testMovies, Format.CSV, outputStream);
@@ -107,6 +129,9 @@ public class DataFormatterTest {
         assertTrue(lines[2].contains("Movie 2,2021,7.9"), "Movie 2 data is incorrect");
     }
 
+    /**
+     * Tests writing movies in JSON format.
+     */
     @Test
     public void writeJson() {
         DataFormatter.write(testMovies, Format.JSON, outputStream);
@@ -118,6 +143,9 @@ public class DataFormatterTest {
         assertTrue(result.contains("\"year\" : 2021"), "Should contain Movie 2 year");
     }
 
+    /**
+     * Tests writing movies in XML format.
+     */
     @Test
     public void writeXml() {
         DataFormatter.write(testMovies, Format.XML, outputStream);
@@ -129,8 +157,11 @@ public class DataFormatterTest {
         assertTrue(result.contains("<year>2021</year>"), "Should contain Movie 2 year");
     }
 
+    /**
+     * Tests formatting of a movie with empty fields.
+     */
     @Test
-    public void MovieWithEmptyFields() {
+    public void movieWithEmptyFields() {
         Movie emptyMovie = new Movie(
                 3,
                 "Empty Fields Movie",
@@ -151,6 +182,9 @@ public class DataFormatterTest {
         assertFalse(result.contains("Poster:"), "Empty URL should not show Poster");
     }
 
+    /**
+     * Tests writing an empty movie list.
+     */
     @Test
     public void writeEmptyList() {
         DataFormatter.write(Collections.emptyList(), Format.PRETTY, outputStream);

@@ -11,11 +11,23 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Test class for MovieFilter utility.
+ */
 class MovieFilterTest {
 
+    /** List of test movies. */
     private List<Movie> testMovies;
-    private Movie movie1, movie2, movie3;
+    /** First test movie. */
+    private Movie movie1;
+    /** Second test movie. */
+    private Movie movie2;
+    /** Third test movie. */
+    private Movie movie3;
 
+    /**
+     * Sets up test data before each test.
+     */
     @BeforeEach
     void setUp() {
         testMovies = new ArrayList<>();
@@ -70,6 +82,9 @@ class MovieFilterTest {
         testMovies.add(movie3);
     }
 
+    /**
+     * Tests filtering movies by title.
+     */
     @Test
     void filterByTitle() {
         // Test normal case
@@ -83,6 +98,9 @@ class MovieFilterTest {
         assertTrue(result.contains(movie3));
     }
 
+    /**
+     * Tests filtering movies by exact title.
+     */
     @Test
     void filterByExactTitle() {
         // Test normal case
@@ -100,6 +118,9 @@ class MovieFilterTest {
         assertEquals(0, result.size());
     }
 
+    /**
+     * Tests filtering movies by director.
+     */
     @Test
     void filterByDirector() {
         // Test normal case
@@ -118,6 +139,9 @@ class MovieFilterTest {
         assertTrue(result.contains(movie2));
     }
 
+    /**
+     * Tests filtering movies by year.
+     */
     @Test
     void filterByYear() {
         // Test normal case
@@ -134,6 +158,9 @@ class MovieFilterTest {
         assertEquals(0, result.size());
     }
 
+    /**
+     * Tests filtering movies by year range.
+     */
     @Test
     void filterByYearRange() {
         // Test range containing multiple movies
@@ -152,6 +179,9 @@ class MovieFilterTest {
         assertEquals(0, result.size());
     }
 
+    /**
+     * Tests filtering movies by minimum rating.
+     */
     @Test
     void filterByMinRating() {
         // Test threshold that includes all movies
@@ -169,6 +199,9 @@ class MovieFilterTest {
         assertEquals(0, result.size());
     }
 
+    /**
+     * Tests filtering movies by maximum rating.
+     */
     @Test
     void filterByMaxRating() {
         // Test threshold that includes all movies
@@ -185,6 +218,9 @@ class MovieFilterTest {
         assertEquals(0, result.size());
     }
 
+    /**
+     * Tests filtering movies by genre.
+     */
     @Test
     void filterByGenre() {
         // Test genre present in all movies
@@ -207,6 +243,9 @@ class MovieFilterTest {
         assertEquals(0, result.size());
     }
 
+    /**
+     * Tests filtering movies by actor.
+     */
     @Test
     void filterByActor() {
         // Test normal case
@@ -229,6 +268,9 @@ class MovieFilterTest {
         assertEquals(0, result.size());
     }
 
+    /**
+     * Tests filtering movies by comment keyword.
+     */
     @Test
     void filterByCommentKeyword() {
         // Test normal case
@@ -246,6 +288,9 @@ class MovieFilterTest {
         assertEquals(0, result.size());
     }
 
+    /**
+     * Tests filtering movies by minimum in-app rating.
+     */
     @Test
     void filterByMinInAppRating() {
         // Test threshold that includes all movies
@@ -262,6 +307,9 @@ class MovieFilterTest {
         assertEquals(0, result.size());
     }
 
+    /**
+     * Tests combining filters with AND logic.
+     */
     @Test
     void combineAnd() {
         // Test combining two filters with overlapping results

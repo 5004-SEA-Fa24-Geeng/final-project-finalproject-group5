@@ -26,14 +26,14 @@ public final class MovieFilter {
      */
     public static List<Movie> filterByTitle(final List<Movie> movies, final String keyword) {
         final List<Movie> results = new ArrayList<>();
-        if (movies == null || keyword == null) {
+        if (movies == null || keyword == null || keyword.isBlank()) {
             return results;
         }
 
         final String lowerCaseKeyword = keyword.toLowerCase(Locale.ROOT);
 
         for (final Movie movie : movies) {
-            if (movie.getTitle().toLowerCase(Locale.ROOT).contains(lowerCaseKeyword)) {
+            if (movie.getTitle() != null && movie.getTitle().toLowerCase(Locale.ROOT).contains(lowerCaseKeyword)) {
                 results.add(movie);
             }
         }
@@ -50,11 +50,15 @@ public final class MovieFilter {
      */
     public static List<Movie> filterByExactTitle(final List<Movie> movies, final String title) {
         final List<Movie> results = new ArrayList<>();
-        if (movies != null && title != null) {
-            for (final Movie movie : movies) {
-                if (movie.getTitle().equalsIgnoreCase(title)) {
-                    results.add(movie);
-                }
+        if (movies == null || title == null || title.isBlank()) {
+            return results;
+        }
+
+        final String lowerCaseTitle = title.toLowerCase(Locale.ROOT);
+
+        for (final Movie movie : movies) {
+            if (movie.getTitle() != null && movie.getTitle().toLowerCase(Locale.ROOT).equals(lowerCaseTitle)) {
+                results.add(movie);
             }
         }
         return results;
@@ -69,17 +73,19 @@ public final class MovieFilter {
      */
     public static List<Movie> filterByDirector(final List<Movie> movies, final String directorName) {
         final List<Movie> results = new ArrayList<>();
-        if (movies == null || directorName == null) {
+        if (movies == null || directorName == null || directorName.isBlank()) {
             return results;
         }
 
         final String directorNameLower = directorName.toLowerCase(Locale.ROOT);
 
         for (final Movie movie : movies) {
-            for (final String director : movie.getDirectors()) {
-                if (director.toLowerCase(Locale.ROOT).contains(directorNameLower)) {
-                    results.add(movie);
-                    break;
+            if (movie.getDirectors() != null) {
+                for (final String director : movie.getDirectors()) {
+                    if (director != null && director.toLowerCase(Locale.ROOT).contains(directorNameLower)) {
+                        results.add(movie);
+                        break;
+                    }
                 }
             }
         }
@@ -96,11 +102,13 @@ public final class MovieFilter {
      */
     public static List<Movie> filterByYear(final List<Movie> movies, final int year) {
         final List<Movie> results = new ArrayList<>();
-        if (movies != null) {
-            for (final Movie movie : movies) {
-                if (movie.getYear() == year) {
-                    results.add(movie);
-                }
+        if (movies == null || year < 0) {
+            return results;
+        }
+
+        for (final Movie movie : movies) {
+            if (movie.getYear() == year) {
+                results.add(movie);
             }
         }
         return results;
@@ -118,12 +126,14 @@ public final class MovieFilter {
                                                 final int startYear,
                                                 final int endYear) {
         final List<Movie> results = new ArrayList<>();
-        if (movies != null) {
-            for (final Movie movie : movies) {
-                final int year = movie.getYear();
-                if (year >= startYear && year <= endYear) {
-                    results.add(movie);
-                }
+        if (movies == null || startYear < 0 || endYear < 0 || startYear > endYear) {
+            return results;
+        }
+
+        for (final Movie movie : movies) {
+            final int year = movie.getYear();
+            if (year >= startYear && year <= endYear) {
+                results.add(movie);
             }
         }
         return results;
@@ -138,11 +148,13 @@ public final class MovieFilter {
      */
     public static List<Movie> filterByMinRating(final List<Movie> movies, final double minRating) {
         final List<Movie> results = new ArrayList<>();
-        if (movies != null) {
-            for (final Movie movie : movies) {
-                if (movie.getRating() >= minRating) {
-                    results.add(movie);
-                }
+        if (movies == null || minRating < 0.0 || minRating > 10.0) {
+            return results;
+        }
+
+        for (final Movie movie : movies) {
+            if (movie.getRating() >= minRating) {
+                results.add(movie);
             }
         }
         return results;
@@ -157,11 +169,13 @@ public final class MovieFilter {
      */
     public static List<Movie> filterByMaxRating(final List<Movie> movies, final double maxRating) {
         final List<Movie> results = new ArrayList<>();
-        if (movies != null) {
-            for (final Movie movie : movies) {
-                if (movie.getRating() <= maxRating) {
-                    results.add(movie);
-                }
+        if (movies == null || maxRating < 0.0 || maxRating > 10.0) {
+            return results;
+        }
+
+        for (final Movie movie : movies) {
+            if (movie.getRating() <= maxRating) {
+                results.add(movie);
             }
         }
         return results;
@@ -176,17 +190,19 @@ public final class MovieFilter {
      */
     public static List<Movie> filterByGenre(final List<Movie> movies, final String genre) {
         final List<Movie> results = new ArrayList<>();
-        if (movies == null || genre == null) {
+        if (movies == null || genre == null || genre.isBlank()) {
             return results;
         }
 
         final String genreLower = genre.toLowerCase(Locale.ROOT);
 
         for (final Movie movie : movies) {
-            for (final Genre g : movie.getGenres()) {
-                if (g.toString().toLowerCase(Locale.ROOT).contains(genreLower)) {
-                    results.add(movie);
-                    break;
+            if (movie.getGenres() != null) {
+                for (final Genre g : movie.getGenres()) {
+                    if (g != null && g.toString().toLowerCase(Locale.ROOT).contains(genreLower)) {
+                        results.add(movie);
+                        break;
+                    }
                 }
             }
         }
@@ -203,17 +219,19 @@ public final class MovieFilter {
      */
     public static List<Movie> filterByActor(final List<Movie> movies, final String actorName) {
         final List<Movie> results = new ArrayList<>();
-        if (movies == null || actorName == null) {
+        if (movies == null || actorName == null || actorName.isBlank()) {
             return results;
         }
 
         final String actorNameLower = actorName.toLowerCase(Locale.ROOT);
 
         for (final Movie movie : movies) {
-            for (final String actor : movie.getCastings()) {
-                if (actor.toLowerCase(Locale.ROOT).contains(actorNameLower)) {
-                    results.add(movie);
-                    break;
+            if (movie.getCastings() != null) {
+                for (final String actor : movie.getCastings()) {
+                    if (actor != null && actor.toLowerCase(Locale.ROOT).contains(actorNameLower)) {
+                        results.add(movie);
+                        break;
+                    }
                 }
             }
         }

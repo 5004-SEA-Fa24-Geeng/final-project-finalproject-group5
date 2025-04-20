@@ -8,8 +8,14 @@ import java.io.InputStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Test class for NetUtil utility.
+ */
 public class NetUtilTest {
 
+    /**
+     * Simple stub test that always passes.
+     */
     @Test
     public void testSimpleStub() {
         // This test always passes
@@ -17,7 +23,9 @@ public class NetUtilTest {
         assertTrue(true);
     }
 
-    // Actual test marked as disabled until implementation is complete
+    /**
+     * Tests that the top 50 movies JSON response is not null.
+     */
     @Test
     public void testGetTop50MoviesJsonNotNull() {
         InputStream result = NetUtil.getTop50MoviesJson();
@@ -40,7 +48,9 @@ public class NetUtilTest {
         }
     }
 
-    // Another approach: Create a stub that returns mock data
+    /**
+     * Tests with mock data to verify functionality.
+     */
     @Test
     public void testWithMockData() {
         System.out.println("Testing with mock data");
@@ -54,6 +64,9 @@ public class NetUtilTest {
         System.out.println("Mock test passed!");
     }
 
+    /**
+     * Tests the format of the top 50 movies JSON response.
+     */
     @Test
     public void testTop50MoviesJsonFormat() throws IOException {
         InputStream stream = NetUtil.getTop50MoviesJson();
@@ -76,6 +89,9 @@ public class NetUtilTest {
         System.out.println("Top 50 Movies JSON array test passed, length: " + json.length());
     }
 
+    /**
+     * Tests that consecutive calls to getTop50MoviesJson return the same result.
+     */
     @Test
     public void testGetTop50MoviesJsonTwice() throws IOException {
         InputStream firstCall = NetUtil.getTop50MoviesJson();
@@ -87,6 +103,7 @@ public class NetUtilTest {
         String first = new String(firstCall.readAllBytes());
         String second = new String(secondCall.readAllBytes());
 
-        assertEquals(first, second, "Consecutive API calls should return the same result for consistency (unless API changes)");
+        assertEquals(first, second, 
+            "Consecutive API calls should return the same result for consistency");
     }
 }

@@ -10,10 +10,26 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Test class for MovieSorter utility class.
+ * Contains tests for various sorting methods of movies.
+ */
 class MovieSorterTest {
-
+    
+    /** List of test movies used in the test cases. */
     private List<Movie> testMovies;
-    private Movie movie1, movie2, movie3, movie4;
+    
+    /** First test movie with medium year, high rating, and "S" title. */
+    private Movie movie1;
+    
+    /** Second test movie, oldest with medium-high rating and "G" title. */
+    private Movie movie2;
+    
+    /** Third test movie, recent with medium rating and "D" title. */
+    private Movie movie3;
+    
+    /** Fourth test movie, newest with lowest rating and "I" title. */
+    private Movie movie4;
 
     @BeforeEach
     void setUp() {
