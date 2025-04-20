@@ -93,11 +93,9 @@ public final class MovieParser {
         for (final MovieSummary movie : moviesSummary) {
             final int movieId = movie.getMovieID();
             final String title = movie.getTitle();
-
             final String releaseDate = movie.getReleaseDate();
             final LocalDate date = LocalDate.parse(releaseDate);
             final int year = date.getYear();
-
             final List<Genre> genre = convertGenreIds(movie.getGenreID());
             final String overview = movie.getOverview();
             final List<String> directors = new ArrayList<>();
@@ -105,7 +103,7 @@ public final class MovieParser {
             final double rating = movie.getRating();
             final String imgUrl = IMAGE_BASE_URL + movie.getPosterPath();
 
-            try (InputStream crewJson = NetUtil.getCrewJsonStream(movie.getMovieID())) {
+            try (InputStream crewJson = NetUtil.getCrewJsonStream(movieId)) {
                 if (crewJson != null) {
                     final ObjectMapper mapper = new ObjectMapper();
                     final JsonNode root = mapper.readTree(crewJson);
@@ -119,13 +117,24 @@ public final class MovieParser {
 
                     final JsonNode castArray = root.get("cast");
                     for (final JsonNode actor : castArray) {
-                        final String actorName = actor.get("name").asText();
-                        castings.add(actorName);
+                        castings.add(actor.get("name").asText());
                     }
                 }
             }
 
-            MOVIES.add(new Movie(movieId, title, directors, year, rating, genre, overview, castings, imgUrl));
+            Movie movieObj = new Movie.MovieBuilder()
+                    .movieId(movieId)
+                    .title(title)
+                    .directors(directors)
+                    .year(year)
+                    .rating(rating)
+                    .genres(genre)
+                    .overview(overview)
+                    .castings(castings)
+                    .imgUrl(imgUrl)
+                    .build();
+
+            MOVIES.add(movieObj);
 
             if (MOVIES.size() >= NUMBER_OF_MOVIES) {
                 break;
