@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Class to store movies' detailed meta data.
  */
-public final class Movie {
+public class Movie {
 
     /** ID of the movie. */
     private int movieId;
@@ -23,7 +23,7 @@ public final class Movie {
     /** Rating of the movie. */
     private double rating;
 
-    /** The List of genres the movie belongs to. */
+    /** List of genres the movie belongs to. */
     private List<Genre> genres;
 
     /** String of overview in movie. */
@@ -42,139 +42,34 @@ public final class Movie {
     private String imgUrl;
 
     /**
-     * Private constructor for Movie class.
-     * Use MovieBuilder to create instances.
+     * Constructs a Movie instance with the given details with safeguard.
+     * If the information is unable to be acquired from api, it will be constructed
+     * with default value.
+     *
+     * @param movieId        ID of the movie
+     * @param title          Title of the movie
+     * @param directors      List of directors
+     * @param year           Year the movie was released
+     * @param rating         Rating of the movie
+     * @param genres         List of genres
+     * @param overview       Overview of movie
+     * @param castings       List of cast members
+     * @param imgUrl         URL of movie's poster
      */
-    private Movie() {
+    public Movie(final int movieId, final String title, final List<String> directors, final int year,
+                 final double rating, final List<Genre> genres, final String overview,
+                 final List<String> castings, final String imgUrl) {
+        this.movieId = movieId;
+        this.title = title != null && !title.isBlank() ? title : "Unknown Title";
+        this.directors = directors != null ? directors : new ArrayList<>();
+        this.year = year > 1800 ? year : 0;
+        this.rating = rating >= 0.0 && rating <= 10_000.0 ? rating : 0.0;
+        this.genres = genres != null ? genres : new ArrayList<>();
+        this.overview = overview != null && !overview.isBlank() ? overview : "No Overview";
+        this.castings = castings != null ? castings : new ArrayList<>();
         this.comments = new ArrayList<>();
         this.inAppRating = new ArrayList<>();
-    }
-
-    /**
-     * Builder class for creating Movie instances.
-     */
-    public static class MovieBuilder {
-
-        /**
-         * Internal Movie instance being built by this builder.
-         * Values are progressively assigned through chained builder methods.
-         */
-        private final Movie movie;
-
-        /**
-         * Creates a new MovieBuilder instance.
-         */
-        public MovieBuilder() {
-            this.movie = new Movie();
-        }
-
-        /**
-         * Sets the movie ID.
-         *
-         * @param movieId the movie ID
-         * @return this builder
-         */
-        public MovieBuilder movieId(final int movieId) {
-            this.movie.movieId = movieId;
-            return this;
-        }
-
-        /**
-         * Sets the movie title.
-         *
-         * @param title the movie title
-         * @return this builder
-         */
-        public MovieBuilder title(final String title) {
-            this.movie.title = title != null && !title.isBlank() ? title : "Unknown Title";
-            return this;
-        }
-
-        /**
-         * Sets the directors.
-         *
-         * @param directors the list of directors
-         * @return this builder
-         */
-        public MovieBuilder directors(final List<String> directors) {
-            this.movie.directors = directors != null ? directors : new ArrayList<>();
-            return this;
-        }
-
-        /**
-         * Sets the release year.
-         *
-         * @param year the release year
-         * @return this builder
-         */
-        public MovieBuilder year(final int year) {
-            this.movie.year = year > 1800 ? year : 0;
-            return this;
-        }
-
-        /**
-         * Sets the rating.
-         *
-         * @param rating the movie rating
-         * @return this builder
-         */
-        public MovieBuilder rating(final double rating) {
-            this.movie.rating = rating >= 0.0 && rating <= 10_000.0 ? rating : 0.0;
-            return this;
-        }
-
-        /**
-         * Sets the genres.
-         *
-         * @param genres the list of genres
-         * @return this builder
-         */
-        public MovieBuilder genres(final List<Genre> genres) {
-            this.movie.genres = genres != null ? genres : new ArrayList<>();
-            return this;
-        }
-
-        /**
-         * Sets the overview.
-         *
-         * @param overview the movie overview
-         * @return this builder
-         */
-        public MovieBuilder overview(final String overview) {
-            this.movie.overview = overview != null && !overview.isBlank() ? overview : "No Overview";
-            return this;
-        }
-
-        /**
-         * Sets the castings.
-         *
-         * @param castings the list of cast members
-         * @return this builder
-         */
-        public MovieBuilder castings(final List<String> castings) {
-            this.movie.castings = castings != null ? castings : new ArrayList<>();
-            return this;
-        }
-
-        /**
-         * Sets the image URL.
-         *
-         * @param imgUrl the image URL
-         * @return this builder
-         */
-        public MovieBuilder imgUrl(final String imgUrl) {
-            this.movie.imgUrl = imgUrl != null ? imgUrl : "";
-            return this;
-        }
-
-        /**
-         * Builds and returns the Movie instance.
-         *
-         * @return the built Movie instance
-         */
-        public Movie build() {
-            return this.movie;
-        }
+        this.imgUrl = imgUrl != null ? imgUrl : "";
     }
 
     /**

@@ -44,7 +44,8 @@ public final class MovieSorter {
             sortedMovies = new ArrayList<>();
         } else {
             sortedMovies = new ArrayList<>(movies);
-            Collections.sort(sortedMovies, Comparator.comparing(Movie::getTitle, String.CASE_INSENSITIVE_ORDER).reversed());
+            Collections.sort(sortedMovies, Comparator.comparing(Movie::getTitle,
+                    String.CASE_INSENSITIVE_ORDER).reversed());
         }
         return sortedMovies;
     }

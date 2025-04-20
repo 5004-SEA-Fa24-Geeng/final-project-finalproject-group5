@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,14 +23,14 @@ class MovieFilterTest {
         // Movie 1
         movie1 = new Movie(
                 1,
-                "The Shawshank Redemption",
-                Arrays.asList("Frank Darabont"),
-                1994,
-                9.3,
-                Arrays.asList(Genre.DRAMA),
-                "Two imprisoned men bond over a number of years...",
-                Arrays.asList("Tim Robbins", "Morgan Freeman"),
-                "https://example.com/shawshank.jpg"
+                "The Matrix",
+                Collections.emptyList(),
+                1999,
+                8.7,
+                Collections.emptyList(),
+                "A computer hacker learns about the true nature of reality",
+                Collections.emptyList(),
+                ""
         );
         movie1.setComments(Arrays.asList("Great prison movie", "Classic film"));
         movie1.setInAppRating(Arrays.asList(5.0, 4.5));
@@ -37,14 +38,14 @@ class MovieFilterTest {
         // Movie 2
         movie2 = new Movie(
                 2,
-                "The Godfather",
-                Arrays.asList("Francis Ford Coppola"),
-                1972,
-                9.2,
-                Arrays.asList(Genre.CRIME, Genre.DRAMA),
-                "The aging patriarch of an organized crime dynasty...",
-                Arrays.asList("Marlon Brando", "Al Pacino"),
-                "https://example.com/godfather.jpg"
+                "Inception",
+                Collections.emptyList(),
+                2010,
+                8.8,
+                Collections.emptyList(),
+                "A thief who steals corporate secrets through the use of dream-sharing technology",
+                Collections.emptyList(),
+                ""
         );
         movie2.setComments(Arrays.asList("Masterpiece of cinema", "Excellent performances"));
         movie2.setInAppRating(Arrays.asList(4.8, 4.9));
@@ -53,13 +54,13 @@ class MovieFilterTest {
         movie3 = new Movie(
                 3,
                 "The Dark Knight",
-                Arrays.asList("Christopher Nolan"),
+                Collections.emptyList(),
                 2008,
                 9.0,
-                Arrays.asList(Genre.ACTION, Genre.CRIME, Genre.DRAMA),
-                "When the menace known as the Joker wreaks havoc...",
-                Arrays.asList("Christian Bale", "Heath Ledger"),
-                "https://example.com/darkknight.jpg"
+                Collections.emptyList(),
+                "When the menace known as the Joker wreaks havoc and chaos on the people of Gotham",
+                Collections.emptyList(),
+                ""
         );
         movie3.setComments(Arrays.asList("Best superhero movie", "Heath Ledger's Joker is amazing"));
         movie3.setInAppRating(Arrays.asList(4.7, 4.2));
