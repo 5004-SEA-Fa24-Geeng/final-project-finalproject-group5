@@ -4,7 +4,6 @@ import com.moviefeaster.utils.*;
 import com.moviefeaster.model.*;
 import org.springframework.stereotype.Service;
 
-import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,21 +16,22 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Service model class that provides movie data fetching, filtering,
+ * Service class that implements MovieModelInterface to provide movie filtering,
  * sorting, and persistence functionalities.
  */
 @Service
 public class MovieModel implements MovieModelInterface {
 
-    private static final Logger logger = LoggerFactory.getLogger(MovieModel.class);
+    /** Logger instance for this class. */
+    private static final Logger LOGGER = LoggerFactory.getLogger(MovieModel.class);
 
-    /** Movie's list */
+    /** List of all movies. */
     private List<Movie> movies;
 
-    /** Filtered movies' list */
+    /** List of filtered movies. */
     private List<Movie> processedMovies;
 
-    /** Default sorting type */
+    /** Default sorting type for movies. */
     private MovieSorterType defaultSortType;
 
     /**
@@ -99,9 +99,9 @@ public class MovieModel implements MovieModelInterface {
 
         try (OutputStream out = new FileOutputStream("output." + format.toString().toLowerCase(Locale.ROOT))) {
             DataFormatter.write(moviesToWrite, format, out);
-            logger.info("Movie data written successfully in {} format.", format);
+            LOGGER.info("Movie data written successfully in {} format.", format);
         } catch (IOException e) {
-            logger.error("Failed to write movie data: {}", e.getMessage());
+            LOGGER.error("Failed to write movie data: {}", e.getMessage());
         }
     }
 

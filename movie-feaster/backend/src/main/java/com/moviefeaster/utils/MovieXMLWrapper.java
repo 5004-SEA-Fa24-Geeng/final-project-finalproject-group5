@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 @JacksonXmlRootElement(localName = "movies")
 public class MovieXMLWrapper {
 
-    /** Collection of movies */
+    /** Collection of movies. */
     @JacksonXmlElementWrapper(useWrapping = false)
     private Collection<Movie> movie;
 

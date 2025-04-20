@@ -7,6 +7,12 @@ plugins {
 
 // https://docs.gradle.org/current/userguide/jacoco_plugin.html
     id 'jacoco'
+    id 'checkstyle'
+}
+
+checkstyle {
+    configFile = file("./checkstyle-rules.xml") // Relative to build.gradle
+    toolVersion = '10.3' // or whichever version you want to use
 }
 
 group = 'com.moviefeaster'
@@ -85,9 +91,8 @@ jacoco {
 
 jacocoTestReport {
     reports {
-        html {
-            destination = file("${buildDir}/jacocoHtml")
-        }
+        html.required.set(true)
+        html.outputLocation.set(file("${buildDir}/jacocoHtml"))
     }
     doLast {
         String fixedBuildDir = buildDir.toString().replace('\\', '/')

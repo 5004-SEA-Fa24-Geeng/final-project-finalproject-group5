@@ -4,13 +4,28 @@ package com.moviefeaster.model;
  * Enum representing available movie sorting strategies.
  */
 public enum MovieSorterType {
+    /** Sort movies by title in ascending order. */
     TITLE_ASC("title_asc"),
+    
+    /** Sort movies by title in descending order. */
     TITLE_DESC("title_desc"),
+    
+    /** Sort movies by release year in ascending order. */
     YEAR_ASC("year_asc"),
+    
+    /** Sort movies by release year in descending order. */
     YEAR_DESC("year_desc"),
+    
+    /** Sort movies by rating in ascending order. */
     RATING_ASC("rating_asc"),
+    
+    /** Sort movies by rating in descending order. */
     RATING_DESC("rating_desc"),
+    
+    /** Sort movies by in-app rating in ascending order. */
     INAPP_RATING_ASC("inapp_rating_asc"),
+    
+    /** Sort movies by in-app rating in descending order. */
     INAPP_RATING_DESC("inapp_rating_desc");
 
     /**

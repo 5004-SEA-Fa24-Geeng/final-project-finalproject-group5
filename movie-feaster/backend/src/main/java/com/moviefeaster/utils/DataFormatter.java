@@ -1,5 +1,4 @@
 package com.moviefeaster.utils;
-
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Collection;
@@ -16,7 +15,8 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
  */
 public final class DataFormatter {
 
-    private static final Logger logger = Logger.getLogger(DataFormatter.class.getName());
+    /** Logger instance for the DataFormatter class. */
+    private static final Logger LOGGER = Logger.getLogger(DataFormatter.class.getName());
 
     /**
      * Private constructor to prevent instantiation.
@@ -105,7 +105,7 @@ public final class DataFormatter {
             final MovieXMLWrapper wrapper = new MovieXMLWrapper(movies);
             mapper.writerWithDefaultPrettyPrinter().writeValue(outputStream, wrapper);
         } catch (final Exception e) {
-            logger.severe("Error writing XML data: " + e.getMessage());
+            LOGGER.severe("Error writing XML data: " + e.getMessage());
         }
     }
 
@@ -114,7 +114,7 @@ public final class DataFormatter {
             final ObjectMapper mapper = new ObjectMapper();
             mapper.writerWithDefaultPrettyPrinter().writeValue(outputStream, movies);
         } catch (final Exception e) {
-            logger.severe("Error writing JSON data: " + e.getMessage());
+            LOGGER.severe("Error writing JSON data: " + e.getMessage());
         }
     }
 
@@ -197,7 +197,7 @@ public final class DataFormatter {
                 try (PrintStream printStream = new PrintStream(outputStream)) {
                     printStream.print(formattedMovies);
                 } catch (final Exception e) {
-                    logger.severe("Error writing formatted data: " + e.getMessage());
+                    LOGGER.severe("Error writing formatted data: " + e.getMessage());
                 }
                 break;
         }

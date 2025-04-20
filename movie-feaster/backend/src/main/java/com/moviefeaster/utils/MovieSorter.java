@@ -1,5 +1,4 @@
 package com.moviefeaster.utils;
-
 import com.moviefeaster.model.Movie;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -8,16 +7,16 @@ import java.util.List;
 
 
 /**
- * Movie sorter class, providing static methods to sort movie lists in different ways
+ * Movie sorter class, providing static methods to sort movie lists in different ways.
  */
-public class MovieSorter {
+public final class MovieSorter {
 
     // Private constructor to prevent instantiation
     private MovieSorter() {
     }
 
     /**
-     * Sort movies by title (A-Z)
+     * Sort movies by title (A-Z).
      *
      * @param movies the list of movies to sort
      * @return sorted list of movies
@@ -34,7 +33,7 @@ public class MovieSorter {
     }
 
     /**
-     * Sort movies by title in descending order (Z-A)
+     * Sort movies by title in descending order (Z-A).
      *
      * @param movies the list of movies to sort
      * @return sorted list of movies
@@ -51,7 +50,7 @@ public class MovieSorter {
     }
 
     /**
-     * Sort movies by rating (high to low)
+     * Sort movies by rating (high to low).
      *
      * @param movies the list of movies to sort
      * @return sorted list of movies
@@ -68,7 +67,7 @@ public class MovieSorter {
     }
 
     /**
-     * Sort movies by rating in ascending order (low to high)
+     * Sort movies by rating in ascending order (low to high).
      *
      * @param movies the list of movies to sort
      * @return sorted list of movies
@@ -85,7 +84,7 @@ public class MovieSorter {
     }
 
     /**
-     * Sort movies by year (newest to oldest)
+     * Sort movies by year (newest to oldest).
      *
      * @param movies the list of movies to sort
      * @return sorted list of movies
@@ -102,7 +101,7 @@ public class MovieSorter {
     }
 
     /**
-     * Sort movies by year in ascending order (oldest to newest)
+     * Sort movies by year in ascending order (oldest to newest).
      *
      * @param movies the list of movies to sort
      * @return sorted list of movies
@@ -119,7 +118,7 @@ public class MovieSorter {
     }
 
     /**
-     * Sort movies by in-app rating (high to low)
+     * Sort movies by in-app rating (high to low).
      *
      * @param movies the list of movies to sort
      * @return sorted list of movies
@@ -140,7 +139,7 @@ public class MovieSorter {
     }
 
     /**
-     * Sort movies by in-app rating in ascending order (low to high)
+     * Sort movies by in-app rating in ascending order (low to high).
      *
      * @param movies the list of movies to sort
      * @return sorted list of movies
@@ -161,7 +160,7 @@ public class MovieSorter {
     }
 
     /**
-     * Get the top N movies from a sorted list
+     * Get the top N movies from a sorted list.
      *
      * @param movies the sorted list of movies
      * @param numberOfMovies the number of movies to return
