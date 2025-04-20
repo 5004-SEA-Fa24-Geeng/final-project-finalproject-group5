@@ -28,7 +28,7 @@ public class MovieSorter {
             sortedMovies = new ArrayList<>();
         } else {
             sortedMovies = new ArrayList<>(movies);
-            Collections.sort(sortedMovies, Comparator.comparing(Movie::getTitle));
+            sortedMovies.sort(Comparator.comparing(movie -> movie.getTitle().toLowerCase()));
         }
         return sortedMovies;
     }
@@ -45,7 +45,7 @@ public class MovieSorter {
             sortedMovies = new ArrayList<>();
         } else {
             sortedMovies = new ArrayList<>(movies);
-            Collections.sort(sortedMovies, Comparator.comparing(Movie::getTitle).reversed());
+            Collections.sort(sortedMovies, Comparator.comparing(Movie::getTitle, String.CASE_INSENSITIVE_ORDER).reversed());
         }
         return sortedMovies;
     }
