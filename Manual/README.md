@@ -63,6 +63,7 @@ Built with **Spring Boot** and **React**, it demonstrates modern web development
 - **Header**: Persistent across pages with navigation to Home and Movie List pages.
 - **🎬 Movie Info Section**:
   - Displays full movie details: Poster, Title, Genres, Cast, Overview
+  - **Back to results** button: Go back to the filtered movie list.
 
 - **⭐ Rating Section**:  
   - **Interactive Star Rating**:  
