@@ -11,9 +11,11 @@ import java.util.Map;
 /**
  * Facilitates filtering of movies based on various criteria.
  */
-public class MovieFilterFacilitator {
+public final class MovieFilterFacilitator {
 
-    /** Private constructor preventing instantiation */
+    /**
+     * Private constructor preventing instantiation.
+     */
     private MovieFilterFacilitator() {
         // preventing instantiation
     }
@@ -26,30 +28,39 @@ public class MovieFilterFacilitator {
      * @return list of movies that match the applied filters
      */
     public static List<Movie> filter(final List<Movie> movies, final Map<MovieFilterType, Object> filters) {
-        List<Movie> result = new ArrayList<>(movies); // Cannot be final because reassigned below
+        List<Movie> result = new ArrayList<>(movies);
 
         for (final Map.Entry<MovieFilterType, Object> entry : filters.entrySet()) {
             final MovieFilterType type = entry.getKey();
             final Object value = entry.getValue();
 
-            switch (type) {
-                case TITLE_KEYWORD -> result = MovieFilter.filterByTitle(result, (String) value);
-                case EXACT_TITLE -> result = MovieFilter.filterByExactTitle(result, (String) value);
-                case DIRECTOR -> result = MovieFilter.filterByDirector(result, (String) value);
-                case ACTOR -> result = MovieFilter.filterByActor(result, (String) value);
-                case GENRE -> result = MovieFilter.filterByGenre(result, (String) value);
-                case YEAR -> result = MovieFilter.filterByYear(result, (Integer) value);
+            List<Movie> filteredMovies = result;
+
+            filteredMovies = switch (type) {
+                case TITLE_KEYWORD -> MovieFilter.filterByTitle(filteredMovies, (String) value);
+                case EXACT_TITLE -> MovieFilter.filterByExactTitle(filteredMovies, (String) value);
+                case DIRECTOR -> MovieFilter.filterByDirector(filteredMovies, (String) value);
+                case ACTOR -> MovieFilter.filterByActor(filteredMovies, (String) value);
+                case GENRE -> MovieFilter.filterByGenre(filteredMovies, (String) value);
+                case YEAR -> MovieFilter.filterByYear(filteredMovies, (Integer) value);
                 case YEAR_RANGE -> {
-                    final int[] range = (int[]) value; // expect array of two elements
-                    if (range.length == 2) {
-                        result = MovieFilter.filterByYearRange(result, range[0], range[1]);
+                    final int[] range = (int[]) value;
+                    final int startYear = range[0];
+                    final int endYear = range[1];
+                    final int expectedLength = 2;
+                    if (range.length == expectedLength) {
+                        yield MovieFilter.filterByYearRange(filteredMovies, startYear, endYear);
                     }
+                    yield filteredMovies;
                 }
-                case MIN_RATING -> result = MovieFilter.filterByMinRating(result, (double) value);
-                case MAX_RATING -> result = MovieFilter.filterByMaxRating(result, (double) value);
-                case COMMENT_KEYWORD -> result = MovieFilter.filterByCommentKeyword(result, (String) value);
-                case MIN_INAPP_RATING -> result = MovieFilter.filterByMinInAppRating(result, (Double) value);
-            }
+                case MIN_RATING -> MovieFilter.filterByMinRating(filteredMovies, (double) value);
+                case MAX_RATING -> MovieFilter.filterByMaxRating(filteredMovies, (double) value);
+                case COMMENT_KEYWORD -> MovieFilter.filterByCommentKeyword(filteredMovies, (String) value);
+                case MIN_INAPP_RATING -> MovieFilter.filterByMinInAppRating(filteredMovies, (Double) value);
+                default -> throw new IllegalStateException("Unexpected value: " + type);
+            };
+
+            result = filteredMovies;
         }
 
         return result;

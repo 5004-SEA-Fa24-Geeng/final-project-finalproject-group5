@@ -20,6 +20,7 @@ public interface MovieControllerInterface {
      * @param cast      The casts
      * @param year     Optional year input as a string (can be null or blank)
      * @param genre     Optional type/genre input (can be null or blank)
+     * @return filtered movies
      */
     List<Movie> handleMultiFilterSearch(
             @RequestParam(required = false) String title,

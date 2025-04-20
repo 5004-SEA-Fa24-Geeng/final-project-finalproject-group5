@@ -8,34 +8,34 @@ import java.util.List;
  */
 public class Movie {
 
-    /** ID of the movie */
+    /** ID of the movie. */
     private int movieId;
 
-    /** Title of the movie */
+    /** Title of the movie. */
     private String title;
 
-    /** List of directors of the movie */
+    /** List of directors of the movie. */
     private List<String> directors;
 
-    /** Release year of the movie */
+    /** Release year of the movie. */
     private int year;
 
-    /** Rating of the movie */
+    /** Rating of the movie. */
     private double rating;
 
-    /** List of genres the movie belongs to */
+    /** List of genres the movie belongs to. */
     private List<Genre> genres;
 
-    /** String of overview in movie */
+    /** String of overview in movie. */
     private String overview;
 
-    /** List of actors or actresses in the movie */
+    /** List of actors or actresses in the movie. */
     private List<String> castings;
 
-    /** User-submitted comments about the movie */
+    /** User-submitted comments about the movie. */
     private List<String> comments;
 
-    /** In-App rating information provided by users*/
+    /** In-App rating information provided by users. */
     private List<Double> inAppRating;
 
     /** URL movie's poster. */
@@ -43,7 +43,7 @@ public class Movie {
 
     /**
      * Constructs a Movie instance with the given details with safeguard.
-     * If the information is unable to be acquired from api. It will be constructed
+     * If the information is unable to be acquired from api, it will be constructed
      * with default value.
      *
      * @param movieId        ID of the movie
@@ -143,7 +143,8 @@ public class Movie {
      * @param year Release year (must be > 1800 to be accepted).
      */
     public void setYear(final int year) {
-        if (year > 1800) {
+        final int minYear = 1800;
+        if (year > minYear) {
             this.year = year;
         }
     }

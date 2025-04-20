@@ -27,12 +27,25 @@ import java.util.stream.Collectors;
 @CrossOrigin(origins = "http://localhost:3000") // Allow cross-origin requests from frontend
 public class MovieController implements MovieControllerInterface {
 
-    private static final Logger logger = LoggerFactory.getLogger(MovieController.class);
+    /**
+     * Logger instance for logging events and errors within the MovieController.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(MovieController.class);
+
+    /**
+     * The main model responsible for managing and processing movie data.
+     */
     private final MovieModel model;
+
+    /**
+     * Utility for parsing and validating user inputs from the view layer.
+     */
     private final InputProcessor inputProcessor;
 
     /**
      * Constructs a new MovieController with the given model and view.
+     * @param model The movie model to use
+     * @param inputProcessor The input processor to use
      */
     @Autowired
     public MovieController(final MovieModel model, final InputProcessor inputProcessor) {
@@ -122,10 +135,15 @@ public class MovieController implements MovieControllerInterface {
             }
             model.updateRating(movieId, rating);
         } catch (Exception e) {
-            logger.warn("Failed to update rating: {}", e.getMessage());
+            LOGGER.warn("Failed to update rating: {}", e.getMessage());
         }
     }
 
+    /**
+     * Retrieves all available movie genres.
+     *
+     * @return List of all available genre names
+     */
     @GetMapping("/genres")
     public List<String> getAllGenres() {
         return Arrays.stream(Genre.values())
@@ -133,25 +151,37 @@ public class MovieController implements MovieControllerInterface {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Retrieves all movies in the system.
+     *
+     * @return List of all movies
+     */
     @GetMapping("")
     public List<Movie> getAllMovies() {
         return model.getMovies();
     }
 
-    @GetMapping("/{id}")
-    public Movie getMovieById(@PathVariable int id) {
-        return model.getMovieById(id);
-//        for (Movie movie : model.getMovies()) {
-//            if (movie.getMovieId() == id) {
-//                return movie;
-//            }
-////        }
-//        throw new IllegalArgumentException("Movie not found with ID: " + id);
+    /**
+     * Retrieves a specific movie by its ID.
+     *
+     * @param movieId The ID of the movie to retrieve
+     * @return The movie with the specified ID
+     */
+    @GetMapping("/{movieId}")
+    public Movie getMovieById(@PathVariable final int movieId) {
+        return model.getMovieById(movieId);
     }
 
+    /**
+     * Exports movies in the specified format.
+     *
+     * @param format The format to export the movies in (PRETTY, JSON, XML, CSV)
+     * @return ResponseEntity containing the exported movie data
+     */
     @GetMapping("/export")
-    public ResponseEntity<byte[]> exportMovies(@RequestParam(defaultValue = "PRETTY") final String format) {
-        HttpHeaders headers = new HttpHeaders();
+    public ResponseEntity<byte[]> exportMovies(
+            @RequestParam(defaultValue = "PRETTY") final String format) {
+        final HttpHeaders headers = new HttpHeaders();
         try {
             Format outputFormat = Format.containsValues(format);
             if (outputFormat == null) {
@@ -159,11 +189,12 @@ public class MovieController implements MovieControllerInterface {
             }
 
             final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            final List<Movie> movies = model.getProcessedMovies() != null ? model.getProcessedMovies() : model.getMovies();
+            final List<Movie> movies =
+                    model.getProcessedMovies() != null ? model.getProcessedMovies() : model.getMovies();
             DataFormatter.write(movies, outputFormat, outputStream);
 
-            final String contentType;
-            final String filename;
+            String contentType;
+            String filename;
             switch (outputFormat) {
                 case JSON:
                     contentType = "application/json";
@@ -188,7 +219,7 @@ public class MovieController implements MovieControllerInterface {
 
             return new ResponseEntity<>(outputStream.toByteArray(), headers, HttpStatus.OK);
         } catch (Exception e) {
-            logger.error("Failed to export movies: {}", e.getMessage());
+            LOGGER.error("Failed to export movies: {}", e.getMessage());
             return new ResponseEntity<>(headers, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

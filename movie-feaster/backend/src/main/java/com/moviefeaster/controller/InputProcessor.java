@@ -9,7 +9,13 @@ import org.springframework.stereotype.Service;
  * that blank input will return null. Invalid formats will raise exceptions.
  */
 @Service
-public class InputProcessor implements InputProcessorInterface {
+public final class InputProcessor implements InputProcessorInterface {
+
+    /**
+     * Private constructor.
+     */
+    private InputProcessor() {
+    }
 
     /**
      * Parses the movie name input. Returns null if input is blank.
