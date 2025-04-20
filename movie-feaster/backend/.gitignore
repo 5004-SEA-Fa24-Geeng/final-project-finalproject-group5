@@ -35,3 +35,4 @@ bin
 # ingore ide files
 .vscode
 idea/.env
+.DS_Store
