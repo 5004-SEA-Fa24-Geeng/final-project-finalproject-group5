@@ -2,18 +2,19 @@ package com.moviefeaster.utils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.cdimascio.dotenv.Dotenv;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 /**
  * Class that pulls data from TMDB API.
@@ -22,8 +23,11 @@ import java.time.format.DateTimeFormatter;
 @SuppressWarnings({"checkstyle:MethodLength", "checkstyle:MultipleStringLiterals"})
 public final class NetUtil {
 
+    /** Logger instance for logging errors and debug info. */
+    private static final Logger LOGGER = LoggerFactory.getLogger(NetUtil.class);
+
     /** Loads environment variables from the `.env` file located in the project root. */
-    private static final Dotenv DOTENV = Dotenv.load(); // Renamed to ALL_CAPS
+    private static final Dotenv DOTENV = Dotenv.load();
 
     /** Access Api keys from `.env` file. */
     private static final String API_TOKEN = DOTENV.get("TMDB_API_TOKEN");
@@ -32,10 +36,10 @@ public final class NetUtil {
     private static final String API_URL = "https://api.themoviedb.org/3/discover/movie";
 
     /** Number of movies to pull from API. */
-    private static final int MOVIE_RESULTS_AMOUNT = 200;
+    private static final int RESULTS_AMOUNT = 200;
 
     /** OkHttpClient instance used for making HTTP requests to the TMDb API. */
-    private static final OkHttpClient CLIENT = new OkHttpClient(); // Renamed to ALL_CAPS
+    private static final OkHttpClient CLIENT = new OkHttpClient();
 
     /** Private constructor preventing instantiation. */
     private NetUtil() {
@@ -64,7 +68,8 @@ public final class NetUtil {
     public static InputStream getTop50MoviesJson() {
         final ObjectMapper mapper = new ObjectMapper();
         final ArrayNode allResults = mapper.createArrayNode();
-        final int totalPages = (int) Math.ceil(MOVIE_RESULTS_AMOUNT / 20.0);
+        final int totalPages = (int) Math.ceil(RESULTS_AMOUNT / 20.0);
+        InputStream resultStream = InputStream.nullInputStream();
 
         try {
             for (int page = 1; page <= totalPages; page++) {
@@ -85,18 +90,19 @@ public final class NetUtil {
                             allResults.addAll((ArrayNode) results);
                         }
                     } else {
-                        System.err.println("Error fetching movies (Page " + page + "): HTTP status " + response.code());
+                        LOGGER.error("Error fetching movies (Page {}): HTTP status {}", page, response.code());
                     }
                 }
             }
 
             final byte[] jsonBytes = mapper.writeValueAsBytes(allResults);
-            return new ByteArrayInputStream(jsonBytes);
+            resultStream = new ByteArrayInputStream(jsonBytes);
 
         } catch (Exception e) {
-            e.printStackTrace();
-            return InputStream.nullInputStream();
+            LOGGER.error("Exception while fetching top movies: {}", e.getMessage(), e);
         }
+
+        return resultStream;
     }
 
     /**
@@ -108,6 +114,7 @@ public final class NetUtil {
     public static InputStream getCrewJsonStream(final int movieId) {
         final String url = "https://api.themoviedb.org/3/movie/" + movieId + "/credits";
         final OkHttpClient client = new OkHttpClient();
+        InputStream stream = InputStream.nullInputStream();
 
         final Request request = new Request.Builder()
                 .url(url)
@@ -118,17 +125,15 @@ public final class NetUtil {
 
         try {
             final Response response = client.newCall(request).execute();
-
             if (!response.isSuccessful()) {
-                System.err.println("Failed to fetch crew for movie ID " + movieId + ": " + response.code());
-                return null;
+                LOGGER.error("Failed to fetch crew for movie ID {}: {}", movieId, response.code());
+            } else if (response.body() != null) {
+                stream = response.body().byteStream();
             }
-
-            return response.body().byteStream();
-
         } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+            LOGGER.error("Error fetching crew data for movie ID {}: {}", movieId, e.getMessage(), e);
         }
+
+        return stream;
     }
 }
