@@ -105,6 +105,7 @@ Navigate to the movie-feaster directory:
    TMDB_API_TOKEN=${YOUR_API_KEY}
 4. Run:
    ```bash
+   gradle wrapper
    ./gradlew bootRun
 
 ### Frontend
