@@ -32,6 +32,7 @@ This project consists of:
 - Node.js 16+
 
 Navigate to the movie-feaster directory:
+
 `cd movie-feaster`
 
 ### Running the Backend
