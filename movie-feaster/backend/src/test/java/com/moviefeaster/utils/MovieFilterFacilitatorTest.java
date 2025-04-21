@@ -23,41 +23,76 @@ class MovieFilterFacilitatorTest {
      */
     @BeforeEach
     void setUp() {
-        Movie m1 = new Movie(
-                1,
-                "The Matrix",
-                List.of("Lana Wachowski", "Lilly Wachowski"),
-                1999,
-                8.7,
-                List.of(Genre.ACTION, Genre.SCIENCE_FICTION),
-                "A computer hacker learns the nature of reality.",
-                List.of("Keanu Reeves", "Carrie-Anne Moss"),
-                "https://image.tmdb.org/t/p/matrix.jpg"
-        );
+        Movie m1 = new Movie.Builder()
+                .movieId(1)
+                .title("The Matrix")
+                .directors(List.of("Lana Wachowski", "Lilly Wachowski"))
+                .year(1999)
+                .rating(8.7)
+                .genres(List.of(Genre.ACTION, Genre.SCIENCE_FICTION))
+                .overview("A computer hacker learns the nature of reality.")
+                .castings(List.of("Keanu Reeves", "Carrie-Anne Moss"))
+                .imgUrl("https://image.tmdb.org/t/p/matrix.jpg")
+                .build();
 
-        Movie m2 = new Movie(
-                2,
-                "Inception",
-                List.of("Christopher Nolan"),
-                2010,
-                8.8,
-                List.of(Genre.SCIENCE_FICTION),
-                "A thief who steals corporate secrets through dream-sharing technology.",
-                List.of("Leonardo DiCaprio", "Joseph Gordon-Levitt"),
-                "https://image.tmdb.org/t/p/inception.jpg"
-        );
+        Movie m2 = new Movie.Builder()
+                .movieId(2)
+                .title("Inception")
+                .directors(List.of("Christopher Nolan"))
+                .year(2010)
+                .rating(8.8)
+                .genres(List.of(Genre.SCIENCE_FICTION))
+                .overview("A thief who steals corporate secrets through dream-sharing technology.")
+                .castings(List.of("Leonardo DiCaprio", "Joseph Gordon-Levitt"))
+                .imgUrl("https://image.tmdb.org/t/p/inception.jpg")
+                .build();
 
-        Movie m3 = new Movie(
-                3,
-                "Barbie",
-                List.of("Greta Gerwig"),
-                2023,
-                7.1,
-                List.of(Genre.COMEDY, Genre.FAMILY),
-                "Barbie and Ken embark on a journey of self-discovery.",
-                List.of("Margot Robbie", "Ryan Gosling"),
-                "https://image.tmdb.org/t/p/barbie.jpg"
-        );
+        Movie m3 = new Movie.Builder()
+                .movieId(3)
+                .title("Barbie")
+                .directors(List.of("Greta Gerwig"))
+                .year(2023)
+                .rating(7.1)
+                .genres(List.of(Genre.COMEDY, Genre.FAMILY))
+                .overview("Barbie and Ken embark on a journey of self-discovery.")
+                .castings(List.of("Margot Robbie", "Ryan Gosling"))
+                .imgUrl("https://image.tmdb.org/t/p/barbie.jpg")
+                .build();
+//        Movie m1 = new Movie(
+//                1,
+//                "The Matrix",
+//                List.of("Lana Wachowski", "Lilly Wachowski"),
+//                1999,
+//                8.7,
+//                List.of(Genre.ACTION, Genre.SCIENCE_FICTION),
+//                "A computer hacker learns the nature of reality.",
+//                List.of("Keanu Reeves", "Carrie-Anne Moss"),
+//                "https://image.tmdb.org/t/p/matrix.jpg"
+//        );
+//
+//        Movie m2 = new Movie(
+//                2,
+//                "Inception",
+//                List.of("Christopher Nolan"),
+//                2010,
+//                8.8,
+//                List.of(Genre.SCIENCE_FICTION),
+//                "A thief who steals corporate secrets through dream-sharing technology.",
+//                List.of("Leonardo DiCaprio", "Joseph Gordon-Levitt"),
+//                "https://image.tmdb.org/t/p/inception.jpg"
+//        );
+//
+//        Movie m3 = new Movie(
+//                3,
+//                "Barbie",
+//                List.of("Greta Gerwig"),
+//                2023,
+//                7.1,
+//                List.of(Genre.COMEDY, Genre.FAMILY),
+//                "Barbie and Ken embark on a journey of self-discovery.",
+//                List.of("Margot Robbie", "Ryan Gosling"),
+//                "https://image.tmdb.org/t/p/barbie.jpg"
+//        );
 
         // Add comments or ratings manually to test those filters
         m3.addComment("Very pink!");

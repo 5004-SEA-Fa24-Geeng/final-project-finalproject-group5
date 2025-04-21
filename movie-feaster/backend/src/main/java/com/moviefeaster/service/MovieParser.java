@@ -125,7 +125,18 @@ public final class MovieParser {
                 }
             }
 
-            MOVIES.add(new Movie(movieId, title, directors, year, rating, genre, overview, castings, imgUrl));
+            Movie movieToAdd = new Movie.Builder()
+                    .movieId(movieId)
+                    .title(title)
+                    .directors(directors)
+                    .year(year)
+                    .rating(rating)
+                    .genres(genre)
+                    .overview(overview)
+                    .castings(castings)
+                    .imgUrl(imgUrl)
+                    .build();
+            MOVIES.add(movieToAdd);
 
             if (MOVIES.size() >= NUMBER_OF_MOVIES) {
                 break;

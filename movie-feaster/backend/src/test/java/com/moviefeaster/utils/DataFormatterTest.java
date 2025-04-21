@@ -27,39 +27,73 @@ public class DataFormatterTest {
     @BeforeEach
     public void setUp() {
         // Initialize Movie 1 with complete data
-        movie1 = new Movie(
-                1,
-                "Movie 1",
-                Arrays.asList("Director A", "Director B"),
-                2020,
-                8.5,
-                Arrays.asList(Genre.ACTION, Genre.DRAMA),
-                "Plot summary for Movie 1",
-                Arrays.asList("Actor X", "Actor Y"),
-                "http://example.com/movie1.jpg"
-        );
+        movie1 = new Movie.Builder()
+                .movieId(1)
+                .title("Movie 1")
+                .directors(Arrays.asList("Director A", "Director B"))
+                .year(2020)
+                .rating(8.5)
+                .genres(Arrays.asList(Genre.ACTION, Genre.DRAMA))
+                .overview("Plot summary for Movie 1")
+                .castings(Arrays.asList("Actor X", "Actor Y"))
+                .imgUrl("http://example.com/movie1.jpg")
+                .build();
         movie1.setComments(Arrays.asList("Excellent film", "Highly recommended"));
         movie1.setInAppRating(Arrays.asList(4.8, 4.9));
 
-        // Initialize Movie 2 with different data
-        movie2 = new Movie(
-                2,
-                "Movie 2",
-                Arrays.asList("Director C"),
-                2021,
-                7.9,
-                Arrays.asList(Genre.COMEDY),
-                "Plot summary for Movie 2",
-                Arrays.asList("Actor Z"),
-                "http://example.com/movie2.jpg"
-        );
+// Initialize Movie 2 with different data
+        movie2 = new Movie.Builder()
+                .movieId(2)
+                .title("Movie 2")
+                .directors(Arrays.asList("Director C"))
+                .year(2021)
+                .rating(7.9)
+                .genres(Arrays.asList(Genre.COMEDY))
+                .overview("Plot summary for Movie 2")
+                .castings(Arrays.asList("Actor Z"))
+                .imgUrl("http://example.com/movie2.jpg")
+                .build();
         movie2.setComments(Arrays.asList("Funny movie"));
         movie2.setInAppRating(Arrays.asList(4.2));
 
-        // Create test collection
+// Create test collection
         testMovies = new ArrayList<>();
         testMovies.add(movie1);
         testMovies.add(movie2);
+//        // Initialize Movie 1 with complete data
+//        movie1 = new Movie(
+//                1,
+//                "Movie 1",
+//                Arrays.asList("Director A", "Director B"),
+//                2020,
+//                8.5,
+//                Arrays.asList(Genre.ACTION, Genre.DRAMA),
+//                "Plot summary for Movie 1",
+//                Arrays.asList("Actor X", "Actor Y"),
+//                "http://example.com/movie1.jpg"
+//        );
+//        movie1.setComments(Arrays.asList("Excellent film", "Highly recommended"));
+//        movie1.setInAppRating(Arrays.asList(4.8, 4.9));
+//
+//        // Initialize Movie 2 with different data
+//        movie2 = new Movie(
+//                2,
+//                "Movie 2",
+//                Arrays.asList("Director C"),
+//                2021,
+//                7.9,
+//                Arrays.asList(Genre.COMEDY),
+//                "Plot summary for Movie 2",
+//                Arrays.asList("Actor Z"),
+//                "http://example.com/movie2.jpg"
+//        );
+//        movie2.setComments(Arrays.asList("Funny movie"));
+//        movie2.setInAppRating(Arrays.asList(4.2));
+//
+//        // Create test collection
+//        testMovies = new ArrayList<>();
+//        testMovies.add(movie1);
+//        testMovies.add(movie2);
 
         // Initialize output stream
         outputStream = new ByteArrayOutputStream();
@@ -162,17 +196,28 @@ public class DataFormatterTest {
      */
     @Test
     public void movieWithEmptyFields() {
-        Movie emptyMovie = new Movie(
-                3,
-                "Empty Fields Movie",
-                Collections.emptyList(),
-                0,
-                0.0,
-                Collections.emptyList(),
-                "",
-                Collections.emptyList(),
-                ""
-        );
+//        Movie emptyMovie = new Movie(
+//                3,
+//                "Empty Fields Movie",
+//                Collections.emptyList(),
+//                0,
+//                0.0,
+//                Collections.emptyList(),
+//                "",
+//                Collections.emptyList(),
+//                ""
+//        );
+        Movie emptyMovie = new Movie.Builder()
+                .movieId(3)
+                .title("Empty Fields Movie")
+                .directors(Collections.emptyList())
+                .year(0)
+                .rating(0.0)
+                .genres(Collections.emptyList())
+                .overview("")
+                .castings(Collections.emptyList())
+                .imgUrl("")
+                .build();
 
         String result = DataFormatter.formatSingleMovie(emptyMovie);
 

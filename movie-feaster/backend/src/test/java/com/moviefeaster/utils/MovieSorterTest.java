@@ -35,61 +35,57 @@ class MovieSorterTest {
     void setUp() {
         // Create test movies
         testMovies = new ArrayList<>();
-
         // Movie 1 - Medium year, high rating, "S" title
-        movie1 = new Movie(
-                1, // ID
-                "The Shawshank Redemption",
-                Arrays.asList("Frank Darabont"),
-                1994,
-                9.3,
-                Arrays.asList(Genre.DRAMA),
-                "Two imprisoned men bond over a number of years...",
-                Arrays.asList("Tim Robbins", "Morgan Freeman"),
-                "https://example.com/shawshank.jpg"
-        );
+        movie1 = new Movie.Builder()
+                .movieId(1) // ID
+                .title("The Shawshank Redemption")
+                .directors(Arrays.asList("Frank Darabont"))
+                .year(1994)
+                .rating(9.3)
+                .genres(Arrays.asList(Genre.DRAMA))
+                .overview("Two imprisoned men bond over a number of years...")
+                .castings(Arrays.asList("Tim Robbins", "Morgan Freeman"))
+                .imgUrl("https://example.com/shawshank.jpg")
+                .build();
         movie1.setInAppRating(Arrays.asList(5.0, 4.5)); // Average: 4.75
 
-        // Movie 2 - Oldest, medium-high rating, "G" title
-        movie2 = new Movie(
-                2, // ID
-                "The Godfather",
-                Arrays.asList("Francis Ford Coppola"),
-                1972,
-                9.2,
-                Arrays.asList(Genre.CRIME, Genre.DRAMA),
-                "The aging patriarch of an organized crime dynasty...",
-                Arrays.asList("Marlon Brando", "Al Pacino"),
-                "https://example.com/godfather.jpg"
-        );
+        movie2 = new Movie.Builder()
+                .movieId(2) // ID
+                .title("The Godfather")
+                .directors(Arrays.asList("Francis Ford Coppola"))
+                .year(1972)
+                .rating(9.2)
+                .genres(Arrays.asList(Genre.CRIME, Genre.DRAMA))
+                .overview("The aging patriarch of an organized crime dynasty...")
+                .castings(Arrays.asList("Marlon Brando", "Al Pacino"))
+                .imgUrl("https://example.com/godfather.jpg")
+                .build();
         movie2.setInAppRating(Arrays.asList(4.8, 4.9)); // Average: 4.85
 
-        // Movie 3 - Recent, medium rating, "D" title
-        movie3 = new Movie(
-                3, // ID
-                "The Dark Knight",
-                Arrays.asList("Christopher Nolan"),
-                2008,
-                9.0,
-                Arrays.asList(Genre.ACTION, Genre.CRIME, Genre.DRAMA),
-                "When the menace known as the Joker wreaks havoc...",
-                Arrays.asList("Christian Bale", "Heath Ledger"),
-                "https://example.com/darkknight.jpg"
-        );
+        movie3 = new Movie.Builder()
+                .movieId(3) // ID
+                .title("The Dark Knight")
+                .directors(Arrays.asList("Christopher Nolan"))
+                .year(2008)
+                .rating(9.0)
+                .genres(Arrays.asList(Genre.ACTION, Genre.CRIME, Genre.DRAMA))
+                .overview("When the menace known as the Joker wreaks havoc...")
+                .castings(Arrays.asList("Christian Bale", "Heath Ledger"))
+                .imgUrl("https://example.com/darkknight.jpg")
+                .build();
         movie3.setInAppRating(Arrays.asList(4.7, 4.2)); // Average: 4.45
 
-        // Movie 4 - Newest, lowest rating, "I" title
-        movie4 = new Movie(
-                4, // ID
-                "Inception",
-                Arrays.asList("Christopher Nolan"),
-                2010,
-                8.8,
-                Arrays.asList(Genre.ACTION, Genre.SCIENCE_FICTION),
-                "A thief who steals corporate secrets...",
-                Arrays.asList("Leonardo DiCaprio", "Joseph Gordon-Levitt"),
-                "https://example.com/inception.jpg"
-        );
+        movie4 = new Movie.Builder()
+                .movieId(4) // ID
+                .title("Inception")
+                .directors(Arrays.asList("Christopher Nolan"))
+                .year(2010)
+                .rating(8.8)
+                .genres(Arrays.asList(Genre.ACTION, Genre.SCIENCE_FICTION))
+                .overview("A thief who steals corporate secrets...")
+                .castings(Arrays.asList("Leonardo DiCaprio", "Joseph Gordon-Levitt"))
+                .imgUrl("https://example.com/inception.jpg")
+                .build();
         movie4.setInAppRating(Arrays.asList(4.0, 4.2)); // Average: 4.1
 
         testMovies.add(movie1);
