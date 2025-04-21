@@ -28,8 +28,8 @@ Built with Spring Boot and React, it demonstrates modern web development practic
 - 💻 **Graphical User Interface**  
   Interactive and responsive web interface built with React.
 
-- 📂 **Load and Modify Saved Lists**  
-  Load previously saved lists and modify them using filtering and sorting options.
+- 📂 **Modify Movie Lists**  
+  Modify movie list by using filtering and sorting options.
 
 - 🔎 **Search Functionality**  
   Search movies by keyword using the filter form.
