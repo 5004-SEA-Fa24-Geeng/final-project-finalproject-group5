@@ -31,8 +31,10 @@ This project consists of:
 - Java 17+
 - Node.js 16+
 
-Navigate to the movie-feaster directory:
-`cd movie-feaster`
+### Enter movie-feaster
+1. Navigate to movie-feaster directory:
+   ```bash
+   cd movie-feaster
 
 ### Running the Backend
 1. Navigate to the backend directory:
