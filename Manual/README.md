@@ -79,7 +79,7 @@ Built with **Spring Boot** and **React**, it demonstrates modern web development
 ---
 ## 🎞️ Walkthrough Preview
 
-![App Walkthrough](https://github.com/5004-SEA-Fa24-Geeng/final-project-finalproject-group5/blob/main/movie-feaster/frontend/src/test/walkthrough3.gif)
+![App Walkthrough](https://github.com/5004-SEA-Fa24-Geeng/final-project-finalproject-group5/blob/main/Manual/walkthrough.gif)
 ---
 
 ## 🛠 Tech Stack
