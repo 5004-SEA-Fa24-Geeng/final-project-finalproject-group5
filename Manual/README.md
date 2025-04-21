@@ -90,11 +90,13 @@ Built with **Spring Boot** and **React**, it demonstrates modern web development
 
 ---
 
-## 📦 Installation
+## 📦 Getting Started
 Navigate to the movie-feaster directory:
+
 `cd movie-feaster`
 
-### Backend
+
+### Running Backend
 
 1. Navigate to the backend directory:
    ```bash
@@ -108,7 +110,7 @@ Navigate to the movie-feaster directory:
    gradle wrapper
    ./gradlew bootRun
 
-### Frontend
+### Running Frontend
 
 1. Navigate to the frontend directory:
    ```bash
