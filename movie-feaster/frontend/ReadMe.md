@@ -1,4 +1,4 @@
-# 🎬 Movie Browser & List Manager (Frontend)
+# Movie Feaster (Frontend)
 
 This is the frontend application for a Movie Browser & List Manager, allowing users to search, filter, and organize movies using data fetched from backend RestAPI. Users can also rate and comment on movies, and export their customized movie lists.
 
