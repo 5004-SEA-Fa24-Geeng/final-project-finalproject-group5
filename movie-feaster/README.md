@@ -1,6 +1,23 @@
+[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/IE0ITl4j)
+# Final Project for CS 5004 - Movie Feaster
+
+## Group Members
+The group member's names and link to their personal githubs
+- [Claire Liu](https://github.com/happy1claire)
+- [Liang Chieh Ho](https://github.com/JanaHo26)
+- [Yiwen Hu](https://github.com/yiwenhu789)
+- [Yu-Jing Wei](https://github.com/egsui)
+
 # Movie Feaster
 
-A web application for discovering and exploring movies.
+Movie Feaster is a full-stack web application that allows users to browse, filter, and view detailed movie information.
+Built with Spring Boot and React, it demonstrates modern web development practices, including routing, reusable components, API integration, and interactive UI features.
+
+## Read Our Design
+
+Links to design documents and manuals.
+- [Deisgn Document](https://github.com/5004-SEA-Fa24-Geeng/final-project-finalproject-group5/tree/main/DesignDocuments)
+- [Manual](https://github.com/5004-SEA-Fa24-Geeng/final-project-finalproject-group5/blob/main/Manual/README.md)
 
 ## Project Structure
 
@@ -14,27 +31,38 @@ This project consists of:
 - Java 17+
 - Node.js 16+
 
-### Running the Backend
-Create `.env` with TMDB_API_TOKEN
+Navigate to the movie-feaster directory:
+`cd movie-feaster`
 
-```bash
-cd backend
-./gradlew bootRun
-```
+### Running the Backend
+1. Navigate to the backend directory:
+   ```bash
+   cd backend
+2. Create .env with `TMDB_API_TOKEN`:
+   ⚠️ [How to get a TMDB API token?](https://developer.themoviedb.org/docs/getting-started)
+   ```bash
+   TMDB_API_TOKEN=${YOUR_API_TOKEN}
+4. Run:
+   ```bash
+   gradle wrapper
+   ./gradlew bootRun
 
 ### Running the Frontend
-Create `.env` with REACT_APP_API_BASE_URL=http://localhost:8080
-
-```bash
-cd frontend
-npm install
-npm start
-```
+1. Navigate to the frontend directory:
+   ```bash
+   cd frontend
+2. Create .env with `REACT_APP_API_BASE_URL`:
+   ```bash
+   REACT_APP_API_BASE_URL=http://localhost:8080
+3. Run:
+   ```bash
+   npm install
+   npm start
 
 ## API Endpoints
 
 - `GET /api/movies` - Get all movies
-- `GET /api/movies/{id}` - Get a movie by ID
+- `GET /api/movies/{movieId}` - Get a movie by ID
 - `GET /api/movies/search` - Get filtered movies
 - `GET /api/movies/sort` - Get sorted and filtered movies
 - `GET /api/movies/export` - Retrieve the HTTP response containing the list of movies in the outputStream as a byte array
@@ -45,7 +73,20 @@ npm start
 ## Technologies Used
 
 ### Backend
-- Spring Boot
+- Spring Boot (REST API, MVC structure)
+- OkHttp (for TMDB API integration)
+- Jackson (for JSON/XML parsing and input validation)
+- Gradle (build automation)
 
 ### Frontend
-- React
+- React (with fetch API and basic state management)
+- npm (package management and build)
+
+### API Integration
+- TMDB API for movie data
+- Custom input processors for data validation
+
+### Data Handling
+- Jackson for data serialization/deserialization
+- Input validation with Jackson annotations and custom logic
+
