@@ -39,8 +39,6 @@ public class NetUtilTest {
 
             // Print the content
             String jsonString = new String(data);
-//            System.out.println(jsonString);
-
             // Reset the stream so it can be read again
             result.reset();
         } catch (IOException e) {

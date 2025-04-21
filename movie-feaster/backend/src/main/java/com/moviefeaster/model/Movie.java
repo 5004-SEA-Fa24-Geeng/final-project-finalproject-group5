@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Class to store movies' detailed meta data.
  */
-public class Movie {
+public final class Movie {
 
     /** ID of the movie. */
     private int movieId;
@@ -42,34 +42,165 @@ public class Movie {
     private String imgUrl;
 
     /**
-     * Constructs a Movie instance with the given details with safeguard.
-     * If the information is unable to be acquired from api, it will be constructed
-     * with default value.
+     * Constructs a Movie instance using the values provided by the {@link Builder}.
+     * Applies default values and validation to safeguard against missing or invalid data.
      *
-     * @param movieId        ID of the movie
-     * @param title          Title of the movie
-     * @param directors      List of directors
-     * @param year           Year the movie was released
-     * @param rating         Rating of the movie
-     * @param genres         List of genres
-     * @param overview       Overview of movie
-     * @param castings       List of cast members
-     * @param imgUrl         URL of movie's poster
+     * @param builder the Builder instance containing movie data
      */
-    public Movie(final int movieId, final String title, final List<String> directors, final int year,
-                 final double rating, final List<Genre> genres, final String overview,
-                 final List<String> castings, final String imgUrl) {
-        this.movieId = movieId;
-        this.title = title != null && !title.isBlank() ? title : "Unknown Title";
-        this.directors = directors != null ? directors : new ArrayList<>();
-        this.year = year > 1800 ? year : 0;
-        this.rating = rating >= 0.0 && rating <= 10_000.0 ? rating : 0.0;
-        this.genres = genres != null ? genres : new ArrayList<>();
-        this.overview = overview != null && !overview.isBlank() ? overview : "No Overview";
-        this.castings = castings != null ? castings : new ArrayList<>();
+    private Movie(Builder builder) {
+        this.movieId = builder.movieId;
+        this.title = builder.title != null && !builder.title.isBlank() ? builder.title : "Unknown Title";
+        this.directors = builder.directors != null ? builder.directors : new ArrayList<>();
+        this.year = builder.year > 1800 ? builder.year : 0;
+        this.rating = builder.rating >= 0.0 && builder.rating <= 10_000.0 ? builder.rating : 0.0;
+        this.genres = builder.genres != null ? builder.genres : new ArrayList<>();
+        this.overview = builder.overview != null && !builder.overview.isBlank() ? builder.overview : "No Overview";
+        this.castings = builder.castings != null ? builder.castings : new ArrayList<>();
+        this.imgUrl = builder.imgUrl != null ? builder.imgUrl : "";
         this.comments = new ArrayList<>();
         this.inAppRating = new ArrayList<>();
-        this.imgUrl = imgUrl != null ? imgUrl : "";
+    }
+
+    /**
+     * Builder class for constructing instances of {@link Movie}.
+     * Provides a fluent interface for setting fields individually before building the Movie.
+     */
+    public static class Builder {
+        /** Unique identifier for the movie. */
+        private int movieId;
+
+        /** Title of the movie. */
+        private String title;
+
+        /** List of directors associated with the movie. */
+        private List<String> directors;
+
+        /** Release year of the movie. */
+        private int year;
+
+        /** Rating of the movie, expected to be between 0.0 and 10,000.0. */
+        private double rating;
+
+        /** List of genres the movie belongs to. */
+        private List<Genre> genres;
+
+        /** Overview or summary description of the movie. */
+        private String overview;
+
+        /** List of cast members appearing in the movie. */
+        private List<String> castings;
+
+        /** URL of the movie's poster image. */
+        private String imgUrl;
+
+        /**
+         * Sets the movie ID.
+         *
+         * @param movieId the ID of the movie
+         * @return the current Builder instance
+         */
+        public Builder movieId(int movieId) {
+            this.movieId = movieId;
+            return this;
+        }
+
+        /**
+         * Sets the title of the movie.
+         *
+         * @param title the movie title
+         * @return the current Builder instance
+         */
+        public Builder title(String title) {
+            this.title = title;
+            return this;
+        }
+
+        /**
+         * Sets the list of directors.
+         *
+         * @param directors list of director names
+         * @return the current Builder instance
+         */
+        public Builder directors(List<String> directors) {
+            this.directors = directors;
+            return this;
+        }
+
+        /**
+         * Sets the release year of the movie.
+         *
+         * @param year the release year
+         * @return the current Builder instance
+         */
+        public Builder year(int year) {
+            this.year = year;
+            return this;
+        }
+
+        /**
+         * Sets the rating of the movie.
+         *
+         * @param rating the rating score (expected between 0.0 and 10,000.0)
+         * @return the current Builder instance
+         */
+        public Builder rating(double rating) {
+            this.rating = rating;
+            return this;
+        }
+
+        /**
+         * Sets the list of genres.
+         *
+         * @param genres list of {@link Genre} objects
+         * @return the current Builder instance
+         */
+        public Builder genres(List<Genre> genres) {
+            this.genres = genres;
+            return this;
+        }
+
+        /**
+         * Sets the overview/summary of the movie.
+         *
+         * @param overview the movie's overview text
+         * @return the current Builder instance
+         */
+        public Builder overview(String overview) {
+            this.overview = overview;
+            return this;
+        }
+
+        /**
+         * Sets the list of cast members.
+         *
+         * @param castings list of actor/actress names
+         * @return the current Builder instance
+         */
+        public Builder castings(List<String> castings) {
+            this.castings = castings;
+            return this;
+        }
+
+        /**
+         * Sets the image URL for the movie poster.
+         *
+         * @param imgUrl the URL of the poster image
+         * @return the current Builder instance
+         */
+        public Builder imgUrl(String imgUrl) {
+            this.imgUrl = imgUrl;
+            return this;
+        }
+
+        /**
+         * Builds and returns a {@link Movie} instance using the current state of the Builder.
+         * Fields are validated and default values are applied where necessary.
+         *
+         * @return a fully constructed {@link Movie} object
+         */
+        public Movie build() {
+            return new Movie(this);
+        }
     }
 
     /**

@@ -60,8 +60,19 @@ public class MovieControllerTest {
         cast1.add("Leonardo DiCaprio");
         cast1.add("Joseph Gordon-Levitt");
 
-        Movie movie1 = new Movie(1, "Inception", directors1, 2010, 8.8,
-                genres1, "A thief who steals corporate secrets", cast1, "inception.jpg");
+        Movie movie1 = new Movie.Builder()
+                .movieId(1)
+                .title("Inception")
+                .directors(directors1)
+                .year(2010)
+                .rating(8.8)
+                .genres(genres1)
+                .overview("A thief who steals corporate secrets")
+                .castings(cast1)
+                .imgUrl("inception.jpg")
+                .build();
+//        Movie movie1 = new Movie(1, "Inception", directors1, 2010, 8.8,
+//                genres1, "A thief who steals corporate secrets", cast1, "inception.jpg");
 
         List<String> directors2 = new ArrayList<>();
         directors2.add("Christopher Nolan");
@@ -72,8 +83,20 @@ public class MovieControllerTest {
         cast2.add("Christian Bale");
         cast2.add("Heath Ledger");
 
-        Movie movie2 = new Movie(2, "The Dark Knight", directors2, 2008, 9.0,
-                genres2, "Batman fights the Joker", cast2, "dark_knight.jpg");
+        Movie movie2 = new Movie.Builder()
+                .movieId(2)
+                .title("The Dark Knight")
+                .directors(directors2)
+                .year(2008)
+                .rating(9.0)
+                .genres(genres2)
+                .overview("Batman fights the Joker")
+                .castings(cast2)
+                .imgUrl("dark_knight.jpg")
+                .build();
+
+//        Movie movie2 = new Movie(2, "The Dark Knight", directors2, 2008, 9.0,
+//                genres2, "Batman fights the Joker", cast2, "dark_knight.jpg");
 
         testMovies.add(movie1);
         testMovies.add(movie2);
