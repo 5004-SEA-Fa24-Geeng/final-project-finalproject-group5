@@ -1,146 +1,115 @@
 # Design Documents
 
-You may have multiple design documents for this project. Place them all in this folder. File naming is up to you, but it should be clear what the document is about. At the bare minimum, you will want a pre/post UML diagram for the project. 
-
+## Initial Design
 ```mermaid
-
 classDiagram
 
-%% === CONTROLLER ===
-class MovieController {
-  +handleMultiFilterSearch(String, String, String, String, String) List~Movie~
-  +handleSort(String) List~Movie~
-  +handleCommentSubmission(int, String) String
-  +handleRatingSubmission(int, double) void
-  +getAllGenres() List~String~
-  +getAllMovies() List~Movie~
-  +getMovieById(int) Movie
-  +exportMovies(String) ResponseEntity~byte[]~
-}
-class MovieControllerInterface {
-  +handleMultiFilterSearch(String, String, String, String, String) List~Movie~
-  +handleSort(String) List~Movie~
-  +handleCommentSubmission(int, String) String
-  +handleRatingSubmission(int, double) void
-}
-class InputProcessor {
-  +optionalParseTitle(String) String
-  +optionalParseDirector(String) String
-  +optionalParseCast(String) String
-  +optionalParseYear(String) Integer
-  +optionalParseGenre(String) Genre
-}
-class InputProcessorInterface {
-  +optionalParseTitle(String) String
-  +optionalParseDirector(String) String
-  +optionalParseCast(String) String
-  +optionalParseYear(String) Integer
-  +optionalParseGenre(String) Genre
+class MovieInfoApp {
+    +main(String[] args) void
 }
 
-%% === MODEL ===
-class Movie {
-  -String title
-  -List~String~ directors
-  -int year
-  -float rating
-  -List~Genre~ genres
-  -List~String~ castings
-  -List~String~ comments
-  -List~Float~ inAppRating
-  -Pair~Float, Integer~ updatedAverageInAppRating
-  -String imgUrl
-  +getId() int
-  +getTitle() String
-  +getDirectors() List~String~
-  +getYear() int
-  +getRating() float
-  +getGenres() List~Genre~
-  +getCastings() List~String~
-  +getComments() List~String~
-  +getInAppRating() List~Float~
-  +getUpdatedAverageInAppRating() Pair~Float, Integer~
-}
-class Format {
-  <<enumeration>>
-  JSON
-  XML
-  CSV
-  PRETTY
-  +containsValues(String) Format
-}
-class Genre {
-  <<enumeration>>
-  ACTION
-  ADVENTURE
-  ANIMATION
-  COMEDY
-  CRIME
-  DOCUMENTARY
-  DRAMA
-  FAMILY
-  FANTASY
-  HISTORY
-  HORROR
-  MUSIC
-  MYSTERY
-  ROMANCE
-  SCIENCE_FICTION
-  TV_MOVIE
-  THRILLER
-  WAR
-  WESTERN
-  +fromId(int) Genre
-  +fromName(String) Genre
-  +getId() int
-}
-class MovieFilterType {
-  <<enumeration>>
-  TITLE_KEYWORD
-  DIRECTOR
-  ACTOR
-  YEAR
-  GENRE
-}
-class MovieSorterType {
-  <<enumeration>>
-  TITLE_AZ
-  TITLE_ZA
-  RATING_ASC
-  RATING_DESC
-  YEAR_ASC
-  YEAR_DESC
-  +fromValue(String) MovieSorterType
-}
 
-%% === SERVICE ===
 class MovieModel {
-  +fetchMovies() void
-  +getMovies() List~Movie~
-  +getProcessedMovies() List~Movie~
-  +searchByFilter(boolean, Map~MovieFilterType, Object~) void
-  +sortMovieList(MovieSorterType) void
-  +UpdateComments(int, String) void
-  +UpdateRating(int, double) void
-}
-class MovieModelInterface {
-  +fetchMovies() void
-  +getMovies() List~Movie~
-  +getProcessedMovies() List~Movie~
-  +searchByFilter(boolean, Map~MovieFilterType, Object~) void
-  +sortMovieList(MovieSorterType) void
-  +UpdateComments(int, String) void
-  +UpdateRating(int, double) void
-}
-class MovieParser { 
-    +getMoviesFromApi() List~Movie~
-    +getParsedMoviesSummary() Collection~MovieSummary~
-}
-class MovieFeasterApplication {
-    +main(String[]) void
+    -List<Movie> movies
+    +Model()
+    +fetchMovies() void
+    +writeFile() void
+    +getInstance() Model
+    +updateComment(String, String) void
+    +updateRating(String, Float) void
 }
 
-%% === UTILS ===
+
+class MovieController {
+    +handleMultiFilterSearch(String, String, String, String) void
+    +handleMovieSelected(Movie) void
+    +handleBackPressed() void
+    +handleCommentSubmission(String, String) void
+    +handleRatingSubmission(String, Float) void
+}
+
+class MovieParser {
+    -InputStream jsonString
+    +MovieParser()
+    +createMovie(InputStream) List<Movie>
+    -convertGenreIds(List<Integer>) List<Genre>
+}
+
+class NetUtils {
+    +getMovieInfo(String) InputStream
+    +getTop50MoviesJson() InputStream
+    -buildUrl(int) String
+    -Dotenv dotenv
+    -String API_TOKEN
+    -String API_URL
+    -int MOVIE_RESULTS_AMOUNT
+    -OkHttpClient client
+}
+
+class Movie {
+    -String title
+    -List<String> directors
+    -int year
+    -float rating
+    -List<Genre> genres
+    -List<String> castings
+    -List<String> comments
+    -List<Float> inAppRating
+    -Pair<Float, Integer> updatedAverageInAppRating
+    -String imgUrl
+    +Movie(...)
+    +getTitle() String
+    +setTitle(String) void
+    +getDirectors() List<String>
+    +setDirectors(List<String>) void
+    +getYear() int
+    +setYear(int) void
+    +getRating() float
+    +setRating(float) void
+    +getGenres() List<Genre>
+    +setGenres(List<Genre>) void
+    +getCastings() List<String>
+    +setCastings(List<String>) void
+    +getComments() List<String>
+    +setComments(List<String>) void
+    +addComment(String) void
+    +getInAppRating() List<Float>
+    +setInAppRating(List<Float>) void
+    +addInAppRating(float) void
+    +getUpdatedAverageInAppRating() Pair<Float, Integer>
+    +setUpdatedAverageInAppRating(Pair<Float, Integer>) void
+    +getImgUrl() String
+    +setImgUrl(String) void
+    +toString() String
+}
+
+class Genre {
+    <<enum>>
+    ACTION
+    ADVENTURE
+    ANIMATION
+    COMEDY
+    CRIME
+    DOCUMENTARY
+    DRAMA
+    FAMILY
+    FANTASY
+    HISTORY
+    HORROR
+    MUSIC
+    MYSTERY
+    ROMANCE
+    SCIENCE_FICTION
+    TV_MOVIE
+    THRILLER
+    WAR
+    WESTERN
+    +getId() int
+    +fromId(int) Genre
+    +fromName(String) Genre
+}
+
+
 class DataFormatter {
     +formatSingleMovie(Movie) String
     +formatMovieList(Collection<Movie>) String
@@ -154,68 +123,338 @@ class DataFormatter {
     -joinComments(Movie) String
     -formatCsvField(String) String
 }
-class MovieXMLWrapper {
+
+class Format {
+    <<enum>>
+    JSON
+    XML
+    CSV
+    PRETTY
+    +containsValues(String) Format
+}
+
+class XMLWrapper {
     -Collection<Movie> movie
     +MovieXMLWrapper()
     +MovieXMLWrapper(Collection<Movie>)
     +getMovie() Collection<Movie>
     +setMovie(Collection<Movie>) void
 }
-class NetUtil {
-  +getTop50MoviesJson() InputStream
-  +getCrewJsonStream(int) InputStream
-}
-class MovieFilterFacilitator {
-  +applyFilters(List~Movie~, Map~MovieFilterType, Object~) List~Movie~
-}
-class MovieFilter {
-    -MovieFilter()
-    +filterByTitle(List<Movie>, String) List<Movie>
-    +filterByExactTitle(List<Movie>, String) List<Movie>
-    +filterByDirector(List<Movie>, String) List<Movie>
-    +filterByYear(List<Movie>, int) List<Movie>
-    +filterByYearRange(List<Movie>, int, int) List<Movie>
-    +filterByMinRating(List<Movie>, float) List<Movie>
-    +filterByMaxRating(List<Movie>, float) List<Movie>
-    +filterByGenre(List<Movie>, String) List<Movie>
-    +filterByActor(List<Movie>, String) List<Movie>
-    +filterByCommentKeyword(List<Movie>, String) List<Movie>
-    +filterByMinInAppRating(List<Movie>, double) List<Movie>
-    +combineAnd(List<Movie>, List<Movie>) List<Movie>
-}
-class MovieSorter {
-    -MovieSorter()
-    +sortByTitle(List<Movie>) List<Movie>
-    +sortByTitleDescending(List<Movie>) List<Movie>
-    +sortByRating(List<Movie>) List<Movie>
-    +sortByRatingAscending(List<Movie>) List<Movie>
-    +sortByYear(List<Movie>) List<Movie>
-    +sortByYearAscending(List<Movie>) List<Movie>
-    +sortByInAppRating(List<Movie>) List<Movie>
-    +sortByInAppRatingAscending(List<Movie>) List<Movie>
-    +getTopN(List<Movie>, int) List<Movie>
+
+class InputProcessor {
+    +optionalParseName(String) String
+    +optionalParseDirector(String) String
+    +optionalParseYear(String) Integer
+    +optionalParseType(String) Genre
 }
 
-%% === RELATIONSHIPS ===
-MovieController --> MovieModel
+%% Relationships
+MovieInfoApp --> MovieController
+
+
 MovieController --> InputProcessor
-MovieController --> MovieFilterType
-MovieController --> MovieSorterType
-MovieController --> MovieControllerInterface
-InputProcessor --> InputProcessorInterface
+MovieController --> MovieModel
+
 InputProcessor --> Genre
-MovieModel --> MovieModelInterface
-MovieModel --> MovieParser
-MovieModel --> MovieFilterFacilitator
-MovieModel --> MovieSorter
-MovieModel --> MovieFilter
+
 MovieModel --> Movie
+MovieModel --> MovieParser
 MovieModel --> DataFormatter
-Movie --> Genre
-Movie --> Format
-MovieParser --> NetUtil
+
+MovieParser --> NetUtils
+
 DataFormatter --> Format
-DataFormatter --> MovieXMLWrapper
-MovieFeasterApplication --> MovieController
+DataFormatter --> XMLWrapper
+```
+
+## Final Design
+We add several helper classes to conform Single Responsibility Principle.
+
+```mermaid
+
+classDiagram
+    class MovieFeasterApplication {
+        + main(args: String[]) void
+        - MovieFeasterApplication()
+    }
+
+    class Movie {
+        -int movieId
+        -String title
+        -List~String~ directors
+        -int year
+        -double rating
+        -List~Genre~ genres
+        -String overview
+        -List~String~ castings
+        -List~String~ comments
+        -List~Double~ inAppRating
+        -String imgUrl
+        +Movie(int, String, List~String~, int, double, List~Genre~, String, List~String~, String)
+        +getMovieId() int
+        +setMovieId(int)
+        +getTitle() String
+        +setTitle(String)
+        +getDirectors() List~String~
+        +setDirectors(List~String~)
+        +getYear() int
+        +setYear(int)
+        +getRating() double
+        +setRating(double)
+        +getGenres() List~Genre~
+        +setGenres(List~Genre~)
+        +getOverview() String
+        +setOverview(String)
+        +getCastings() List~String~
+        +setCastings(List~String~)
+        +getComments() List~String~
+        +setComments(List~String~)
+        +addComment(String)
+        +getInAppRating() double
+        +setInAppRating(List~Double~)
+        +addInAppRating(Double)
+        +getImgUrl() String
+        +setImgUrl(String)
+    }
+
+    class Genre {
+        -String name
+        -int id
+        +Genre(String, int)
+        +getName() String
+        +getId() int
+    }
+
+    class Format {
+        <<enum>>
+        + JSON
+        + XML
+        + CSV
+        + PRETTY
+        + containsValues(value: String) Format
+    }
+
+    class MovieFilterType {
+        <<enum>>
+        + TITLE_KEYWORD
+        + EXACT_TITLE
+        + DIRECTOR
+        + ACTOR
+        + GENRE
+        + YEAR
+        + YEAR_RANGE
+        + MIN_RATING
+        + MAX_RATING
+        + COMMENT_KEYWORD
+        + MIN_INAPP_RATING
+    }
+
+    class MovieSorterType {
+        <<enum>>
+        - String value
+        + TITLE_ASC
+        + TITLE_DESC
+        + YEAR_ASC
+        + YEAR_DESC
+        + RATING_ASC
+        + RATING_DESC
+        + INAPP_RATING_ASC
+        + INAPP_RATING_DESC
+        + MovieSorterType(String value)
+        + getValue() String
+        + fromValue(String value) MovieSorterType
+    }
+
+    class MovieController {
+        - MovieModel model
+        - InputProcessor inputProcessor
+        + handleMultiFilterSearch(title, director, cast, year, genre) List~Movie~
+        + handleSort(sortType) List~Movie~
+        + handleCommentSubmission(movieId, comment) String
+        + handleRatingSubmission(movieId, rating) void
+        + getAllGenres() List~String~
+        + getAllMovies() List~Movie~
+        + getMovieById(movieId) Movie
+        + exportMovies(format) ResponseEntity~byte[]~
+    }
+
+    class MovieControllerInterface {
+        <<interface>>
+        +processUserInput(String) String
+        +getMovieById(int) Movie
+        +getMoviesByTitle(String) List~Movie~
+        +getMoviesByGenre(Genre) List~Movie~
+        +getMoviesByYear(int) List~Movie~
+        +getMoviesByRating(double) List~Movie~
+        +addComment(int, String)
+        +addRating(int, double)
+    }
+
+    class InputProcessor {
+        - InputProcessor()
+        + String optionalParseTitle(String)
+        + String optionalParseDirector(String)
+        + String optionalParseCast(String)
+        + Integer optionalParseYear(String)
+        + Genre optionalParseGenre(String)
+    }
+
+    class InputProcessorInterface {
+        <<interface>>
+        + String optionalParseTitle(String)
+        + String optionalParseDirector(String)
+        + String optionalParseCast(String)
+        + Integer optionalParseYear(String)
+        + Genre optionalParseGenre(String)
+    }
+
+    class MovieModel {
+        - List~Movie~ movies
+        - List~Movie~ processedMovies
+        - MovieSorterType defaultSortType
+        + MovieModel()
+        + fetchMovies() void
+        + getMovies() List~Movie~
+        + getMovieById(movieId: int) Movie
+        + getProcessedMovies() List~Movie~
+        + writeFile(useProcessedMovie: boolean, format: Format) void
+        + searchByFilter(filtersStrategy: Map~MovieFilterType, Object~) void
+        + sortMovieList(sortType: MovieSorterType) void
+        + setDefaultSortType(defaultSortType: MovieSorterType) void
+        + updateComments(movieId: int, comment: String) void
+        + updateRating(movieId: int, rating: double) void
+    }
+
+    class MovieModelInterface {
+        <<interface>>
+        + fetchMovies() void
+        + writeFile(useProcessedMovie: boolean, format: Format) void
+        + searchByFilter(filtersStrategy: Map~MovieFilterType, Object~) void
+        + updateComments(movieID: int, comment: String) void
+        + updateRating(movieID: int, rating: double) void
+    }
+
+    class MovieFilter {
+        <<static>>
+        + filterByTitle(movies: List~Movie~, title: String) List~Movie~
+        + filterByExactTitle(movies: List~Movie~, title: String) List~Movie~
+        + filterByDirector(movies: List~Movie~, director: String) List~Movie~
+        + filterByActor(movies: List~Movie~, actor: String) List~Movie~
+        + filterByGenre(movies: List~Movie~, genre: String) List~Movie~
+        + filterByYear(movies: List~Movie~, year: int) List~Movie~
+        + filterByYearRange(movies: List~Movie~, startYear: int, endYear: int) List~Movie~
+        + filterByMinRating(movies: List~Movie~, rating: double) List~Movie~
+        + filterByMaxRating(movies: List~Movie~, rating: double) List~Movie~
+        + filterByCommentKeyword(movies: List~Movie~, keyword: String) List~Movie~
+        + filterByMinInAppRating(movies: List~Movie~, rating: double) List~Movie~
+    }
+
+    class MovieSorter {
+        <<static>>
+        + sortByTitle(movies: List~Movie~) List~Movie~
+        + sortByTitleDescending(movies: List~Movie~) List~Movie~
+        + sortByRating(movies: List~Movie~) List~Movie~
+        + sortByRatingAscending(movies: List~Movie~) List~Movie~
+        + sortByYear(movies: List~Movie~) List~Movie~
+        + sortByYearAscending(movies: List~Movie~) List~Movie~
+        + sortByInAppRating(movies: List~Movie~) List~Movie~
+        + sortByInAppRatingAscending(movies: List~Movie~) List~Movie~
+        + getTopN(movies: List~Movie~, numberOfMovies: int) List~Movie~
+    }
+
+    class DataFormatter {
+        <<static>>
+        + formatSingleMovie(movie: Movie) String
+        + formatMovieList(movies: Collection~Movie~) String
+        + write(movies: Collection~Movie~, format: Format, outputStream: OutputStream) void
+        - writeXmlData(movies: Collection~Movie~, outputStream: OutputStream) void
+        - writeJsonData(movies: Collection~Movie~, outputStream: OutputStream) void
+        - writeCsvData(movies: Collection~Movie~, outputStream: OutputStream) void
+        - joinDirectors(movie: Movie) String
+        - joinGenres(movie: Movie) String
+        - joinCastings(movie: Movie) String
+        - joinComments(movie: Movie) String
+        - formatCsvField(input: String) String
+    }
+
+    class MovieXMLWrapper {
+        - Collection~Movie~ movie
+        + MovieXMLWrapper()
+        + MovieXMLWrapper(movies: Collection~Movie~)
+        + getMovie() Collection~Movie~
+        + setMovie(movie: Collection~Movie~) void
+    }
+
+    class MovieParser {
+        <<static>> + getMoviesFromApi() List~Movie~
+        <<static>> + getParsedMoviesSummary() Collection~MovieSummary~
+        <<static>> - parseMovies() void
+        <<static>> - cleanMovieSummary() void
+        <<static>> - convertGenreIds(genreIds: Set~Integer~) List~Genre~
+    }
+
+    class MovieSummary {
+        - int movieID
+        - String title
+        - String overview
+        - String releaseDate
+        - double rating
+        - Set~Integer~ genreID
+        - String posterPath
+        + getMovieID() int
+        + setMovieID(int)
+        + getTitle() String
+        + setTitle(String)
+        + getOverview() String
+        + setOverview(String)
+        + getReleaseDate() String
+        + setReleaseDate(String)
+        + getRating() double
+        + setRating(double)
+        + getGenreID() Set~Integer~
+        + setGenreID(Set~Integer~)
+        + getPosterPath() String
+        + setPosterPath(String)
+        + toString() String
+    }
+
+    class NetUtil {
+        <<static>>
+        + getTop50MoviesJson() InputStream
+        + getCrewJsonStream(movieId: int) InputStream
+        - buildUrl(page: int) String
+    }
+
+    class MovieFilterFacilitator {
+        <<static>>
+        + filter(movies: List~Movie~, filters: Map~MovieFilterType, Object~) List~Movie~
+    }
+
+    MovieController ..|> MovieControllerInterface 
+    MovieController --o MovieModel
+    MovieController --o InputProcessor
+    InputProcessor ..|> InputProcessorInterface
+    MovieModel ..|> MovieModelInterface
+    MovieModel --o Movie
+    MovieModel --> MovieParser 
+    MovieModel --> MovieFilterFacilitator
+    MovieModel --> MovieSorter
+    MovieModel --> Genre
+    MovieModel --> Format
+    MovieModel --> MovieSorterType
+    MovieModel --> MovieFilterType
+    MovieModel --> DataFormatter
+    DataFormatter --* MovieXMLWrapper
+
+    MovieFilterFacilitator --> MovieFilterType
+    MovieFilterFacilitator --> MovieFilter
+    MovieParser --* MovieSummary
+    MovieParser --> NetUtil
+    MovieParser --o Movie
+    MovieParser --> Genre
+    Movie --> Genre
+    MovieFeasterApplication --> MovieController : starts via Spring Context
+    MovieController --> MovieModel : @Autowired 
+    
 
 ```
