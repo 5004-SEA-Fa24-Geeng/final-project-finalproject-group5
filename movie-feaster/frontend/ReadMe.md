@@ -34,7 +34,7 @@ This is the frontend application for a Movie Browser & List Manager, allowing us
 
 ## 🧪 Manual Testing
 
-Refer to the [`GUITestPlan.md`](frontend/src/test/GUITestPlan.md) for:
+Refer to the [`GUITestPlan.md`](/src/test/GUITestPlan.md) for:
 
 - Test Objectives
 - Core UI Flows
