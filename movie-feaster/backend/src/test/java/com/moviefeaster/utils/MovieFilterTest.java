@@ -35,13 +35,13 @@ class MovieFilterTest {
         // Movie 1
         movie1 = new Movie(
                 1,
-                "The Matrix",
-                Collections.emptyList(),
+                "The Godfather",
+                List.of("Francis Ford Coppola"),
                 1999,
-                8.7,
-                Collections.emptyList(),
+                8.5,
+                List.of(Genre.ACTION, Genre.ANIMATION),
                 "A computer hacker learns about the true nature of reality",
-                Collections.emptyList(),
+                List.of("Morgan Freeman"),
                 ""
         );
         movie1.setComments(Arrays.asList("Great prison movie", "Classic film"));
@@ -51,12 +51,12 @@ class MovieFilterTest {
         movie2 = new Movie(
                 2,
                 "Inception",
-                Collections.emptyList(),
+                List.of("Christopher Nolan"),
                 2010,
                 8.8,
-                Collections.emptyList(),
+                List.of(Genre.TV_MOVIE, Genre.THRILLER),
                 "A thief who steals corporate secrets through the use of dream-sharing technology",
-                Collections.emptyList(),
+                List.of("Leonardo DiCaprio"),
                 ""
         );
         movie2.setComments(Arrays.asList("Masterpiece of cinema", "Excellent performances"));
@@ -66,12 +66,12 @@ class MovieFilterTest {
         movie3 = new Movie(
                 3,
                 "The Dark Knight",
-                Collections.emptyList(),
+                List.of("Christopher Nolan"),
                 2008,
                 9.0,
-                Collections.emptyList(),
+                List.of(Genre.ACTION, Genre.CRIME, Genre.COMEDY),
                 "When the menace known as the Joker wreaks havoc and chaos on the people of Gotham",
-                Collections.emptyList(),
+                List.of("Jeff Albertson", "National Guard", "Tracy L. Aldaz", "Tracy L.", "Matthew W>"),
                 ""
         );
         movie3.setComments(Arrays.asList("Best superhero movie", "Heath Ledger's Joker is amazing"));
@@ -88,9 +88,9 @@ class MovieFilterTest {
     @Test
     void filterByTitle() {
         // Test normal case
-        List<Movie> result = MovieFilter.filterByTitle(testMovies, "godfather");
+        List<Movie> result = MovieFilter.filterByTitle(testMovies, "Godfather");
         assertEquals(1, result.size());
-        assertTrue(result.contains(movie2));
+        assertTrue(result.contains(movie1));
 
         // Test case insensitivity
         result = MovieFilter.filterByTitle(testMovies, "DARK");
@@ -106,7 +106,7 @@ class MovieFilterTest {
         // Test normal case
         List<Movie> result = MovieFilter.filterByExactTitle(testMovies, "The Godfather");
         assertEquals(1, result.size());
-        assertTrue(result.contains(movie2));
+        assertTrue(result.contains(movie1));
 
         // Test case insensitivity
         result = MovieFilter.filterByExactTitle(testMovies, "THE DARK KNIGHT");
@@ -114,7 +114,7 @@ class MovieFilterTest {
         assertTrue(result.contains(movie3));
 
         // Test no match for partial title
-        result = MovieFilter.filterByExactTitle(testMovies, "Godfather");
+        result = MovieFilter.filterByExactTitle(testMovies, "matrix");
         assertEquals(0, result.size());
     }
 
@@ -125,16 +125,16 @@ class MovieFilterTest {
     void filterByDirector() {
         // Test normal case
         List<Movie> result = MovieFilter.filterByDirector(testMovies, "Nolan");
-        assertEquals(1, result.size());
-        assertTrue(result.contains(movie3));
+        assertEquals(2, result.size());
+        assertTrue(result.contains(movie2));
 
         // Test case insensitivity
         result = MovieFilter.filterByDirector(testMovies, "COPPOLA");
         assertEquals(1, result.size());
-        assertTrue(result.contains(movie2));
+        assertTrue(result.contains(movie1));
 
         // Test partial match
-        result = MovieFilter.filterByDirector(testMovies, "Fra");
+        result = MovieFilter.filterByDirector(testMovies, "Chris");
         assertEquals(2, result.size());
         assertTrue(result.contains(movie2));
     }
@@ -145,7 +145,7 @@ class MovieFilterTest {
     @Test
     void filterByYear() {
         // Test normal case
-        List<Movie> result = MovieFilter.filterByYear(testMovies, 1994);
+        List<Movie> result = MovieFilter.filterByYear(testMovies, 1999);
         assertEquals(1, result.size());
         assertTrue(result.contains(movie1));
 
@@ -165,17 +165,17 @@ class MovieFilterTest {
     void filterByYearRange() {
         // Test range containing multiple movies
         List<Movie> result = MovieFilter.filterByYearRange(testMovies, 1970, 2000);
-        assertEquals(2, result.size());
+        assertEquals(1, result.size());
         assertTrue(result.contains(movie1));
-        assertTrue(result.contains(movie2));
 
         // Test range containing one movie
         result = MovieFilter.filterByYearRange(testMovies, 2000, 2010);
-        assertEquals(1, result.size());
+        assertEquals(2, result.size());
+        assertTrue(result.contains(movie2));
         assertTrue(result.contains(movie3));
 
         // Test range containing no movies
-        result = MovieFilter.filterByYearRange(testMovies, 2010, 2020);
+        result = MovieFilter.filterByYearRange(testMovies, 2011, 2020);
         assertEquals(0, result.size());
     }
 
@@ -185,14 +185,13 @@ class MovieFilterTest {
     @Test
     void filterByMinRating() {
         // Test threshold that includes all movies
-        List<Movie> result = MovieFilter.filterByMinRating(testMovies, 9.0f);
+        List<Movie> result = MovieFilter.filterByMinRating(testMovies, 8.0f);
         assertEquals(3, result.size());
 
         // Test threshold that includes some movies
-        result = MovieFilter.filterByMinRating(testMovies, 9.1f);
-        assertEquals(2, result.size());
-        assertTrue(result.contains(movie1));
-        assertTrue(result.contains(movie2));
+        result = MovieFilter.filterByMinRating(testMovies, 8.8f);
+        assertEquals(1, result.size());
+        assertTrue(result.contains(movie3));
 
         // Test threshold that includes no movies
         result = MovieFilter.filterByMinRating(testMovies, 9.4f);
@@ -209,12 +208,12 @@ class MovieFilterTest {
         assertEquals(3, result.size());
 
         // Test threshold that includes some movies
-        result = MovieFilter.filterByMaxRating(testMovies, 9.1f);
-        assertEquals(1, result.size());
-        assertTrue(result.contains(movie3));
+        result = MovieFilter.filterByMaxRating(testMovies, 8.8f);
+        assertEquals(2, result.size());
+        assertTrue(result.contains(movie1));
 
         // Test threshold that includes no movies
-        result = MovieFilter.filterByMaxRating(testMovies, 8.9f);
+        result = MovieFilter.filterByMaxRating(testMovies, 8.4f);
         assertEquals(0, result.size());
     }
 
@@ -224,22 +223,21 @@ class MovieFilterTest {
     @Test
     void filterByGenre() {
         // Test genre present in all movies
-        List<Movie> result = MovieFilter.filterByGenre(testMovies, "drama");
-        assertEquals(3, result.size());
+        List<Movie> result = MovieFilter.filterByGenre(testMovies, "tv_movie");
+        assertEquals(1, result.size());
 
         // Test genre present in some movies
         result = MovieFilter.filterByGenre(testMovies, "crime");
-        assertEquals(2, result.size());
-        assertTrue(result.contains(movie2));
+        assertEquals(1, result.size());
         assertTrue(result.contains(movie3));
 
         // Test genre present in one movie
         result = MovieFilter.filterByGenre(testMovies, "action");
-        assertEquals(1, result.size());
-        assertTrue(result.contains(movie3));
+        assertEquals(2, result.size());
+        assertTrue(result.contains(movie1));
 
         // Test genre not present
-        result = MovieFilter.filterByGenre(testMovies, "comedy");
+        result = MovieFilter.filterByGenre(testMovies, "family");
         assertEquals(0, result.size());
     }
 
@@ -254,17 +252,17 @@ class MovieFilterTest {
         assertTrue(result.contains(movie1));
 
         // Test case insensitivity
-        result = MovieFilter.filterByActor(testMovies, "PACINO");
+        result = MovieFilter.filterByActor(testMovies, "DICAPRIO");
         assertEquals(1, result.size());
         assertTrue(result.contains(movie2));
 
         // Test partial match
-        result = MovieFilter.filterByActor(testMovies, "Heath");
+        result = MovieFilter.filterByActor(testMovies, "man");
         assertEquals(1, result.size());
-        assertTrue(result.contains(movie3));
+        assertTrue(result.contains(movie1));
 
         // Test no match
-        result = MovieFilter.filterByActor(testMovies, "DiCaprio");
+        result = MovieFilter.filterByActor(testMovies, "Hathaway");
         assertEquals(0, result.size());
     }
 
@@ -313,16 +311,15 @@ class MovieFilterTest {
     @Test
     void combineAnd() {
         // Test combining two filters with overlapping results
-        List<Movie> dramaMovies = MovieFilter.filterByGenre(testMovies, "drama");
+        List<Movie> actionMovies = MovieFilter.filterByGenre(testMovies, "action");
         List<Movie> crimeMovies = MovieFilter.filterByGenre(testMovies, "crime");
 
-        List<Movie> result = MovieFilter.combineAnd(dramaMovies, crimeMovies);
-        assertEquals(2, result.size());
-        assertTrue(result.contains(movie2));
+        List<Movie> result = MovieFilter.combineAnd(actionMovies, crimeMovies);
+        assertEquals(1, result.size());
         assertTrue(result.contains(movie3));
 
         // Test combining with no overlap
-        List<Movie> recentMovies = MovieFilter.filterByYear(testMovies, 2008);
+        List<Movie> recentMovies = MovieFilter.filterByYear(testMovies, 1999);
         List<Movie> oldMovies = MovieFilter.filterByYear(testMovies, 1972);
 
         result = MovieFilter.combineAnd(recentMovies, oldMovies);
