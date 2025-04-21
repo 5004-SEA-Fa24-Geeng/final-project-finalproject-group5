@@ -170,4 +170,7 @@ All features are accessed via a user-friendly interface.
 - **Fail**: Broken UI, crashes, or incorrect save/load behavior
 
 ---
-# 📹Walkthrough Video
+## 🎞️ Walkthrough Preview
+
+![App Walkthrough](https://github.com/5004-SEA-Fa24-Geeng/final-project-finalproject-group5/blob/main/movie-feaster/frontend/src/test/walkthrough3.gif)
+
