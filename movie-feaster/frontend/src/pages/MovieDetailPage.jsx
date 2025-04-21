@@ -2,6 +2,87 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './MovieDetailPage.css';
 
+// Utility functions for rating management
+const RatingUtils = {
+    // Clear a specific movie's rating
+    clearMovieRating: (movieId) => {
+        localStorage.removeItem(`movieUserRating_${movieId}`);
+        localStorage.removeItem(`movieRatingCount_${movieId}`);
+    },
+
+    // Clear all movie ratings in localStorage
+    clearAllMovieRatings: () => {
+        // Get all localStorage keys
+        const keys = Object.keys(localStorage);
+
+        // Filter keys related to movie ratings
+        const movieRatingKeys = keys.filter(key =>
+            key.startsWith('movieUserRating_') ||
+            key.startsWith('movieRatingCount_')
+        );
+
+        // Remove each key
+        movieRatingKeys.forEach(key => {
+            localStorage.removeItem(key);
+        });
+
+        return movieRatingKeys.length;
+    },
+
+    // Check if a movie has a rating
+    hasRating: (movieId) => {
+        const rating = localStorage.getItem(`movieUserRating_${movieId}`);
+        return rating !== null && rating !== '0';
+    },
+
+    // Get a movie's rating
+    getRating: (movieId) => {
+        const rating = localStorage.getItem(`movieUserRating_${movieId}`);
+        return rating ? parseInt(rating, 10) : 0;
+    },
+
+    // Set a movie's rating
+    setRating: (movieId, rating) => {
+        localStorage.setItem(`movieUserRating_${movieId}`, rating.toString());
+    },
+
+    // Get rating count for a movie
+    getRatingCount: (movieId) => {
+        const count = localStorage.getItem(`movieRatingCount_${movieId}`);
+        return count ? parseInt(count, 10) : 0;
+    },
+
+    // Set rating count for a movie
+    setRatingCount: (movieId, count) => {
+        localStorage.setItem(`movieRatingCount_${movieId}`, count.toString());
+    },
+
+    // Store the timestamp of the last app start
+    storeAppStartTimestamp: () => {
+        localStorage.setItem('appStartTimestamp', Date.now().toString());
+    },
+
+    // Get the timestamp of the last app start
+    getAppStartTimestamp: () => {
+        return localStorage.getItem('appStartTimestamp');
+    }
+};
+
+// Generate a unique identifier for this app session
+const APP_SESSION_ID = Date.now().toString();
+
+// Store the session ID to detect restarts
+if (!localStorage.getItem('currentAppSessionId') ||
+    localStorage.getItem('currentAppSessionId') !== APP_SESSION_ID) {
+
+    // This is a new session (app restart), clear all ratings
+    console.log('New application session detected, clearing all ratings');
+    RatingUtils.clearAllMovieRatings();
+
+    // Store the new session ID
+    localStorage.setItem('currentAppSessionId', APP_SESSION_ID);
+}
+
 const MovieDetailPage = () => {
     // Constants
     const BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
@@ -18,9 +99,9 @@ const MovieDetailPage = () => {
     const [commentSubmitting, setCommentSubmitting] = useState(false);
     const [userRating, setUserRating] = useState(0);
     const [ratingSubmitting, setRatingSubmitting] = useState(false);
-    const [hasRated, setHasRated] = useState(false); // Track if user has already rated
-    const [refreshing, setRefreshing] = useState(false); // Track when we're refreshing data
-    const [ratingCount, setRatingCount] = useState(0); // Track rating count locally
+    const [hasRated, setHasRated] = useState(false);
+    const [refreshing, setRefreshing] = useState(false);
+    const [ratingCount, setRatingCount] = useState(0);
 
     // Helper functions
     const formatGenre = useCallback((genre) => {
@@ -35,22 +116,26 @@ const MovieDetailPage = () => {
 
     // Check if user has already rated this movie and retrieve their rating
     const checkUserHasRated = useCallback(() => {
-        // Check specifically if this movie has a saved rating
-        const specificRating = localStorage.getItem(`movieUserRating_${id}`);
+        try {
+            // Check if user has rated this movie
+            const hasStoredRating = RatingUtils.hasRating(id);
 
-        // Only mark as rated if we find an actual rating for this specific movie
-        if (specificRating) {
-            setHasRated(true);
-            setUserRating(parseInt(specificRating, 10));
-        } else {
+            if (hasStoredRating) {
+                const storedRating = RatingUtils.getRating(id);
+                setHasRated(true);
+                setUserRating(storedRating);
+            } else {
+                setHasRated(false);
+                setUserRating(0);
+            }
+
+            // Get rating count
+            const storedCount = RatingUtils.getRatingCount(id);
+            setRatingCount(storedCount);
+        } catch (error) {
+            // Reset on error to be safe
             setHasRated(false);
             setUserRating(0);
-        }
-
-        // Also retrieve stored rating count
-        const storedCount = localStorage.getItem(`movieRatingCount_${id}`);
-        if (storedCount) {
-            setRatingCount(parseInt(storedCount, 10));
         }
     }, [id]);
 
@@ -73,7 +158,6 @@ const MovieDetailPage = () => {
             }
 
             const data = await response.json();
-            console.log('Fetched movie data:', data); // Log the fetched data to debug
 
             // Update state with new data
             setMovie(data);
@@ -88,7 +172,6 @@ const MovieDetailPage = () => {
             // Check if user has rated after fetching movie
             checkUserHasRated();
         } catch (err) {
-            console.error('Error fetching movie:', err);
             setError(err.message);
             if (!isRefresh) {
                 setLoading(false);
@@ -99,7 +182,13 @@ const MovieDetailPage = () => {
     }, [BASE_URL, id, checkUserHasRated]);
 
     useEffect(() => {
+        // Initial load
         fetchMovie();
+
+        // Clean up function to ensure we don't have stale state if component unmounts
+        return () => {
+            // Cleanup if needed
+        };
     }, [fetchMovie]);
 
     // Event handlers
@@ -112,7 +201,14 @@ const MovieDetailPage = () => {
     };
 
     const handleRatingChange = (value) => {
-        if (hasRated) return; // Prevent rating change if already rated
+        // Check if user has already rated
+        const hasStoredRating = RatingUtils.hasRating(id);
+
+        if (hasStoredRating) {
+            alert('You have already rated this movie');
+            return;
+        }
+
         setUserRating(value);
     };
 
@@ -135,10 +231,9 @@ const MovieDetailPage = () => {
             }
 
             setComment('');
-            await fetchMovie(true); // Use refresh mode for comment updates too
+            await fetchMovie(true);
             alert('Comment submitted successfully!');
         } catch (err) {
-            console.error('Error submitting comment:', err);
             alert('Failed to submit comment. Please try again.');
         } finally {
             setCommentSubmitting(false);
@@ -151,8 +246,11 @@ const MovieDetailPage = () => {
             return;
         }
 
-        if (hasRated) {
+        // Double check if user has already rated
+        if (RatingUtils.hasRating(id)) {
             alert('You have already rated this movie');
+            setHasRated(true);
+            setUserRating(RatingUtils.getRating(id));
             return;
         }
 
@@ -165,51 +263,41 @@ const MovieDetailPage = () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: userRating.toString(), // Send the rating as a string value
+                body: userRating.toString(),
             });
 
             if (!response.ok) {
                 throw new Error('Failed to submit rating');
             }
 
-            // Store that user has rated this movie
-            const ratedMovies = JSON.parse(localStorage.getItem('ratedMovies') || '[]');
-            ratedMovies.push(parseInt(id));
-            localStorage.setItem('ratedMovies', JSON.stringify(ratedMovies));
+            // Store rating
+            RatingUtils.setRating(id, userRating);
 
-            // Store the user's rating value for this movie
-            localStorage.setItem(`movieUserRating_${id}`, userRating.toString());
-
-            // Store rating count locally (temporary solution until backend provides it)
-            const currentCount = parseInt(localStorage.getItem(`movieRatingCount_${id}`) || '0');
+            // Update rating count
+            const currentCount = RatingUtils.getRatingCount(id);
             const newCount = currentCount + 1;
-            localStorage.setItem(`movieRatingCount_${id}`, newCount.toString());
+            RatingUtils.setRatingCount(id, newCount);
             setRatingCount(newCount);
 
             // Update UI to show user has rated
             setHasRated(true);
 
-            // We don't reset userRating so the stars will stay filled
-            // setUserRating(0);
-
             // Small delay to ensure backend has processed the rating
-            // before we try to fetch the updated data
             setTimeout(async () => {
                 try {
-                    // Fetch updated movie data (including new ratings)
-                    // Pass true to indicate this is a refresh, not initial load
                     await fetchMovie(true);
-
-                    // Show success message AFTER data is refreshed
                     alert('Rating submitted successfully!');
                 } finally {
                     setRatingSubmitting(false);
                 }
-            }, 300); // 300ms delay
+            }, 300);
         } catch (err) {
-            console.error('Error submitting rating:', err);
             alert('Failed to submit rating. Please try again.');
             setRatingSubmitting(false);
+
+            // Clean up local storage in case of error
+            RatingUtils.clearMovieRating(id);
+            setHasRated(false);
         }
     };
 
@@ -376,7 +464,7 @@ const MovieDetailPage = () => {
                                     </div>
                                 ) : movie.inAppRating > 0 ? (
                                     <div className="rating-summary">
-                                        <p>App Rating: {parseFloat(movie.inAppRating).toFixed(1)} (Total ratings: {ratingCount || '?'})</p>
+                                        <p>{parseFloat(movie.inAppRating).toFixed(1)}</p>
                                         <div className="rating-stars">
                                             {[1, 2, 3, 4, 5].map((star) => (
                                                 <span

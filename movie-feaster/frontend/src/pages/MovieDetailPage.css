@@ -354,8 +354,6 @@
     color: #ffc107; /* Yellow/gold color for active stars */
 }
 
-/* Make sure this rule appears after any other .rating-star.disabled rules */
-
 /* Additional styling for the refreshing state */
 .refreshing-ratings {
     display: flex;
