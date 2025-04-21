@@ -13,6 +13,43 @@ The group member's names and link to their personal githubs
 Movie Feaster is a full-stack web application that allows users to browse, filter, and view detailed movie information.
 Built with Spring Boot and React, it demonstrates modern web development practices, including routing, reusable components, API integration, and interactive UI features.
 
+## Features
+### Core Features
+- 🔍 **View All Movies**  
+  Display all movies in the collection, sorted alphabetically by default.
+
+- 📋 **Build Custom Movie Lists**  
+  Filter and build personalized movie lists based on various criteria.
+
+- 💾 **Save Movie Lists**  
+  Export filtered movie lists in `.json`, `.xml`, or `.csv` formats.
+
+### Additional Features
+- 💻 **Graphical User Interface**  
+  Interactive and responsive web interface built with React.
+
+- 📂 **Load and Modify Saved Lists**  
+  Load previously saved lists and modify them using filtering and sorting options.
+
+- 🔎 **Search Functionality**  
+  Search movies by keyword using the filter form.
+
+- ↕️ **Sort Options**  
+  Sort movies by:
+  - Title (A–Z / Z–A)
+  - Release Year
+  - Popularity
+
+- 🎯 **Filtering Options**  
+  Use the filter form to narrow down movies based on user-defined criteria.
+
+- 🌐 **Online Data Source**  
+  Fetch live movie data from the [TMDB API](https://www.themoviedb.org/documentation/api).
+
+- 🖼️ **Movie Posters**  
+  Display high-quality movie posters along with movie details.
+
+
 ## Read Our Design
 
 Links to design documents and manuals.
