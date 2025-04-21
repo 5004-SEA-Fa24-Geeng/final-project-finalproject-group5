@@ -49,6 +49,11 @@ Built with Spring Boot and React, it demonstrates modern web development practic
 - 🖼️ **Movie Posters**  
   Display high-quality movie posters along with movie details.
 
+- ⭐ **Movie Rating System**  
+  Users can assign a rating to each movie (e.g., 1–5 stars).
+
+- 💬 **Comment Section**  
+  Users can add and view personal comments for each movie in their list.
 
 ## Read Our Design
 
