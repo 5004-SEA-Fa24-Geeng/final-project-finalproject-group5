@@ -1,4 +1,4 @@
-# 🎬 Movie Browser & List Manager — GUI Test Plan
+# 🎬 Movie Feast — GUI Test Plan
 
 ## 📘 Overview
 This test plan outlines the GUI testing strategy for a movie browsing and list management application. The app allows users to:
