@@ -100,9 +100,9 @@ Navigate to the movie-feaster directory:
    ```bash
    cd backend
 2. Create .env with `TMDB_API_TOKEN`:
-   ⚠️ [How to get a TMDB API key?](https://developer.themoviedb.org/docs/getting-started)
+   ⚠️ [How to get a TMDB API token?](https://developer.themoviedb.org/docs/getting-started)
    ```bash
-   TMDB_API_TOKEN=${YOUR_API_KEY}
+   TMDB_API_TOKEN=${YOUR_API_TOKEN}
 4. Run:
    ```bash
    gradle wrapper
