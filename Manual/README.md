@@ -77,6 +77,10 @@ Built with **Spring Boot** and **React**, it demonstrates modern web development
   - Displays all previously submitted comments.
 - **Footer**: Fixed at the bottom across all pages.
 ---
+## 🎞️ Walkthrough Preview
+
+![App Walkthrough](https://github.com/5004-SEA-Fa24-Geeng/final-project-finalproject-group5/blob/main/movie-feaster/frontend/src/test/walkthrough3.gif)
+---
 
 ## 🛠 Tech Stack
 
