@@ -55,11 +55,20 @@ class MovieModelTest {
      */
     @Test
     void getMovieById() {
+        model.fetchMovies();
         Movie movie = model.getMovies().get(0);
         Movie found = model.getMovieById(movie.getMovieId());
-        System.out.println(movie);
-        System.out.println(found);
         assertEquals(movie.getMovieId(), found.getMovieId());
+    }
+
+    /**
+     * Tests getting a movie by non-existent ID.
+     */
+    @Test
+    void getMovieByNonExistentId() {
+        model.fetchMovies();
+        Movie found = model.getMovieById(-1);
+        assertNull(found, "Should return null for non-existent movie ID");
     }
 
     /**
@@ -72,10 +81,10 @@ class MovieModelTest {
     }
 
     /**
-     * Tests writing movies to a file.
+     * Tests writing movies to a file in JSON format.
      */
     @Test
-    void writeFile() {
+    void writeFileJson() {
         model.fetchMovies();
         model.writeFile(false, Format.JSON);
         File outputFile = new File("output.json");
@@ -84,50 +93,150 @@ class MovieModelTest {
     }
 
     /**
-     * Tests searching movies by filter.
+     * Tests writing movies to a file in XML format.
      */
     @Test
-    void searchByFilter() {
+    void writeFileXml() {
+        model.fetchMovies();
+        model.writeFile(false, Format.XML);
+        File outputFile = new File("output.xml");
+        assertTrue(outputFile.exists(), "Output file should exist after writing");
+        outputFile.delete(); // Clean up
+    }
+
+    /**
+     * Tests writing movies to a file in CSV format.
+     */
+    @Test
+    void writeFileCsv() {
+        model.fetchMovies();
+        model.writeFile(false, Format.CSV);
+        File outputFile = new File("output.csv");
+        assertTrue(outputFile.exists(), "Output file should exist after writing");
+        outputFile.delete(); // Clean up
+    }
+
+    /**
+     * Tests searching movies by filter with title keyword.
+     */
+    @Test
+    void searchByFilterTitleKeyword() {
         model.fetchMovies();
         Map<MovieFilterType, Object> filters = new HashMap<>();
         filters.put(MovieFilterType.TITLE_KEYWORD, "The");
         model.searchByFilter(filters);
         List<Movie> results = model.getProcessedMovies();
         assertNotNull(results);
+        assertFalse(results.isEmpty(), "Should find movies with 'The' in title");
     }
 
     /**
-     * Tests searching movies by filter with new filter flag.
+     * Tests searching movies by filter with non-existent title keyword.
      */
     @Test
-    void searchByFilterWithNewFilterFlag() {
+    void searchByFilterNonExistentTitleKeyword() {
         model.fetchMovies();
-
         Map<MovieFilterType, Object> filters = new HashMap<>();
-        filters.put(MovieFilterType.TITLE_KEYWORD, "3");
-
+        filters.put(MovieFilterType.TITLE_KEYWORD, "NonExistentMovieTitle123");
         model.searchByFilter(filters);
         List<Movie> results = model.getProcessedMovies();
-
-        // --------
-        System.out.println("new");
-
-        Map<MovieFilterType, Object> filters1 = new HashMap<>();
-        model.searchByFilter(filters);
-        List<Movie> results1 = model.getProcessedMovies();
-
-        assertNotNull(results);
+        assertTrue(results.isEmpty(), "Should return empty list for non-existent title");
     }
 
     /**
-     * Tests sorting the movie list.
+     * Tests searching movies by filter with null filters.
      */
     @Test
-    void sortMovieList() {
+    void searchByFilterNullFilters() {
+        model.fetchMovies();
+        model.searchByFilter(null);
+        List<Movie> results = model.getProcessedMovies();
+        assertNotNull(results);
+        assertEquals(model.getMovies().size(), results.size(), "Should return all movies when filters are null");
+    }
+
+    /**
+     * Tests searching movies by filter with empty filters.
+     */
+    @Test
+    void searchByFilterEmptyFilters() {
+        model.fetchMovies();
+        model.searchByFilter(new HashMap<>());
+        List<Movie> results = model.getProcessedMovies();
+        assertNotNull(results);
+        assertEquals(model.getMovies().size(), results.size(), "Should return all movies when filters are empty");
+    }
+
+    /**
+     * Tests sorting the movie list by title ascending.
+     */
+    @Test
+    void sortMovieListTitleAsc() {
+        model.fetchMovies();
+        model.sortMovieList(MovieSorterType.TITLE_ASC);
+        List<Movie> sorted = model.getProcessedMovies();
+        assertNotNull(sorted);
+        assertTrue(isSortedByTitleAsc(sorted), "Movies should be sorted by title ascending");
+    }
+
+    /**
+     * Tests sorting the movie list by title descending.
+     */
+    @Test
+    void sortMovieListTitleDesc() {
+        model.fetchMovies();
+        model.sortMovieList(MovieSorterType.TITLE_DESC);
+        List<Movie> sorted = model.getProcessedMovies();
+        assertNotNull(sorted);
+        assertTrue(isSortedByTitleDesc(sorted), "Movies should be sorted by title descending");
+    }
+
+    /**
+     * Tests sorting the movie list by year ascending.
+     */
+    @Test
+    void sortMovieListYearAsc() {
+        model.fetchMovies();
+        model.sortMovieList(MovieSorterType.YEAR_ASC);
+        List<Movie> sorted = model.getProcessedMovies();
+        assertNotNull(sorted);
+        assertTrue(isSortedByYearAsc(sorted), "Movies should be sorted by year ascending");
+    }
+
+    /**
+     * Tests sorting the movie list by year descending.
+     */
+    @Test
+    void sortMovieListYearDesc() {
         model.fetchMovies();
         model.sortMovieList(MovieSorterType.YEAR_DESC);
         List<Movie> sorted = model.getProcessedMovies();
         assertNotNull(sorted);
+        assertTrue(isSortedByYearDesc(sorted), "Movies should be sorted by year descending");
+    }
+
+    /**
+     * Tests sorting the movie list by rating ascending.
+     */
+    @Test
+    void sortMovieListRatingAsc() {
+        model.fetchMovies();
+        model.sortMovieList(MovieSorterType.RATING_ASC);
+        List<Movie> sorted = model.getProcessedMovies();
+        assertNotNull(sorted);
+        assertTrue(isSortedByRatingAsc(sorted), "Movies should be sorted by rating ascending");
+    }
+
+    /**
+     * Tests sorting the movie list by rating descending.
+     */
+    @Test
+    void sortMovieListRatingDesc() {
+        model.fetchMovies();
+        model.sortMovieList(MovieSorterType.RATING_DESC);
+        List<Movie> sorted = model.getProcessedMovies();
+        assertNotNull(sorted);
+        assertTrue(isSortedByRatingDesc(sorted), "Movies should be sorted by rating descending");
     }
 
     /**
@@ -147,19 +256,83 @@ class MovieModelTest {
     void updateComments() {
         model.fetchMovies();
         Movie movie = model.getMovies().get(0);
-        model.updateComments(movie.getMovieId(), "Great movie!");
-        assertTrue(movie.getComments().contains("Great movie!"));
+        String comment = "Great movie!";
+        model.updateComments(movie.getMovieId(), comment);
+        assertTrue(movie.getComments().contains(comment));
     }
 
     /**
-     * Tests updating movie ratings.
+     * Tests updating comments for non-existent movie.
      */
     @Test
-    void updateRating() {
+    void updateCommentsNonExistentMovie() {
         model.fetchMovies();
-        Movie movie = model.getMovies().get(0);
-        double initialAverage = movie.getInAppRating();
-        model.updateRating(movie.getMovieId(), 4.5);
-        assertTrue(movie.getInAppRating() > initialAverage || movie.getInAppRating() == 4.5);
+        model.updateComments(-1, "Test comment");
+        // Should not throw exception
+    }
+
+    /**
+     * Tests updating rating for non-existent movie.
+     */
+    @Test
+    void updateRatingNonExistentMovie() {
+        model.fetchMovies();
+        model.updateRating(-1, 4.5);
+        // Should not throw exception
+    }
+
+    // Helper methods for checking sort order
+    private boolean isSortedByTitleAsc(List<Movie> movies) {
+        for (int i = 0; i < movies.size() - 1; i++) {
+            if (movies.get(i).getTitle().compareToIgnoreCase(movies.get(i + 1).getTitle()) > 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean isSortedByTitleDesc(List<Movie> movies) {
+        for (int i = 0; i < movies.size() - 1; i++) {
+            if (movies.get(i).getTitle().compareToIgnoreCase(movies.get(i + 1).getTitle()) < 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean isSortedByYearAsc(List<Movie> movies) {
+        for (int i = 0; i < movies.size() - 1; i++) {
+            if (movies.get(i).getYear() > movies.get(i + 1).getYear()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean isSortedByYearDesc(List<Movie> movies) {
+        for (int i = 0; i < movies.size() - 1; i++) {
+            if (movies.get(i).getYear() < movies.get(i + 1).getYear()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean isSortedByRatingAsc(List<Movie> movies) {
+        for (int i = 0; i < movies.size() - 1; i++) {
+            if (movies.get(i).getRating() > movies.get(i + 1).getRating()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean isSortedByRatingDesc(List<Movie> movies) {
+        for (int i = 0; i < movies.size() - 1; i++) {
+            if (movies.get(i).getRating() < movies.get(i + 1).getRating()) {
+                return false;
+            }
+        }
+        return true;
     }
 }

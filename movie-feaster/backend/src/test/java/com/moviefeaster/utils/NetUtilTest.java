@@ -1,17 +1,147 @@
 package com.moviefeaster.utils;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import okhttp3.OkHttpClient;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Test class for NetUtil utility.
  */
+@ExtendWith(MockitoExtension.class)
 public class NetUtilTest {
+
+    /** Mock OkHttpClient for testing HTTP requests. */
+    @Mock
+    private OkHttpClient mockClient;
+
+    /** Mock Response for testing HTTP responses. */
+    @Mock
+    private Response mockResponse;
+
+    /** Mock ResponseBody for testing response content. */
+    @Mock
+    private ResponseBody mockResponseBody;
+
+    /** Mock ObjectMapper for testing JSON processing. */
+    @Mock
+    private ObjectMapper mockMapper;
+
+    /** Mock ArrayNode for testing JSON array operations. */
+    @Mock
+    private ArrayNode mockArrayNode;
+
+    @BeforeEach
+    void setUp() {
+        // Reset mocks before each test
+        reset(mockClient, mockResponse, mockResponseBody, mockMapper, mockArrayNode);
+    }
+
+    @Nested
+    @DisplayName("getTop50MoviesJson tests")
+    class GetTop50MoviesJsonTests {
+        @Test
+        @DisplayName("getTop50MoviesJson should return non-null stream")
+        void shouldReturnNonNullStream() {
+            InputStream result = NetUtil.getTop50MoviesJson();
+            assertNotNull(result);
+        }
+
+        @Test
+        @DisplayName("getTop50MoviesJson should return valid JSON stream")
+        void shouldReturnValidJsonStream() throws IOException {
+            InputStream result = NetUtil.getTop50MoviesJson();
+            assertNotNull(result);
+            
+            // Read the stream to verify it contains valid JSON
+            byte[] data = result.readAllBytes();
+            String json = new String(data);
+            assertTrue(json.startsWith("[") && json.endsWith("]"), 
+                "Response should be a JSON array");
+        }
+
+        @Test
+        @DisplayName("getTop50MoviesJson should handle API errors gracefully")
+        void shouldHandleApiErrors() {
+            assertDoesNotThrow(() -> {
+                InputStream result = NetUtil.getTop50MoviesJson();
+                assertNotNull(result);
+            });
+        }
+
+        @Test
+        @DisplayName("getTop50MoviesJson should return consistent results")
+        void shouldReturnConsistentResults() throws IOException {
+            InputStream firstCall = NetUtil.getTop50MoviesJson();
+            InputStream secondCall = NetUtil.getTop50MoviesJson();
+            
+            assertNotNull(firstCall);
+            assertNotNull(secondCall);
+            
+            String firstJson = new String(firstCall.readAllBytes());
+            String secondJson = new String(secondCall.readAllBytes());
+            
+            assertEquals(firstJson, secondJson, 
+                "Consecutive calls should return the same data");
+        }
+    }
+
+    @Nested
+    @DisplayName("getCrewJsonStream tests")
+    class GetCrewJsonStreamTests {
+        @Test
+        @DisplayName("getCrewJsonStream should return non-null stream for valid movie ID")
+        void shouldReturnNonNullStream() {
+            InputStream result = NetUtil.getCrewJsonStream(123);
+            assertNotNull(result);
+        }
+
+        @Test
+        @DisplayName("getCrewJsonStream should handle invalid movie ID gracefully")
+        void shouldHandleInvalidMovieId() {
+            assertDoesNotThrow(() -> {
+                InputStream result = NetUtil.getCrewJsonStream(-1);
+                assertNotNull(result);
+            });
+        }
+
+        @Test
+        @DisplayName("getCrewJsonStream should return valid JSON stream")
+        void shouldReturnValidJsonStream() throws IOException {
+            InputStream result = NetUtil.getCrewJsonStream(123);
+            assertNotNull(result);
+            
+            // Read the stream to verify it contains valid JSON
+            byte[] data = result.readAllBytes();
+            String json = new String(data);
+            assertTrue(json.startsWith("{") && json.endsWith("}"), 
+                "Response should be a JSON object");
+        }
+
+        @Test
+        @DisplayName("getCrewJsonStream should handle API errors gracefully")
+        void shouldHandleApiErrors() {
+            assertDoesNotThrow(() -> {
+                InputStream result = NetUtil.getCrewJsonStream(999999);
+                assertNotNull(result);
+            });
+        }
+    }
 
     /**
      * Simple stub test that always passes.
@@ -85,24 +215,6 @@ public class NetUtilTest {
         assertTrue(json.length() > 500, "Response should contain substantial data");
 
         System.out.println("Top 50 Movies JSON array test passed, length: " + json.length());
-    }
-
-    /**
-     * Tests that consecutive calls to getTop50MoviesJson return the same result.
-     */
-    @Test
-    public void testGetTop50MoviesJsonTwice() throws IOException {
-        InputStream firstCall = NetUtil.getTop50MoviesJson();
-        InputStream secondCall = NetUtil.getTop50MoviesJson();
-
-        assertNotNull(firstCall);
-        assertNotNull(secondCall);
-
-        String first = new String(firstCall.readAllBytes());
-        String second = new String(secondCall.readAllBytes());
-
-        assertEquals(first, second, 
-            "Consecutive API calls should return the same result for consistency");
     }
 
     /**
