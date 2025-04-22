@@ -465,51 +465,51 @@ classDiagram
     }
 
     class Header {
-        - searchQuery: String
-        - handleSearch() void
-        - handleFilterToggle() void
         + render() JSX
     }
 
     class Footer {
-        - currentYear: String
         + render() JSX
     }
 
     class MovieCard {
-        - movie: Object
-        - handleClick() void
-        - handleFavorite() void
+        - formatGenre
+        - primaryGenre
+        - primaryDirector
         + render() JSX
     }
 
     class HomePage {
-        - featuredMovies: List~Movie~
-        - topRatedMovies: List~Movie~
-        - recentlyViewedMovies: List~Movie~
-        - fetchMovies() void
-        - handleFilterChange() void
+        - handleChange
+        - handleSubmit
         + render() JSX
     }
 
     class MovieDetailPage {
-        - movie: Movie
-        - isLoading: Boolean
-        - userRating: Number
-        - userComment: String
-        - fetchMovieDetails(id) void
-        - handleSubmitRating() void
-        - handleSubmitComment() void
+        - APP_SESSION_ID
+        - RatingUtils
+        - formatGenre
+        - checkUserHasRated
+        - fetchMovie
+        - handleGoBack
+        - handleCommentChange
+        - handleRatingChange
+        - handleCommentSubmit
+        - handleRatingSubmit
         + render() JSX
     }
 
     class MovieListPage {
-        - savedMovies: List~Movie~
-        - listFilter: String
-        - sortOption: String
-        - fetchSavedMovies() void
-        - handleFilterChange() void
-        - handleSortChange() void
+        - parseFiltersFromUrl
+        - loadDataWithCurrentFilters
+        - fetchMovies
+        - handleDownload
+        - getFileExtension
+        - handleMovieClick
+        - handleSortChange
+        - formatFilterValue
+        - getFilterDisplayName
+        - handleRemoveFilter
         + render() JSX
     }
 
@@ -563,8 +563,8 @@ classDiagram
     MovieListPage --> MovieCard
 
     APIService --> MovieController : RESTful API calls
-    HomePage --> APIService
     MovieListPage --> APIService
+    HomePage --> APIService
     MovieDetailPage --> APIService
 
 ```
