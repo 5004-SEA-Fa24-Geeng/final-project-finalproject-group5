@@ -58,41 +58,6 @@ class MovieFilterFacilitatorTest {
                 .castings(List.of("Margot Robbie", "Ryan Gosling"))
                 .imgUrl("https://image.tmdb.org/t/p/barbie.jpg")
                 .build();
-//        Movie m1 = new Movie(
-//                1,
-//                "The Matrix",
-//                List.of("Lana Wachowski", "Lilly Wachowski"),
-//                1999,
-//                8.7,
-//                List.of(Genre.ACTION, Genre.SCIENCE_FICTION),
-//                "A computer hacker learns the nature of reality.",
-//                List.of("Keanu Reeves", "Carrie-Anne Moss"),
-//                "https://image.tmdb.org/t/p/matrix.jpg"
-//        );
-//
-//        Movie m2 = new Movie(
-//                2,
-//                "Inception",
-//                List.of("Christopher Nolan"),
-//                2010,
-//                8.8,
-//                List.of(Genre.SCIENCE_FICTION),
-//                "A thief who steals corporate secrets through dream-sharing technology.",
-//                List.of("Leonardo DiCaprio", "Joseph Gordon-Levitt"),
-//                "https://image.tmdb.org/t/p/inception.jpg"
-//        );
-//
-//        Movie m3 = new Movie(
-//                3,
-//                "Barbie",
-//                List.of("Greta Gerwig"),
-//                2023,
-//                7.1,
-//                List.of(Genre.COMEDY, Genre.FAMILY),
-//                "Barbie and Ken embark on a journey of self-discovery.",
-//                List.of("Margot Robbie", "Ryan Gosling"),
-//                "https://image.tmdb.org/t/p/barbie.jpg"
-//        );
 
         // Add comments or ratings manually to test those filters
         m3.addComment("Very pink!");
@@ -251,5 +216,89 @@ class MovieFilterFacilitatorTest {
 
         List<Movie> filtered = MovieFilterFacilitator.filter(movies, filters);
         assertEquals(2, filtered.size());
+    }
+
+    /**
+     * Tests filtering with empty movie list.
+     */
+    @Test
+    void filterWithEmptyMovieList() {
+        Map<MovieFilterType, Object> filters = new HashMap<>();
+        filters.put(MovieFilterType.TITLE_KEYWORD, "Matrix");
+        
+        List<Movie> emptyList = Collections.emptyList();
+        List<Movie> filtered = MovieFilterFacilitator.filter(emptyList, filters);
+        assertTrue(filtered.isEmpty());
+    }
+
+    /**
+     * Tests filtering with empty filters map.
+     */
+    @Test
+    void filterWithEmptyFilters() {
+        List<Movie> filtered = MovieFilterFacilitator.filter(movies, new HashMap<>());
+        assertEquals(movies.size(), filtered.size());
+    }
+
+    /**
+     * Tests filtering with case-insensitive title search.
+     */
+    @Test
+    void filterWithCaseInsensitiveTitle() {
+        Map<MovieFilterType, Object> filters = new HashMap<>();
+        filters.put(MovieFilterType.TITLE_KEYWORD, "matrix");
+        
+        List<Movie> filtered = MovieFilterFacilitator.filter(movies, filters);
+        assertEquals(1, filtered.size());
+        assertEquals("The Matrix", filtered.get(0).getTitle());
+    }
+
+    /**
+     * Tests filtering with partial match in title.
+     */
+    @Test
+    void filterWithPartialTitleMatch() {
+        Map<MovieFilterType, Object> filters = new HashMap<>();
+        filters.put(MovieFilterType.TITLE_KEYWORD, "The");
+        
+        List<Movie> filtered = MovieFilterFacilitator.filter(movies, filters);
+        assertEquals(1, filtered.size());
+        assertEquals("The Matrix", filtered.get(0).getTitle());
+    }
+
+    /**
+     * Tests filtering with special characters in title.
+     */
+    @Test
+    void filterWithSpecialCharacters() {
+        Map<MovieFilterType, Object> filters = new HashMap<>();
+        filters.put(MovieFilterType.TITLE_KEYWORD, "!");
+        
+        List<Movie> filtered = MovieFilterFacilitator.filter(movies, filters);
+        assertTrue(filtered.isEmpty());
+    }
+
+    /**
+     * Tests filtering with non-existent genre.
+     */
+    @Test
+    void filterWithNonExistentGenre() {
+        Map<MovieFilterType, Object> filters = new HashMap<>();
+        filters.put(MovieFilterType.GENRE, "NON_EXISTENT");
+        
+        List<Movie> filtered = MovieFilterFacilitator.filter(movies, filters);
+        assertTrue(filtered.isEmpty());
+    }
+
+    /**
+     * Tests filtering with exact year range boundaries.
+     */
+    @Test
+    void filterWithExactYearRangeBoundaries() {
+        Map<MovieFilterType, Object> filters = new HashMap<>();
+        filters.put(MovieFilterType.YEAR_RANGE, new int[]{1999, 2023});
+        
+        List<Movie> filtered = MovieFilterFacilitator.filter(movies, filters);
+        assertEquals(3, filtered.size());
     }
 }

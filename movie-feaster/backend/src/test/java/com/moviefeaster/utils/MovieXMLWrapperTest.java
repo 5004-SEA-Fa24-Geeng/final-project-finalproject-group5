@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -84,5 +86,85 @@ class MovieXMLWrapperTest {
 
         wrapper.setMovie(newMovies);
         assertSame(newMovies, wrapper.getMovie());
+    }
+
+    @Test
+    void shouldHandleLargeCollection() {
+        // Create a large collection of movies
+        List<Movie> largeCollection = new ArrayList<>();
+        for (int i = 0; i < 1000; i++) {
+            Movie movie = new Movie.Builder()
+                    .movieId(i)
+                    .title("Movie " + i)
+                    .directors(Collections.emptyList())
+                    .year(2000 + (i % 20))
+                    .rating(5.0 + (i % 5))
+                    .genres(Collections.emptyList())
+                    .overview("Overview " + i)
+                    .castings(Collections.emptyList())
+                    .imgUrl("")
+                    .build();
+            largeCollection.add(movie);
+        }
+
+        MovieXMLWrapper wrapper = new MovieXMLWrapper(largeCollection);
+        assertEquals(1000, wrapper.getMovie().size());
+    }
+
+    @Test
+    void shouldHandleCollectionWithNullElements() {
+        List<Movie> collectionWithNulls = new ArrayList<>();
+        collectionWithNulls.add(null);
+        collectionWithNulls.add(new Movie.Builder()
+                .movieId(1)
+                .title("Valid Movie")
+                .directors(Collections.emptyList())
+                .year(2020)
+                .rating(8.0)
+                .genres(Collections.emptyList())
+                .overview("Overview")
+                .castings(Collections.emptyList())
+                .imgUrl("")
+                .build());
+        collectionWithNulls.add(null);
+
+        MovieXMLWrapper wrapper = new MovieXMLWrapper(collectionWithNulls);
+        assertEquals(3, wrapper.getMovie().size());
+        assertNull(wrapper.getMovie().iterator().next());
+    }
+
+    @Test
+    void shouldHandlePartiallyInitializedMovies() {
+        List<Movie> partialMovies = new ArrayList<>();
+        
+        // Movie with only required fields
+        partialMovies.add(new Movie.Builder()
+                .movieId(1)
+                .title("Minimal Movie")
+                .directors(Collections.emptyList())
+                .year(2020)
+                .rating(0.0)
+                .genres(Collections.emptyList())
+                .overview("")
+                .castings(Collections.emptyList())
+                .imgUrl("")
+                .build());
+
+        // Movie with null title
+        partialMovies.add(new Movie.Builder()
+                .movieId(2)
+                .title(null)
+                .directors(Collections.emptyList())
+                .year(2020)
+                .rating(0.0)
+                .genres(Collections.emptyList())
+                .overview("")
+                .castings(Collections.emptyList())
+                .imgUrl("")
+                .build());
+
+        MovieXMLWrapper wrapper = new MovieXMLWrapper(partialMovies);
+        assertEquals(2, wrapper.getMovie().size());
+        assertEquals("Minimal Movie", wrapper.getMovie().iterator().next().getTitle());
     }
 }

@@ -234,4 +234,134 @@ class MovieFilterTest {
         result = MovieFilter.filterByCommentKeyword(testMovies, "terrible");
         assertEquals(0, result.size());
     }
+
+    /**
+     * Tests edge cases for filtering movies by exact title.
+     */
+    @Test
+    void filterByExactTitleEdgeCases() {
+        // Test null input list
+        List<Movie> result = MovieFilter.filterByExactTitle(null, "The Godfather");
+        assertTrue(result.isEmpty());
+
+        // Test empty input list
+        result = MovieFilter.filterByExactTitle(new ArrayList<>(), "The Godfather");
+        assertTrue(result.isEmpty());
+
+        // Test null search term
+        result = MovieFilter.filterByExactTitle(testMovies, null);
+        assertTrue(result.isEmpty());
+
+        // Test empty search term
+        result = MovieFilter.filterByExactTitle(testMovies, "");
+        assertTrue(result.isEmpty());
+
+        // Test whitespace search term
+        result = MovieFilter.filterByExactTitle(testMovies, "   ");
+        assertTrue(result.isEmpty());
+    }
+
+    /**
+     * Tests edge cases for filtering movies by director.
+     */
+    @Test
+    void filterByDirectorEdgeCases() {
+        // Test null input list
+        List<Movie> result = MovieFilter.filterByDirector(null, "Nolan");
+        assertTrue(result.isEmpty());
+
+        // Test empty input list
+        result = MovieFilter.filterByDirector(new ArrayList<>(), "Nolan");
+        assertTrue(result.isEmpty());
+
+        // Test null search term
+        result = MovieFilter.filterByDirector(testMovies, null);
+        assertTrue(result.isEmpty());
+
+        // Test empty search term
+        result = MovieFilter.filterByDirector(testMovies, "");
+        assertTrue(result.isEmpty());
+
+        // Test whitespace search term
+        result = MovieFilter.filterByDirector(testMovies, "   ");
+        assertTrue(result.isEmpty());
+    }
+
+    /**
+     * Tests edge cases for filtering movies by year.
+     */
+    @Test
+    void filterByYearEdgeCases() {
+        // Test null input list
+        List<Movie> result = MovieFilter.filterByYear(null, 1999);
+        assertTrue(result.isEmpty());
+
+        // Test empty input list
+        result = MovieFilter.filterByYear(new ArrayList<>(), 1999);
+        assertTrue(result.isEmpty());
+
+        // Test negative year
+        result = MovieFilter.filterByYear(testMovies, -1);
+        assertTrue(result.isEmpty());
+
+        // Test future year
+        result = MovieFilter.filterByYear(testMovies, 3000);
+        assertTrue(result.isEmpty());
+    }
+
+    /**
+     * Tests edge cases for filtering movies by actor.
+     */
+    @Test
+    void filterByActorEdgeCases() {
+        // Test null input list
+        List<Movie> result = MovieFilter.filterByActor(null, "Freeman");
+        assertTrue(result.isEmpty());
+
+        // Test empty input list
+        result = MovieFilter.filterByActor(new ArrayList<>(), "Freeman");
+        assertTrue(result.isEmpty());
+
+        // Test null search term
+        result = MovieFilter.filterByActor(testMovies, null);
+        assertTrue(result.isEmpty());
+
+        // Test empty search term
+        result = MovieFilter.filterByActor(testMovies, "");
+        assertTrue(result.isEmpty());
+
+        // Test whitespace search term
+        result = MovieFilter.filterByActor(testMovies, "   ");
+        assertTrue(result.isEmpty());
+    }
+
+    /**
+     * Tests edge cases for filtering movies by genre.
+     */
+    @Test
+    void filterByGenreEdgeCases() {
+        // Test null input list
+        List<Movie> result = MovieFilter.filterByGenre(null, "action");
+        assertTrue(result.isEmpty());
+
+        // Test empty input list
+        result = MovieFilter.filterByGenre(new ArrayList<>(), "action");
+        assertTrue(result.isEmpty());
+
+        // Test null search term
+        result = MovieFilter.filterByGenre(testMovies, null);
+        assertTrue(result.isEmpty());
+
+        // Test empty search term
+        result = MovieFilter.filterByGenre(testMovies, "");
+        assertTrue(result.isEmpty());
+
+        // Test whitespace search term
+        result = MovieFilter.filterByGenre(testMovies, "   ");
+        assertTrue(result.isEmpty());
+
+        // Test non-existent genre
+        result = MovieFilter.filterByGenre(testMovies, "nonexistent");
+        assertTrue(result.isEmpty());
+    }
 }

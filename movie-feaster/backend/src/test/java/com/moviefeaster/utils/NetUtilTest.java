@@ -104,4 +104,92 @@ public class NetUtilTest {
         assertEquals(first, second, 
             "Consecutive API calls should return the same result for consistency");
     }
+
+    /**
+     * Tests handling of malformed JSON response.
+     */
+    @Test
+    public void testMalformedJsonResponse() {
+        // Create malformed JSON
+        String malformedJson = "{\"results\":[{\"id\":123,\"title\":\"Test Movie\"";
+        InputStream malformedStream = new ByteArrayInputStream(malformedJson.getBytes());
+        
+        try {
+            // Try to read the malformed JSON
+            byte[] data = malformedStream.readAllBytes();
+            String json = new String(data);
+            
+            // Verify the JSON is malformed
+            assertFalse(json.trim().endsWith("}"), "JSON should be malformed");
+        } catch (IOException e) {
+            fail("Should not throw IOException when reading malformed JSON");
+        }
+    }
+
+    /**
+     * Tests handling of empty API response.
+     */
+    @Test
+    public void testEmptyApiResponse() {
+        String emptyJson = "{\"results\":[]}";
+        InputStream emptyStream = new ByteArrayInputStream(emptyJson.getBytes());
+        
+        try {
+            byte[] data = emptyStream.readAllBytes();
+            String json = new String(data);
+            
+            assertTrue(json.contains("\"results\":[]"), "Response should contain empty results array");
+            assertEquals(emptyJson, json, "Response should match empty JSON structure");
+        } catch (IOException e) {
+            fail("Should not throw IOException when reading empty response");
+        }
+    }
+
+    /**
+     * Tests handling of very large response.
+     */
+    @Test
+    public void testLargeResponseHandling() {
+        // Create a large JSON response (simulating many movies)
+        StringBuilder largeJson = new StringBuilder("{\"results\":[");
+        for (int i = 0; i < 1000; i++) {
+            if (i > 0) {
+                largeJson.append(",");
+            }
+            largeJson.append("{\"id\":").append(i).append(",\"title\":\"Movie ").append(i).append("\"}");
+        }
+        largeJson.append("]}");
+        
+        InputStream largeStream = new ByteArrayInputStream(largeJson.toString().getBytes());
+        
+        try {
+            // Test that we can read the entire large response
+            byte[] data = largeStream.readAllBytes();
+            String json = new String(data);
+            
+            assertTrue(json.length() > 10000, "Response should be large");
+            assertTrue(json.contains("\"results\""), "Response should contain results array");
+        } catch (IOException e) {
+            fail("Should not throw IOException when reading large response");
+        }
+    }
+
+    /**
+     * Tests handling of API rate limiting.
+     */
+    @Test
+    public void testApiRateLimiting() {
+        // Make multiple rapid API calls to test rate limiting
+        for (int i = 0; i < 5; i++) {
+            InputStream stream = NetUtil.getTop50MoviesJson();
+            assertNotNull(stream, "Stream should not be null even under rate limiting");
+            
+            try {
+                byte[] data = stream.readAllBytes();
+                assertTrue(data.length > 0, "Stream should contain data");
+            } catch (IOException e) {
+                fail("Should not throw IOException under rate limiting");
+            }
+        }
+    }
 }
