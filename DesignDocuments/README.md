@@ -430,13 +430,81 @@ classDiagram
         + filter(movies: List~Movie~, filters: Map~MovieFilterType, Object~) List~Movie~
     }
 
-    MovieController ..|> MovieControllerInterface 
+    %% View Components
+    class AppComponent {
+        - Router
+        + render() JSX
+    }
+
+    class Header {
+        - searchQuery: String
+        - handleSearch() void
+        - handleFilterToggle() void
+        + render() JSX
+    }
+
+    class Footer {
+        - currentYear: String
+        + render() JSX
+    }
+
+    class MovieCard {
+        - movie: Object
+        - handleClick() void
+        - handleFavorite() void
+        + render() JSX
+    }
+
+    class HomePage {
+        - featuredMovies: List~Movie~
+        - topRatedMovies: List~Movie~
+        - recentlyViewedMovies: List~Movie~
+        - fetchMovies() void
+        - handleFilterChange() void
+        + render() JSX
+    }
+
+    class MovieDetailPage {
+        - movie: Movie
+        - isLoading: Boolean
+        - userRating: Number
+        - userComment: String
+        - fetchMovieDetails(id) void
+        - handleSubmitRating() void
+        - handleSubmitComment() void
+        + render() JSX
+    }
+
+    class MovieListPage {
+        - savedMovies: List~Movie~
+        - listFilter: String
+        - sortOption: String
+        - fetchSavedMovies() void
+        - handleFilterChange() void
+        - handleSortChange() void
+        + render() JSX
+    }
+
+    class APIService {
+        <<service>>
+        + getAllMovies() Promise
+        + getMovieById(id) Promise
+        + searchMovies(filters) Promise
+        + addRating(movieId, rating) Promise
+        + addComment(movieId, comment) Promise
+        + getSavedMovies() Promise
+        + saveMovie(movieId) Promise
+        + removeSavedMovie(movieId) Promise
+    }
+
+    %% Relationships for backend
+    MovieController ..|> MovieControllerInterface
     MovieController --o MovieModel
     MovieController --o InputProcessor
     InputProcessor ..|> InputProcessorInterface
     MovieModel ..|> MovieModelInterface
     MovieModel --o Movie
-    MovieModel --> MovieParser 
+    MovieModel --> MovieParser
     MovieModel --> MovieFilterFacilitator
     MovieModel --> MovieSorter
     MovieModel --> Genre
@@ -454,7 +522,20 @@ classDiagram
     MovieParser --> Genre
     Movie --> Genre
     MovieFeasterApplication --> MovieController : starts via Spring Context
-    MovieController --> MovieModel : @Autowired 
-    
+    MovieController --> MovieModel : @Autowired
+
+    %% Relationships for frontend/view components
+    AppComponent --> Header
+    AppComponent --> Footer
+    AppComponent --> HomePage
+    AppComponent --> MovieDetailPage
+    AppComponent --> MovieListPage
+
+    MovieListPage --> MovieCard
+
+    APIService --> MovieController : RESTful API calls
+    HomePage --> APIService
+    MovieListPage --> APIService
+    MovieDetailPage --> APIService
 
 ```
