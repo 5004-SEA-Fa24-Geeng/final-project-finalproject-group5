@@ -538,4 +538,57 @@ public class MovieTest {
                 .build();
         assertEquals("http://example.com/valid.jpg", validImgUrlMovie.getImgUrl());
     }
+
+    /**
+     * Tests the {@link Movie#toString()} method.
+     * Verifies that the string representation contains all the expected fields
+     * and that the values match the Movie object's current state.
+     */
+    @Test
+    public void testToString() {
+        // Create a movie with specific values for testing
+        Movie testMovie = new Movie.Builder()
+                .movieId(100)
+                .title("Test Movie Title")
+                .directors(Arrays.asList("Director A", "Director B"))
+                .year(2022)
+                .rating(8.7)
+                .genres(Arrays.asList(Genre.ACTION, Genre.THRILLER))
+                .overview("Test overview")
+                .castings(Arrays.asList("Actor A", "Actor B"))
+                .imgUrl("http://test.com/image.jpg")
+                .build();
+
+        // Add some comments
+        testMovie.addComment("Comment 1");
+        testMovie.addComment("Comment 2");
+
+        // Add some in-app ratings
+        testMovie.addInAppRating(9.0);
+        testMovie.addInAppRating(8.0);
+
+        // Get the string representation
+        String toString = testMovie.toString();
+
+        // Verify all expected fields are present
+        assertTrue(toString.contains("movieId=" + testMovie.getMovieId()));
+        assertTrue(toString.contains("title='" + testMovie.getTitle() + "'"));
+        assertTrue(toString.contains("directors=" + testMovie.getDirectors()));
+        assertTrue(toString.contains("year=" + testMovie.getYear()));
+        assertTrue(toString.contains("rating=" + testMovie.getRating()));
+        assertTrue(toString.contains("genres=" + testMovie.getGenres()));
+        assertTrue(toString.contains("castings=" + testMovie.getCastings()));
+        assertTrue(toString.contains("comments=" + testMovie.getComments()));
+        assertTrue(toString.contains("inAppRating="));
+
+        // Check for calculated average in-app rating
+        double expectedAverage = (9.0 + 8.0) / 2.0;
+        assertTrue(toString.contains("updatedAverageInAppRating=" + expectedAverage));
+
+        assertTrue(toString.contains("imgUrl='" + testMovie.getImgUrl() + "'"));
+
+        // Verify the string starts and ends with the expected format
+        assertTrue(toString.startsWith("Movie{"));
+        assertTrue(toString.endsWith("}"));
+    }
 }
