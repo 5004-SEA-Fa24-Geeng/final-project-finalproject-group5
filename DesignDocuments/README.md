@@ -459,70 +459,72 @@ classDiagram
     }
 
     %% View Components
-    class AppComponent {
-        - Router
-        + render() JSX
-    }
-
-    class Header {
-        + render() JSX
-    }
-
-    class Footer {
-        + render() JSX
-    }
-
-    class MovieCard {
-        - formatGenre
-        - primaryGenre
-        - primaryDirector
-        + render() JSX
-    }
-
-    class HomePage {
-        - handleChange
-        - handleSubmit
-        + render() JSX
-    }
-
-    class MovieDetailPage {
-        - APP_SESSION_ID
-        - RatingUtils
-        - formatGenre
-        - checkUserHasRated
-        - fetchMovie
-        - handleGoBack
-        - handleCommentChange
-        - handleRatingChange
-        - handleCommentSubmit
-        - handleRatingSubmit
-        + render() JSX
-    }
-
-    class MovieListPage {
-        - parseFiltersFromUrl
-        - loadDataWithCurrentFilters
-        - fetchMovies
-        - handleDownload
-        - getFileExtension
-        - handleMovieClick
-        - handleSortChange
-        - formatFilterValue
-        - getFilterDisplayName
-        - handleRemoveFilter
-        + render() JSX
-    }
-
-    class APIService {
-        <<service>>
-        + getAllMovies() Promise
-        + getMovieById(id) Promise
-        + searchMovies(filters) Promise
-        + sortMovies(sortType) Promise
-        + exportMovies(format) Promise
-        + getAllGenres() Promise
-        + addComment(movieId, comment) Promise
-        + addRating(movieId, rating) Promise
+    namespace Frontend {
+        class AppComponent {
+            - Router
+            + render() JSX
+        }
+    
+        class Header {
+            + render() JSX
+        }
+    
+        class Footer {
+            + render() JSX
+        }
+    
+        class MovieCard {
+            - formatGenre
+            - primaryGenre
+            - primaryDirector
+            + render() JSX
+        }
+    
+        class HomePage {
+            - handleChange
+            - handleSubmit
+            + render() JSX
+        }
+    
+        class MovieDetailPage {
+            - APP_SESSION_ID
+            - RatingUtils
+            - formatGenre
+            - checkUserHasRated
+            - fetchMovie
+            - handleGoBack
+            - handleCommentChange
+            - handleRatingChange
+            - handleCommentSubmit
+            - handleRatingSubmit
+            + render() JSX
+        }
+    
+        class MovieListPage {
+            - parseFiltersFromUrl
+            - loadDataWithCurrentFilters
+            - fetchMovies
+            - handleDownload
+            - getFileExtension
+            - handleMovieClick
+            - handleSortChange
+            - formatFilterValue
+            - getFilterDisplayName
+            - handleRemoveFilter
+            + render() JSX
+        }
+    
+        class APIService {
+            <<service>>
+            + getAllMovies() Promise
+            + getMovieById(id) Promise
+            + searchMovies(filters) Promise
+            + sortMovies(sortType) Promise
+            + exportMovies(format) Promise
+            + getAllGenres() Promise
+            + addComment(movieId, comment) Promise
+            + addRating(movieId, rating) Promise
+        }
     }
 
     %% Relationships for backend
