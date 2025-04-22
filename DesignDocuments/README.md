@@ -518,11 +518,11 @@ classDiagram
         + getAllMovies() Promise
         + getMovieById(id) Promise
         + searchMovies(filters) Promise
-        + addRating(movieId, rating) Promise
+        + sortMovies(sortType) Promise
+        + exportMovies(format) Promise
+        + getAllGenres() Promise
         + addComment(movieId, comment) Promise
-        + getSavedMovies() Promise
-        + saveMovie(movieId) Promise
-        + removeSavedMovie(movieId) Promise
+        + addRating(movieId, rating) Promise
     }
 
     %% Relationships for backend
