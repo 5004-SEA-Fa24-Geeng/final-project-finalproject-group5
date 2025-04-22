@@ -9,12 +9,12 @@ import org.springframework.stereotype.Service;
  * that blank input will return null. Invalid formats will raise exceptions.
  */
 @Service
-public final class InputProcessor implements InputProcessorInterface {
+public class InputProcessor implements InputProcessorInterface {
 
     /**
      * Private constructor.
      */
-    private InputProcessor() {
+    InputProcessor() {
     }
 
     /**

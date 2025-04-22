@@ -1,795 +1,790 @@
 package com.moviefeaster.controller;
 
-import com.moviefeaster.model.Format;
-import com.moviefeaster.model.Genre;
-import com.moviefeaster.model.Movie;
-import com.moviefeaster.model.MovieFilterType;
-import com.moviefeaster.service.MovieModelInterface;
+import com.moviefeaster.model.*;
+import com.moviefeaster.service.MovieModel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Test class for MovieController.
- * This class tests the functionality of the MockMovieController by using stub implementations
- * of the required interfaces.
- *
- * @author MovieFeaster Team
- * @version 1.0
- * @since 2025-04-21
+ * JUnit test class for MovieController.
+ * Tests the functionality of MovieController using JUnit without Mockito.
+ * The class tests various controller methods including filtering, sorting,
+ * comment and rating submissions, and data export functionality.
  */
 public class MovieControllerTest {
 
-    /**
-     * The movie model stub used for testing.
-     */
-    private StubMovieModel movieModel;
+    /** The movie controller instance being tested. */
+    private MovieController movieController;
 
-    /**
-     * The input processor stub used for testing.
-     */
-    private StubInputProcessor inputProcessor;
+    /** Test implementation of MovieModel for verifying controller behavior. */
+    private TestMovieModel movieModel;
 
-    /**
-     * The movie controller mock being tested.
-     */
-    private MockMovieController movieController;
+    /** Test implementation of InputProcessor for providing controlled input. */
+    private TestInputProcessor inputProcessor;
+
+    /** Collection of test movie data used for testing controller methods. */
+    private List<Movie> testMovies;
 
     /**
      * Sets up the test environment before each test.
-     * Creates test movie data, initializes stubs, and sets up the controller.
+     * Creates test movies, initializes test implementations of dependencies,
+     * and creates the controller with these test dependencies.
      */
     @BeforeEach
     public void setUp() {
-        // Create test movie data
-        List<Movie> testMovies = new ArrayList<>();
+        // Create test movies
+        testMovies = createTestMovies();
 
-        // Create movies using proper constructor and methods based on Movie.java
-        List<String> directors1 = new ArrayList<>();
-        directors1.add("Christopher Nolan");
-        List<Genre> genres1 = new ArrayList<>();
-        genres1.add(Genre.ACTION);
-        genres1.add(Genre.SCIENCE_FICTION);
-        List<String> cast1 = new ArrayList<>();
-        cast1.add("Leonardo DiCaprio");
-        cast1.add("Joseph Gordon-Levitt");
+        // Create test implementations for dependencies
+        movieModel = new TestMovieModel(testMovies);
+        inputProcessor = new TestInputProcessor();
 
-        Movie movie1 = new Movie.Builder()
-                .movieId(1)
-                .title("Inception")
-                .directors(directors1)
-                .year(2010)
-                .rating(8.8)
-                .genres(genres1)
-                .overview("A thief who steals corporate secrets")
-                .castings(cast1)
-                .imgUrl("inception.jpg")
-                .build();
-//        Movie movie1 = new Movie(1, "Inception", directors1, 2010, 8.8,
-//                genres1, "A thief who steals corporate secrets", cast1, "inception.jpg");
-
-        List<String> directors2 = new ArrayList<>();
-        directors2.add("Christopher Nolan");
-        List<Genre> genres2 = new ArrayList<>();
-        genres2.add(Genre.ACTION);
-        genres2.add(Genre.CRIME);
-        List<String> cast2 = new ArrayList<>();
-        cast2.add("Christian Bale");
-        cast2.add("Heath Ledger");
-
-        Movie movie2 = new Movie.Builder()
-                .movieId(2)
-                .title("The Dark Knight")
-                .directors(directors2)
-                .year(2008)
-                .rating(9.0)
-                .genres(genres2)
-                .overview("Batman fights the Joker")
-                .castings(cast2)
-                .imgUrl("dark_knight.jpg")
-                .build();
-
-//        Movie movie2 = new Movie(2, "The Dark Knight", directors2, 2008, 9.0,
-//                genres2, "Batman fights the Joker", cast2, "dark_knight.jpg");
-
-        testMovies.add(movie1);
-        testMovies.add(movie2);
-
-        // Initialize stubs
-        movieModel = new StubMovieModel(testMovies);
-        inputProcessor = new StubInputProcessor();
-
-        // Initialize controller with stubs
-        movieController = new MockMovieController(movieModel, inputProcessor);
+        // Create controller with test dependencies
+        movieController = new MovieController(movieModel, inputProcessor);
     }
 
     /**
-     * Tests the handleMultiFilterSearch method with only a title filter.
-     * Verifies that the correct filter is applied and the search is performed.
+     * Tests the handleMultiFilterSearch method when all parameters are null.
+     * Verifies that the method returns all movies and calls the model's
+     * searchByFilter method with an empty filter strategy.
+     */
+    @Test
+    public void testHandleMultiFilterSearchAllParamsNull() {
+        // Test
+        List<Movie> result = movieController.handleMultiFilterSearch(null, null, null, null, null);
+
+        // Verify
+        assertEquals(testMovies, result);
+        assertTrue(movieModel.searchByFilterCalled);
+        assertEquals(0, movieModel.filterStrategy.size());
+    }
+
+    /**
+     * Tests the handleMultiFilterSearch method with only a title parameter.
+     * Verifies that the method correctly handles a single filter parameter,
+     * passes it to the model, and returns the expected result.
      */
     @Test
     public void testHandleMultiFilterSearchWithTitle() {
-        // Setup input processor to return valid data
-        inputProcessor.setTitleToReturn("Inception");
+        // Setup
+        String title = "Inception";
+        inputProcessor.titleToReturn = title;
 
-        // Execute search
-        List<Movie> result = movieController.handleMultiFilterSearch(
-                "Inception", null, null, null, null
-        );
+        // Test
+        List<Movie> result = movieController.handleMultiFilterSearch(title, null, null, null, null);
 
-        // Verify that the correct filter was applied
-        Map<MovieFilterType, Object> expectedFilter = new HashMap<>();
-        expectedFilter.put(MovieFilterType.TITLE_KEYWORD, "Inception");
-
-        assertEquals(expectedFilter, movieController.getLastAppliedFilter());
-        assertTrue(movieModel.isSearchByFilterCalled());
+        // Verify
+        assertEquals(testMovies, result);
+        assertTrue(movieModel.searchByFilterCalled);
+        assertEquals(1, movieModel.filterStrategy.size());
+        assertEquals(title, movieModel.filterStrategy.get(MovieFilterType.TITLE_KEYWORD));
     }
 
     /**
-     * Tests the handleMultiFilterSearch method with multiple filters.
-     * Verifies that all filters are properly applied in the search.
+     * Tests the handleMultiFilterSearch method with multiple parameters.
+     * Verifies that the method correctly processes multiple filter parameters,
+     * passes them to the model with the appropriate filter types, and returns
+     * the expected result.
      */
     @Test
-    public void testHandleMultiFilterSearchWithMultipleFilters() {
-        // Setup input processor
-        inputProcessor.setTitleToReturn("Dark");
-        inputProcessor.setDirectorToReturn("Nolan");
-        inputProcessor.setYearToReturn(2008);
+    public void testHandleMultiFilterSearchWithMultipleParams() {
+        // Setup
+        String director = "Nolan";
+        Integer year = 2010;
+        inputProcessor.directorToReturn = director;
+        inputProcessor.yearToReturn = year;
 
-        // Execute search
-        List<Movie> result = movieController.handleMultiFilterSearch(
-                "Dark", "Nolan", null, "2008", null
-        );
+        // Test
+        List<Movie> result = movieController.handleMultiFilterSearch(null, director, null, "2010", null);
 
-        // Verify that all filters were properly applied
-        Map<MovieFilterType, Object> expectedFilter = new HashMap<>();
-        expectedFilter.put(MovieFilterType.TITLE_KEYWORD, "Dark");
-        expectedFilter.put(MovieFilterType.DIRECTOR, "Nolan");
-        expectedFilter.put(MovieFilterType.YEAR, 2008);
-
-        assertEquals(expectedFilter, movieController.getLastAppliedFilter());
+        // Verify
+        assertEquals(testMovies, result);
+        assertTrue(movieModel.searchByFilterCalled);
+        assertEquals(2, movieModel.filterStrategy.size());
+        assertEquals(director, movieModel.filterStrategy.get(MovieFilterType.DIRECTOR));
+        assertEquals(year, movieModel.filterStrategy.get(MovieFilterType.YEAR));
     }
 
     /**
-     * Tests the handleMultiFilterSearch method with an invalid year.
-     * Verifies that an IllegalArgumentException is thrown when an invalid year is provided.
+     * Tests the handleMultiFilterSearch method with a genre parameter.
+     * Verifies that the method correctly processes the genre parameter,
+     * passes it to the model with the appropriate filter type, and returns
+     * the expected result.
      */
     @Test
-    public void testHandleMultiFilterSearchWithInvalidYear() {
-        // Setup input processor to throw exception for invalid year
-        inputProcessor.setThrowExceptionForYear(true);
+    public void testHandleMultiFilterSearchWithGenre() {
+        // Setup
+        Genre genre = Genre.ACTION;
+        inputProcessor.genreToReturn = genre;
 
-        // Assert that the exception is propagated
-        assertThrows(IllegalArgumentException.class, () -> {
-            movieController.handleMultiFilterSearch(
-                    null, null, null, "invalid year", null
-            );
-        });
+        // Test
+        List<Movie> result = movieController.handleMultiFilterSearch(null, null, null, null, "ACTION");
+
+        // Verify
+        assertEquals(testMovies, result);
+        assertTrue(movieModel.searchByFilterCalled);
+        assertEquals(1, movieModel.filterStrategy.size());
+        assertEquals(genre.toString(), movieModel.filterStrategy.get(MovieFilterType.GENRE));
     }
 
     /**
-     * Tests the handleSort method.
-     * Verifies that the sort type is correctly recorded.
+     * Tests the handleMultiFilterSearch method with a cast parameter.
+     * Verifies that the method correctly processes the cast parameter,
+     * passes it to the model with the appropriate filter type, and returns
+     * the expected result.
+     */
+    @Test
+    public void testHandleMultiFilterSearchWithCast() {
+        // Setup
+        String cast = "Leonardo DiCaprio";
+        inputProcessor.castToReturn = cast;
+
+        // Test
+        List<Movie> result = movieController.handleMultiFilterSearch(null, null,
+                cast, null, null);
+
+        // Verify
+        assertEquals(testMovies, result);
+        assertTrue(movieModel.searchByFilterCalled);
+        assertEquals(1, movieModel.filterStrategy.size());
+        assertEquals(cast, movieModel.filterStrategy.get(MovieFilterType.ACTOR));
+    }
+
+    /**
+     * Tests the handleMultiFilterSearch method with an empty title parameter.
+     * Verifies that the method correctly handles empty parameters by not
+     * including them in the filter strategy.
+     */
+    @Test
+    public void testHandleMultiFilterSearchWithEmptyTitle() {
+        // Setup
+        String title = "";
+        inputProcessor.titleToReturn = title;
+
+        // Test
+        List<Movie> result = movieController.handleMultiFilterSearch(title, null, null, null, null);
+
+        // Verify
+        assertEquals(testMovies, result);
+        assertTrue(movieModel.searchByFilterCalled);
+        assertEquals(0, movieModel.filterStrategy.size());
+        assertFalse(movieModel.filterStrategy.containsKey(MovieFilterType.TITLE_KEYWORD));
+    }
+
+    /**
+     * Tests the handleMultiFilterSearch method with an empty director parameter.
+     * Verifies that the method correctly handles empty parameters by not
+     * including them in the filter strategy.
+     */
+    @Test
+    public void testHandleMultiFilterSearchWithEmptyDirector() {
+        // Setup
+        String director = "";
+        inputProcessor.directorToReturn = director;
+
+        // Test
+        List<Movie> result = movieController.handleMultiFilterSearch(null, director, null, null, null);
+
+        // Verify
+        assertEquals(testMovies, result);
+        assertTrue(movieModel.searchByFilterCalled);
+        assertEquals(0, movieModel.filterStrategy.size());
+        assertFalse(movieModel.filterStrategy.containsKey(MovieFilterType.DIRECTOR));
+    }
+
+    /**
+     * Tests the handleMultiFilterSearch method with an empty cast parameter.
+     * Verifies that the method correctly handles empty parameters by not
+     * including them in the filter strategy.
+     */
+    @Test
+    public void testHandleMultiFilterSearchWithEmptyCast() {
+        // Setup
+        String cast = "";
+        inputProcessor.castToReturn = cast;
+
+        // Test
+        List<Movie> result = movieController.handleMultiFilterSearch(null, null, cast, null, null);
+
+        // Verify
+        assertEquals(testMovies, result);
+        assertTrue(movieModel.searchByFilterCalled);
+        assertEquals(0, movieModel.filterStrategy.size());
+        assertFalse(movieModel.filterStrategy.containsKey(MovieFilterType.ACTOR));
+    }
+
+    /**
+     * Tests the handleSort method with a valid sort type.
+     * Verifies that the method correctly passes the sort type to the model
+     * and returns the expected result.
      */
     @Test
     public void testHandleSort() {
-        // Execute sort
-        List<Movie> result = movieController.handleSort("YEAR");
+        // Test
+        List<Movie> result = movieController.handleSort("TITLE_ASC");
 
-        // Verify sort type was recorded
-        assertEquals("YEAR", movieController.getLastSortType());
+        // Verify
+        assertEquals(testMovies, result);
+        assertTrue(movieModel.sortMovieListCalled);
+        assertEquals(MovieSorterType.TITLE_ASC, movieModel.sortType);
+    }
+
+    /**
+     * Tests the handleSort method with an invalid sort type.
+     * Verifies that the method handles invalid sort types by passing null
+     * to the model and still returns the expected result.
+     */
+    @Test
+    public void testHandleSortWithInvalidSortType() {
+        // Test
+        List<Movie> result = movieController.handleSort("INVALID_SORT");
+
+        // Verify
+        assertEquals(testMovies, result);
+        assertTrue(movieModel.sortMovieListCalled);
+        assertNull(movieModel.sortType); // The controller should pass null to the model for invalid sort types
     }
 
     /**
      * Tests the handleCommentSubmission method with a valid comment.
-     * Verifies that the comment is correctly recorded and returned.
+     * Verifies that the method correctly passes the movie ID and comment
+     * to the model and returns the expected result.
      */
     @Test
     public void testHandleCommentSubmissionValidComment() {
-        // Execute comment submission
+        // Setup
+        int movieId = 1;
         String comment = "Great movie!";
-        String result = movieController.handleCommentSubmission(1, comment);
 
-        // Verify comment was recorded and returned
-        assertEquals(1, movieController.getLastCommentMovieId());
-        assertEquals(comment, movieController.getLastSubmittedComment());
+        // Test
+        String result = movieController.handleCommentSubmission(movieId, comment);
+
+        // Verify
         assertEquals(comment, result);
-        assertTrue(movieModel.isUpdateCommentsCalled());
+        assertTrue(movieModel.updateCommentsCalled);
+        assertEquals(movieId, movieModel.commentMovieId);
+        assertEquals(comment, movieModel.commentText);
     }
 
     /**
      * Tests the handleCommentSubmission method with an empty comment.
-     * Verifies that an IllegalArgumentException is thrown when an empty comment is provided.
+     * Verifies that the method throws an IllegalArgumentException with
+     * the expected message and does not call the model.
      */
     @Test
-    public void testHandleCommentSubmissionEmptyComment() {
-        // Assert that empty comments are rejected
-        assertThrows(IllegalArgumentException.class, () -> {
-            movieController.handleCommentSubmission(1, "");
+    public void testHandleCommentSubmissionInvalidComment() {
+        // Setup
+        int movieId = 1;
+        String comment = "";
+
+        // Test & Verify
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            movieController.handleCommentSubmission(movieId, comment);
         });
+
+        assertEquals("Invalid comment.", exception.getMessage());
+        assertFalse(movieModel.updateCommentsCalled);
+    }
+
+    /**
+     * Tests the handleCommentSubmission method with a null comment.
+     * Verifies that the method throws an IllegalArgumentException with
+     * the expected message and does not call the model.
+     */
+    @Test
+    public void testHandleCommentSubmissionNullComment() {
+        // Setup
+        int movieId = 1;
+        String comment = null;
+
+        // Test & Verify
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            movieController.handleCommentSubmission(movieId, comment);
+        });
+
+        assertEquals("Invalid comment.", exception.getMessage());
+        assertFalse(movieModel.updateCommentsCalled);
     }
 
     /**
      * Tests the handleRatingSubmission method with a valid rating.
-     * Verifies that the rating is correctly recorded and the model is updated.
+     * Verifies that the method correctly passes the movie ID and rating
+     * to the model.
      */
     @Test
     public void testHandleRatingSubmissionValidRating() {
-        // Execute rating submission
+        // Setup
+        int movieId = 1;
         double rating = 4.5;
-        movieController.handleRatingSubmission(1, rating);
 
-        // Verify rating was recorded
-        assertEquals(1, movieController.getLastRatedMovieId());
-        assertEquals(rating, movieController.getLastSubmittedRating());
-        assertTrue(movieModel.isUpdateRatingCalled());
+        // Test
+        movieController.handleRatingSubmission(movieId, rating);
+
+        // Verify
+        assertTrue(movieModel.updateRatingCalled);
+        assertEquals(movieId, movieModel.ratingMovieId);
+        assertEquals(rating, movieModel.ratingValue);
     }
 
     /**
-     * Tests the handleRatingSubmission method with an invalid rating.
-     * Verifies that the model is not updated when an invalid rating is provided.
+     * Tests the handleRatingSubmission method with an invalid rating (above 5.0).
+     * Verifies that the method does not call the model's updateRating method.
      */
     @Test
     public void testHandleRatingSubmissionInvalidRating() {
-        // Execute rating submission with invalid rating
-        movieController.handleRatingSubmission(1, 6.0);  // Out of range
+        // Setup
+        int movieId = 1;
+        double rating = 6.0;
 
-        // Verify model was not updated
-        assertFalse(movieModel.isUpdateRatingCalled());
+        // Test
+        movieController.handleRatingSubmission(movieId, rating);
+
+        // Verify
+        assertFalse(movieModel.updateRatingCalled);
     }
 
     /**
-     * Mock implementation of MovieControllerInterface for testing.
-     * Uses the MovieModelInterface and InputProcessorInterface dependencies.
+     * Tests the handleRatingSubmission method with a zero rating.
+     * Verifies that the method correctly passes the movie ID and rating
+     * to the model, as zero is a valid rating.
      */
-    public static class MockMovieController implements MovieControllerInterface {
+    @Test
+    public void testHandleRatingSubmissionZeroRating() {
+        // Setup
+        int movieId = 1;
+        double rating = 0.0;
 
-        /**
-         * The movie model interface implementation.
-         */
-        private final MovieModelInterface movieModel;
+        // Test
+        movieController.handleRatingSubmission(movieId, rating);
 
-        /**
-         * The input processor interface implementation.
-         */
-        private final InputProcessorInterface inputProcessor;
-
-        // Tracking variables for test verification
-        /**
-         * Tracks the last filter map applied in a search operation.
-         */
-        private Map<MovieFilterType, Object> lastAppliedFilter;
-
-        /**
-         * Tracks the ID of the last movie that was rated.
-         */
-        private int lastRatedMovieId;
-
-        /**
-         * Tracks the last rating value that was submitted.
-         */
-        private double lastSubmittedRating;
-
-        /**
-         * Tracks the ID of the last movie that received a comment.
-         */
-        private int lastCommentMovieId;
-
-        /**
-         * Tracks the last comment that was submitted.
-         */
-        private String lastSubmittedComment;
-
-        /**
-         * Tracks the last sort type that was used.
-         */
-        private String lastSortType;
-
-        /**
-         * Constructor for MockMovieController.
-         *
-         * @param movieModel The movie model to use
-         * @param inputProcessor The input processor to use for validation
-         */
-        public MockMovieController(MovieModelInterface movieModel, InputProcessorInterface inputProcessor) {
-            this.movieModel = movieModel;
-            this.inputProcessor = inputProcessor;
-            this.lastAppliedFilter = new HashMap<>();
-            this.lastRatedMovieId = 0;
-            this.lastSubmittedRating = 0.0;
-            this.lastCommentMovieId = 0;
-            this.lastSubmittedComment = "";
-            this.lastSortType = "";
-        }
-
-        /**
-         * Handles multi-filter search for movies.
-         * Processes and validates inputs, creates a filter map, and searches for movies.
-         *
-         * @param title The title keyword to search for (may be null)
-         * @param director The director name to search for (may be null)
-         * @param cast The actor name to search for (may be null)
-         * @param year The year to search for (may be null)
-         * @param genre The genre to search for (may be null)
-         * @return A list of movies matching the provided filters
-         * @throws IllegalArgumentException If any input values are invalid
-         */
-        @Override
-        public List<Movie> handleMultiFilterSearch(
-                String title,
-                String director,
-                String cast,
-                String year,
-                String genre) {
-
-            // Process and validate inputs using input processor
-            String parsedTitle = inputProcessor.optionalParseTitle(title);
-            String parsedDirector = inputProcessor.optionalParseDirector(director);
-            String parsedCast = inputProcessor.optionalParseCast(cast);
-            Integer parsedYear = inputProcessor.optionalParseYear(year);
-            Genre parsedGenre = inputProcessor.optionalParseGenre(genre);
-
-            // Create filter map with non-null values
-            Map<MovieFilterType, Object> filterMap = new HashMap<>();
-
-            if (parsedTitle != null) {
-                filterMap.put(MovieFilterType.TITLE_KEYWORD, parsedTitle);
-            }
-
-            if (parsedDirector != null) {
-                filterMap.put(MovieFilterType.DIRECTOR, parsedDirector);
-            }
-
-            if (parsedCast != null) {
-                filterMap.put(MovieFilterType.ACTOR, parsedCast);
-            }
-
-            if (parsedYear != null) {
-                filterMap.put(MovieFilterType.YEAR, parsedYear);
-            }
-
-            if (parsedGenre != null) {
-                filterMap.put(MovieFilterType.GENRE, parsedGenre.name());
-            }
-
-            // Store last applied filter for test verification
-            this.lastAppliedFilter = filterMap;
-
-            // Apply filters via model and return results
-            movieModel.searchByFilter(filterMap);
-            return ((StubMovieModel) movieModel).getProcessedMovies();
-        }
-
-        /**
-         * Handles sorting of movies.
-         * Records the sort type for verification and returns the sorted movies.
-         *
-         * @param sortType The type of sort to perform (e.g., "YEAR", "RATING")
-         * @return A list of sorted movies
-         */
-        @Override
-        public List<Movie> handleSort(String sortType) {
-            // Store for verification
-            this.lastSortType = sortType;
-
-            // In a real implementation, would call model's sort method
-            // For mock purposes, just return the current processed movies
-            return ((StubMovieModel) movieModel).getProcessedMovies();
-        }
-
-        /**
-         * Handles comment submission for a movie.
-         * Validates the comment, records it for verification, and updates the model.
-         *
-         * @param movieID The ID of the movie to comment on
-         * @param comment The comment text
-         * @return The submitted comment
-         * @throws IllegalArgumentException If the comment is empty or null
-         */
-        @Override
-        public String handleCommentSubmission(int movieID, String comment) {
-            // Validate comment
-            if (comment == null || comment.trim().isEmpty()) {
-                throw new IllegalArgumentException("Comment cannot be empty");
-            }
-
-            // Store for verification
-            this.lastCommentMovieId = movieID;
-            this.lastSubmittedComment = comment;
-
-            // Update model
-            movieModel.updateComments(movieID, comment);
-
-            // Return submitted comment
-            return comment;
-        }
-
-        /**
-         * Handles rating submission for a movie.
-         * Validates the rating, records it for verification, and updates the model if valid.
-         *
-         * @param movieID The ID of the movie to rate
-         * @param rating The rating value (expected to be between 0 and 5)
-         */
-        @Override
-        public void handleRatingSubmission(int movieID, double rating) {
-            // Validate rating (assuming 0-5 scale)
-            if (rating < 0 || rating > 5) {
-                // Invalid rating, do not update
-                return;
-            }
-
-            // Store for verification
-            this.lastRatedMovieId = movieID;
-            this.lastSubmittedRating = rating;
-
-            // Update model
-            movieModel.updateRating(movieID, rating);
-        }
-
-        /**
-         * Gets the last filter applied in handleMultiFilterSearch.
-         * This method is used for test verification.
-         *
-         * @return The last applied filter map
-         */
-        public Map<MovieFilterType, Object> getLastAppliedFilter() {
-            return lastAppliedFilter;
-        }
-
-        /**
-         * Gets the last movie ID for which a rating was submitted.
-         * This method is used for test verification.
-         *
-         * @return The last rated movie ID
-         */
-        public int getLastRatedMovieId() {
-            return lastRatedMovieId;
-        }
-
-        /**
-         * Gets the last rating submitted.
-         * This method is used for test verification.
-         *
-         * @return The last submitted rating
-         */
-        public double getLastSubmittedRating() {
-            return lastSubmittedRating;
-        }
-
-        /**
-         * Gets the last movie ID for which a comment was submitted.
-         * This method is used for test verification.
-         *
-         * @return The last comment movie ID
-         */
-        public int getLastCommentMovieId() {
-            return lastCommentMovieId;
-        }
-
-        /**
-         * Gets the last comment submitted.
-         * This method is used for test verification.
-         *
-         * @return The last submitted comment
-         */
-        public String getLastSubmittedComment() {
-            return lastSubmittedComment;
-        }
-
-        /**
-         * Gets the last sort type used.
-         * This method is used for test verification.
-         *
-         * @return The last sort type
-         */
-        public String getLastSortType() {
-            return lastSortType;
-        }
+        // Verify
+        assertTrue(movieModel.updateRatingCalled);
+        assertEquals(movieId, movieModel.ratingMovieId);
+        assertEquals(rating, movieModel.ratingValue);
     }
 
     /**
-     * Stub implementation of MovieModelInterface for testing.
+     * Tests the handleRatingSubmission method with a negative rating.
+     * Verifies that the method does not call the model's updateRating method.
      */
-    private static class StubMovieModel implements MovieModelInterface {
-        /** List of movies. */
+    @Test
+    public void testHandleRatingSubmissionNegativeRating() {
+        // Setup
+        int movieId = 1;
+        double rating = -1.0;
+
+        // Test
+        movieController.handleRatingSubmission(movieId, rating);
+
+        // Verify
+        assertFalse(movieModel.updateRatingCalled);
+    }
+
+    /**
+     * Tests the getAllGenres method.
+     * Verifies that the method returns a list containing all genre names
+     * and that the list has the expected size and contents.
+     */
+    @Test
+    public void testGetAllGenres() {
+        // Test
+        List<String> genres = movieController.getAllGenres();
+
+        // Verify
+        assertNotNull(genres);
+        assertEquals(Genre.values().length, genres.size());
+        assertTrue(genres.contains(Genre.ACTION.name()));
+        assertTrue(genres.contains(Genre.COMEDY.name()));
+    }
+
+    /**
+     * Tests the getAllMovies method.
+     * Verifies that the method returns all test movies.
+     */
+    @Test
+    public void testGetAllMovies() {
+        // Test
+        List<Movie> result = movieController.getAllMovies();
+
+        // Verify
+        assertEquals(testMovies, result);
+    }
+
+    /**
+     * Tests the getMovieById method with an existing movie ID.
+     * Verifies that the method correctly passes the movie ID to the model
+     * and returns the expected movie.
+     */
+    @Test
+    public void testGetMovieByIdExistingId() {
+        // Setup
+        int movieId = 1;
+        Movie expectedMovie = testMovies.get(0);
+        movieModel.movieById = expectedMovie;
+
+        // Test
+        Movie result = movieController.getMovieById(movieId);
+
+        // Verify
+        assertEquals(expectedMovie, result);
+        assertEquals(movieId, movieModel.movieByIdCalled);
+    }
+
+    /**
+     * Tests the getMovieById method with a non-existing movie ID.
+     * Verifies that the method correctly passes the movie ID to the model
+     * and returns null when no movie is found.
+     */
+    @Test
+    public void testGetMovieByIdNonExistingId() {
+        // Setup
+        int movieId = 999;
+        movieModel.movieById = null;
+
+        // Test
+        Movie result = movieController.getMovieById(movieId);
+
+        // Verify
+        assertNull(result);
+        assertEquals(movieId, movieModel.movieByIdCalled);
+    }
+
+    /**
+     * Tests the exportMovies method with the default format (PRETTY).
+     * Verifies that the method returns a ResponseEntity with the expected
+     * status code, content type, and non-null body.
+     */
+    @Test
+    public void testExportMoviesDefaultFormat() {
+        // Test
+        ResponseEntity<byte[]> response = movieController.exportMovies("PRETTY");
+
+        // Verify
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals("text/plain", Objects.requireNonNull(response.getHeaders().getContentType()).toString());
+    }
+
+    /**
+     * Tests the exportMovies method with JSON format.
+     * Verifies that the method returns a ResponseEntity with the expected
+     * status code, content type, and non-null body.
+     */
+    @Test
+    public void testExportMoviesJsonFormat() {
+        // Test
+        ResponseEntity<byte[]> response = movieController.exportMovies("JSON");
+
+        // Verify
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals("application/json", Objects.requireNonNull(response.getHeaders()
+                .getContentType()).toString());
+    }
+
+    /**
+     * Tests the exportMovies method with XML format.
+     * Verifies that the method returns a ResponseEntity with the expected
+     * status code, content type, and non-null body.
+     */
+    @Test
+    public void testExportMoviesXmlFormat() {
+        // Test
+        ResponseEntity<byte[]> response = movieController.exportMovies("XML");
+
+        // Verify
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals("application/xml", Objects.requireNonNull(response.getHeaders()
+                .getContentType()).toString());
+    }
+
+    /**
+     * Tests the exportMovies method with CSV format.
+     * Verifies that the method returns a ResponseEntity with the expected
+     * status code, content type, and non-null body.
+     */
+    @Test
+    public void testExportMoviesCsvFormat() {
+        // Test
+        ResponseEntity<byte[]> response = movieController.exportMovies("CSV");
+
+        // Verify
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals("text/csv", Objects.requireNonNull(response.getHeaders().getContentType()).toString());
+    }
+
+    /**
+     * Tests the exportMovies method with an invalid format.
+     * Verifies that the method defaults to PRETTY format and returns a
+     * ResponseEntity with the expected status code, content type, and non-null body.
+     */
+    @Test
+    public void testExportMoviesInvalidFormat() {
+        // Test
+        ResponseEntity<byte[]> response = movieController.exportMovies("INVALID_FORMAT");
+
+        // Verify
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        // Should default to PRETTY format
+        assertEquals("text/plain", Objects.requireNonNull(response.getHeaders().getContentType()).toString());
+    }
+
+    /**
+     * Tests the exportMovies method when an exception occurs.
+     * Verifies that the method returns a ResponseEntity with an INTERNAL_SERVER_ERROR
+     * status code and a null body.
+     */
+    @Test
+    public void testExportMoviesWithException() {
+        // Setup a scenario that would cause an exception
+        // We'll modify our test model to throw an exception when accessing processed movies
+        movieModel.throwExceptionOnGetProcessedMovies = true;
+
+        // Test
+        ResponseEntity<byte[]> response = movieController.exportMovies("JSON");
+
+        // Verify
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertNull(response.getBody());
+    }
+
+    /**
+     * Tests the exportMovies method when processedMovies returns null.
+     * Verifies that the method falls back to using getMovies() and returns
+     * a ResponseEntity with the expected status code, content type, and non-null body.
+     */
+    @Test
+    public void testExportMoviesWithNullProcessedMovies() {
+        // Setup - make processedMovies return null
+        movieModel.returnNullForProcessedMovies = true;
+
+        // Test
+        ResponseEntity<byte[]> response = movieController.exportMovies("JSON");
+
+        // Verify
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals("application/json", Objects.requireNonNull(response.getHeaders()
+                .getContentType()).toString());
+        assertTrue(movieModel.getMoviesCalled); // Verify that getMovies() was called as fallback
+    }
+
+    /**
+     * Helper method to create test movies.
+     * Creates and returns a list of test movies with predefined properties.
+     *
+     * @return A list of test Movie objects
+     */
+    private List<Movie> createTestMovies() {
+        List<Movie> movies = new ArrayList<>();
+
+        // Create first test movie - Inception
+        Movie movie1 = new Movie.Builder()
+                .movieId(1)
+                .title("Inception")
+                .directors(List.of("Christopher Nolan"))
+                .year(2010)
+                .rating(8.8)
+                .genres(List.of(Genre.ACTION, Genre.SCIENCE_FICTION))
+                .overview("A thief who steals corporate secrets through the use of dream-sharing technology.")
+                .castings(List.of("Leonardo DiCaprio", "Joseph Gordon-Levitt"))
+                .imgUrl("https://example.com/inception.jpg")
+                .build();
+
+        // Create second test movie - The Dark Knight
+        Movie movie2 = new Movie.Builder()
+                .movieId(2)
+                .title("The Dark Knight")
+                .directors(List.of("Christopher Nolan"))
+                .year(2008)
+                .rating(9.0)
+                .genres(List.of(Genre.ACTION, Genre.CRIME))
+                .overview("Batman fights the menace known as The Joker.")
+                .castings(List.of("Christian Bale", "Heath Ledger"))
+                .imgUrl("https://example.com/dark-knight.jpg")
+                .build();
+
+        movies.add(movie1);
+        movies.add(movie2);
+
+        return movies;
+    }
+
+    /**
+     * Test implementation of MovieModel that tracks method calls.
+     * This class extends MovieModel to provide test-specific behavior
+     * and tracking of method calls and parameters.
+     */
+    private static class TestMovieModel extends MovieModel {
+        /** A list of original movies used for testing. */
         private final List<Movie> movies;
-        /** List of processed movies. */
+
+        /** A list of processed movies that can be filtered or sorted. */
         private final List<Movie> processedMovies;
 
-        /**
-         * Flag indicating whether searchByFilter method was called.
-         */
+        /** Flag to track if searchByFilter method was called. */
         private boolean searchByFilterCalled = false;
 
-        /**
-         * Flag indicating whether updateComments method was called.
-         */
+        /** Flag to track if sortMovieList method was called. */
+        private boolean sortMovieListCalled = false;
+
+        /** Flag to track if updateComments method was called. */
         private boolean updateCommentsCalled = false;
 
-        /**
-         * Flag indicating whether updateRating method was called.
-         */
+        /** Flag to track if updateRating method was called. */
         private boolean updateRatingCalled = false;
 
-        StubMovieModel(List<Movie> movies) {
-            this.movies = new ArrayList<>(movies);
-            this.processedMovies = new ArrayList<>(movies);
-        }
+        /** Map to store filter strategy passed to searchByFilter method. */
+        private Map<MovieFilterType, Object> filterStrategy = new HashMap<>();
+
+        /** Sort type passed to sortMovieList method. */
+        private MovieSorterType sortType;
+
+        /** Movie ID passed to updateComments method. */
+        private int commentMovieId;
+
+        /** Comment text passed to updateComments method. */
+        private String commentText;
+
+        /** Movie ID passed to updateRating method. */
+        private int ratingMovieId;
+
+        /** Rating value passed to updateRating method. */
+        private double ratingValue;
+
+        /** Movie ID passed to getMovieById method. */
+        private int movieByIdCalled;
+
+        /** Movie to return from getMovieById method. */
+        private Movie movieById;
+
+        /** Flag to control throwing exception in getProcessedMovies method. */
+        private boolean throwExceptionOnGetProcessedMovies = false;
+
+        /** Flag to control returning null in getProcessedMovies method. */
+        private boolean returnNullForProcessedMovies = false;
+
+        /** Flag to track if getMovies method was called. */
+        private boolean getMoviesCalled = false;
+
 
         /**
-         * Fetches movies from a data source.
-         * This is a stub implementation that does nothing for testing purposes.
+         * Constructs a TestMovieModel with the given test movies.
+         *
+         * @param testMovies The list of test movies to use
          */
+        TestMovieModel(List<Movie> testMovies) {
+            this.movies = testMovies;
+            this.processedMovies = new ArrayList<>(testMovies);
+        }
+
         @Override
         public void fetchMovies() {
             // Do nothing for tests
         }
 
-        /**
-         * Writes movie data to a file.
-         * This is a stub implementation that does nothing for testing purposes.
-         *
-         * @param useProcessedMovie Whether to use processed movies or all movies
-         * @param format The format to write the file in
-         */
+        @Override
+        public List<Movie> getMovies() {
+            getMoviesCalled = true;
+            return movies;
+        }
+        @Override
+        public Movie getMovieById(int movieId) {
+            this.movieByIdCalled = movieId;
+            return movieById;
+        }
+
+        @Override
+        public List<Movie> getProcessedMovies() {
+            if (throwExceptionOnGetProcessedMovies) {
+                throw new RuntimeException("Test exception");
+            }
+            return returnNullForProcessedMovies ? null : processedMovies;
+        }
         @Override
         public void writeFile(boolean useProcessedMovie, Format format) {
             // Do nothing for tests
         }
 
-        /**
-         * Searches for movies using the specified filters.
-         * This is a stub implementation that sets a flag for testing purposes.
-         *
-         * @param filtersStrategy The map of filters to apply
-         */
         @Override
-        public void searchByFilter(Map<MovieFilterType, Object> filtersStrategy) {
-            searchByFilterCalled = true;
-
-            // In a real implementation, this would filter the movies
+        public void searchByFilter(Map<MovieFilterType, Object> filterStrategy) {
+            this.searchByFilterCalled = true;
+            this.filterStrategy = filterStrategy != null ? filterStrategy : new HashMap<>();
         }
 
-        /**
-         * Updates the comments for a movie.
-         * This is a stub implementation that sets a flag for testing purposes.
-         *
-         * @param movieID The ID of the movie to update
-         * @param comment The comment to add
-         */
         @Override
-        public void updateComments(int movieID, String comment) {
-            updateCommentsCalled = true;
+        public void sortMovieList(MovieSorterType sortType) {
+            this.sortMovieListCalled = true;
+            this.sortType = sortType;
         }
 
-        /**
-         * Updates the rating for a movie.
-         * This is a stub implementation that sets a flag for testing purposes.
-         *
-         * @param movieID The ID of the movie to update
-         * @param rating The rating to add
-         */
         @Override
-        public void updateRating(int movieID, double rating) {
-            updateRatingCalled = true;
+        public void updateComments(int movieId, String comment) {
+            this.updateCommentsCalled = true;
+            this.commentMovieId = movieId;
+            this.commentText = comment;
         }
 
-        /**
-         * Gets the list of all movies.
-         *
-         * @return The list of all movies
-         */
-        public List<Movie> getMovies() {
-            return movies;
-        }
-
-        /**
-         * Gets the list of processed movies (after filtering/sorting).
-         *
-         * @return The list of processed movies
-         */
-        public List<Movie> getProcessedMovies() {
-            return processedMovies;
-        }
-
-        /**
-         * Gets a movie by its ID.
-         *
-         * @param id The ID of the movie to retrieve
-         * @return The movie with the specified ID, or null if not found
-         */
-        public Movie getMovieById(int id) {
-            return movies.stream()
-                    .filter(movie -> movie.getMovieId() == id)
-                    .findFirst()
-                    .orElse(null);
-        }
-
-        /**
-         * Checks if searchByFilter method was called.
-         *
-         * @return true if searchByFilter was called, false otherwise
-         */
-        public boolean isSearchByFilterCalled() {
-            return searchByFilterCalled;
-        }
-
-        /**
-         * Checks if updateComments method was called.
-         *
-         * @return true if updateComments was called, false otherwise
-         */
-        public boolean isUpdateCommentsCalled() {
-            return updateCommentsCalled;
-        }
-
-        /**
-         * Checks if updateRating method was called.
-         *
-         * @return true if updateRating was called, false otherwise
-         */
-        public boolean isUpdateRatingCalled() {
-            return updateRatingCalled;
+        @Override
+        public void updateRating(int movieId, double rating) {
+            this.updateRatingCalled = true;
+            this.ratingMovieId = movieId;
+            this.ratingValue = rating;
         }
     }
 
     /**
-     * Stub implementation of InputProcessorInterface for testing.
+     * Test implementation of InputProcessor that returns predefined values.
+     * This class extends InputProcessor to provide test-specific behavior
+     * by returning predefined values for each parsing method.
      */
-    private static class StubInputProcessor implements InputProcessorInterface {
-        /**
-         * The title value to return when optionalParseTitle is called.
-         */
-        private String titleToReturn = null;
+    private static class TestInputProcessor extends InputProcessor {
+        /** Predefined title value to return from optionalParseTitle method. */
+        private String titleToReturn;
 
-        /**
-         * The director value to return when optionalParseDirector is called.
-         */
-        private String directorToReturn = null;
+        /** Predefined director value to return from optionalParseDirector method. */
+        private String directorToReturn;
 
-        /**
-         * The cast value to return when optionalParseCast is called.
-         */
-        private String castToReturn = null;
+        /** Predefined cast value to return from optionalParseCast method. */
+        private String castToReturn;
 
-        /**
-         * The year value to return when optionalParseYear is called.
-         */
-        private Integer yearToReturn = null;
+        /** Predefined year value to return from optionalParseYear method. */
+        private Integer yearToReturn;
 
-        /**
-         * The genre value to return when optionalParseGenre is called.
-         */
-        private Genre genreToReturn = null;
+        /** Predefined genre value to return from optionalParseGenre method. */
+        private Genre genreToReturn;
 
-        /**
-         * Flag to control whether optionalParseYear throws an exception.
-         */
-        private boolean throwExceptionForYear = false;
-
-        /**
-         * Sets the title value to return.
-         *
-         * @param titleToReturn The title to return
-         */
-        public void setTitleToReturn(String titleToReturn) {
-            this.titleToReturn = titleToReturn;
-        }
-
-        /**
-         * Sets the director value to return.
-         *
-         * @param directorToReturn The director to return
-         */
-        public void setDirectorToReturn(String directorToReturn) {
-            this.directorToReturn = directorToReturn;
-        }
-
-        /**
-         * Sets the cast value to return.
-         *
-         * @param castToReturn The cast to return
-         */
-        public void setCastToReturn(String castToReturn) {
-            this.castToReturn = castToReturn;
-        }
-
-        /**
-         * Sets the year value to return.
-         *
-         * @param yearToReturn The year to return
-         */
-        public void setYearToReturn(Integer yearToReturn) {
-            this.yearToReturn = yearToReturn;
-        }
-
-        /**
-         * Sets the genre value to return.
-         *
-         * @param genreToReturn The genre to return
-         */
-        public void setGenreToReturn(Genre genreToReturn) {
-            this.genreToReturn = genreToReturn;
-        }
-
-        /**
-         * Sets whether optionalParseYear should throw an exception.
-         *
-         * @param throwExceptionForYear True to throw exception, false otherwise
-         */
-        public void setThrowExceptionForYear(boolean throwExceptionForYear) {
-            this.throwExceptionForYear = throwExceptionForYear;
-        }
-
-        /**
-         * Parses an optional title input.
-         * This is a stub implementation that returns a predefined value.
-         *
-         * @param input The input to parse
-         * @return The parsed title, or null if input is null/empty
-         */
         @Override
-        public String optionalParseTitle(String input) {
+        public String optionalParseTitle(String title) {
             return titleToReturn;
         }
 
-        /**
-         * Parses an optional director input.
-         * This is a stub implementation that returns a predefined value.
-         *
-         * @param input The input to parse
-         * @return The parsed director, or null if input is null/empty
-         */
         @Override
-        public String optionalParseDirector(String input) {
+        public String optionalParseDirector(String director) {
             return directorToReturn;
         }
 
-        /**
-         * Parses an optional cast input.
-         * This is a stub implementation that returns a predefined value.
-         *
-         * @param input The input to parse
-         * @return The parsed cast member, or null if input is null/empty
-         */
         @Override
-        public String optionalParseCast(String input) {
+        public String optionalParseCast(String cast) {
             return castToReturn;
         }
 
-        /**
-         * Parses an optional year input.
-         * This is a stub implementation that returns a predefined value or throws
-         * an exception if throwExceptionForYear is true.
-         *
-         * @param input The input to parse
-         * @return The parsed year as an Integer, or null if input is null/empty
-         * @throws IllegalArgumentException If the year format is invalid and throwExceptionForYear is true
-         */
         @Override
-        public Integer optionalParseYear(String input) {
-            if (throwExceptionForYear) {
-                throw new IllegalArgumentException("Invalid year format");
-            }
+        public Integer optionalParseYear(String year) {
             return yearToReturn;
         }
 
-        /**
-         * Parses an optional genre input.
-         * This is a stub implementation that returns a predefined value.
-         *
-         * @param input The input to parse
-         * @return The parsed Genre, or null if input is null/empty
-         */
         @Override
-        public Genre optionalParseGenre(String input) {
+        public Genre optionalParseGenre(String genre) {
             return genreToReturn;
         }
     }
