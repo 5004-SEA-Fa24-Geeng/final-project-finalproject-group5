@@ -252,6 +252,28 @@ classDiagram
         +getId() int
     }
 
+    
+    Genre : <<enumeration>>
+    Genre : +ACTION
+    Genre : +ADVENTURE
+    Genre : +ANIMATION
+    Genre : +COMEDY
+    Genre : +CRIME
+    Genre : +DOCUMENTARY
+    Genre : +DRAMA
+    Genre : +FAMILY
+    Genre : +FANTASY
+    Genre : +HISTORY
+    Genre : +HORROR
+    Genre : +MUSIC
+    Genre : +MYSTERY
+    Genre : +ROMANCE
+    Genre : +SCIENCE_FICTION
+    Genre : +TV_MOVIE
+    Genre : +THRILLER
+    Genre : +WAR
+    Genre : +WESTERN
+
     class Format {
         <<enum>>
         + JSON
