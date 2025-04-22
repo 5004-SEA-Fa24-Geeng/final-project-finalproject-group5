@@ -29,6 +29,7 @@ class MovieController {
 }
 
 class MovieParser {
+    <<static>>
     -InputStream jsonString
     +MovieParser()
     +createMovie(InputStream) List<Movie>
@@ -36,6 +37,7 @@ class MovieParser {
 }
 
 class NetUtils {
+    <<static>>
     +getMovieInfo(String) InputStream
     +getTop50MoviesJson() InputStream
     -buildUrl(int) String
@@ -178,46 +180,71 @@ classDiagram
         - MovieFeasterApplication()
     }
 
-    class Movie {
-        -int movieId
-        -String title
-        -List~String~ directors
-        -int year
-        -double rating
-        -List~Genre~ genres
-        -String overview
-        -List~String~ castings
-        -List~String~ comments
-        -List~Double~ inAppRating
-        -String imgUrl
-        +Movie(int, String, List~String~, int, double, List~Genre~, String, List~String~, String)
-        +getMovieId() int
-        +setMovieId(int)
-        +getTitle() String
-        +setTitle(String)
-        +getDirectors() List~String~
-        +setDirectors(List~String~)
-        +getYear() int
-        +setYear(int)
-        +getRating() double
-        +setRating(double)
-        +getGenres() List~Genre~
-        +setGenres(List~Genre~)
-        +getOverview() String
-        +setOverview(String)
-        +getCastings() List~String~
-        +setCastings(List~String~)
-        +getComments() List~String~
-        +setComments(List~String~)
-        +addComment(String)
-        +getInAppRating() double
-        +setInAppRating(List~Double~)
-        +addInAppRating(Double)
-        +getImgUrl() String
-        +setImgUrl(String)
+   class Movie {
+        - int movieId
+        - String title
+        - List~String~ directors
+        - int year
+        - double rating
+        - List~Genre~ genres
+        - String overview
+        - List~String~ castings
+        - List~String~ comments
+        - List~Double~ inAppRating
+        - String imgUrl
+
+        + getMovieId(): int
+        + setMovieId(int): void
+        + getTitle(): String
+        + setTitle(String): void
+        + getDirectors(): List~String~
+        + setDirectors(List~String~): void
+        + getYear(): int
+        + setYear(int): void
+        + getRating(): double
+        + setRating(double): void
+        + getGenres(): List~Genre~
+        + setGenres(List~Genre~): void
+        + getOverview(): String
+        + setOverview(String): void
+        + getCastings(): List~String~
+        + setCastings(List~String~): void
+        + getComments(): List~String~
+        + setComments(List~String~): void
+        + addComment(String): void
+        + getInAppRating(): double
+        + setInAppRating(List~Double~): void
+        + addInAppRating(Double): void
+        + getImgUrl(): String
+        + setImgUrl(String): void
+        + toString(): String
+    }
+
+    class Builder {
+        - int movieId
+        - String title
+        - List~String~ directors
+        - int year
+        - double rating
+        - List~Genre~ genres
+        - String overview
+        - List~String~ castings
+        - String imgUrl
+
+        + movieId(int): Builder
+        + title(String): Builder
+        + directors(List~String~): Builder
+        + year(int): Builder
+        + rating(double): Builder
+        + genres(List~Genre~): Builder
+        + overview(String): Builder
+        + castings(List~String~): Builder
+        + imgUrl(String): Builder
+        + build(): Movie
     }
 
     class Genre {
+        <<enum>>
         -String name
         -int id
         +Genre(String, int)
@@ -386,11 +413,12 @@ classDiagram
     }
 
     class MovieParser {
-        <<static>> + getMoviesFromApi() List~Movie~
-        <<static>> + getParsedMoviesSummary() Collection~MovieSummary~
-        <<static>> - parseMovies() void
-        <<static>> - cleanMovieSummary() void
-        <<static>> - convertGenreIds(genreIds: Set~Integer~) List~Genre~
+        <<static>>
+        + getMoviesFromApi() List~Movie~
+        + getParsedMoviesSummary() Collection~MovieSummary~
+        - parseMovies() void
+        - cleanMovieSummary() void
+        - convertGenreIds(genreIds: Set~Integer~) List~Genre~
     }
 
     class MovieSummary {
@@ -499,11 +527,11 @@ classDiagram
 
     %% Relationships for backend
     MovieController ..|> MovieControllerInterface
-    MovieController --o MovieModel
-    MovieController --o InputProcessor
+    MovieController o-- MovieModel
+    MovieController o-- InputProcessor
     InputProcessor ..|> InputProcessorInterface
     MovieModel ..|> MovieModelInterface
-    MovieModel --o Movie
+    MovieModel o-- Movie
     MovieModel --> MovieParser
     MovieModel --> MovieFilterFacilitator
     MovieModel --> MovieSorter
@@ -516,11 +544,12 @@ classDiagram
 
     MovieFilterFacilitator --> MovieFilterType
     MovieFilterFacilitator --> MovieFilter
-    MovieParser --* MovieSummary
+    MovieParser *-- MovieSummary
     MovieParser --> NetUtil
-    MovieParser --o Movie
+    MovieParser o-- Movie
     MovieParser --> Genre
     Movie --> Genre
+    Movie *-- Builder : uses
     MovieFeasterApplication --> MovieController : starts via Spring Context
     MovieController --> MovieModel : @Autowired
 
