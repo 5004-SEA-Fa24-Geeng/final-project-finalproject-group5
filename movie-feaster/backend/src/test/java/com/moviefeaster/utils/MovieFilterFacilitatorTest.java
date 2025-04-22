@@ -145,6 +145,20 @@ class MovieFilterFacilitatorTest {
     }
 
     /**
+     * Tests filtering with invalid year range length.
+     */
+    @Test
+    void filterWithInvalidYearRangeLength() {
+        Map<MovieFilterType, Object> filters = new HashMap<>();
+        // Create a year range array with length != 2
+        filters.put(MovieFilterType.YEAR_RANGE, new int[]{1999, 2010, 2023});
+
+        List<Movie> filtered = MovieFilterFacilitator.filter(movies, filters);
+        // Should return the original list since the invalid filter would be ignored
+        assertEquals(movies.size(), filtered.size());
+    }
+
+    /**
      * Tests filtering movies by genre.
      */
     @Test
